@@ -18,7 +18,7 @@ type tile =
   | WALL;
 
 type place = {
-  floor: tile,
+  tile: tile,
   items: list(item),
   enemies: list(enemy),
 };
