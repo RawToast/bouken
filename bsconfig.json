@@ -1,11 +1,21 @@
 {
   "name": "reason-scripts",
   "sources": [
-    "src"
+    {
+      "dir": "src"
+    },
+    {
+      "dir": "src/app"
+    },
+    {
+      "dir": "src/test",
+      "type": "dev"
+    }
   ],
   "bs-dependencies": [
     "reason-react",
-    "bs-jest"
+    "bs-jest",
+    "rationale"
   ],
   "reason": {
     "react-jsx": 2
