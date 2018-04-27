@@ -1,4 +1,4 @@
-/* Types for a level */
+/* Basic types */
 type player = {
   name: string,
   health: int,
@@ -39,4 +39,27 @@ type enemyTile = {
 type level = {
   name: string,
   map: list(list(place)),
+};
+
+type error = 
+  | INVALID_STATE
+  | IMPOSSIBLE_MOVE;
+
+type result('l, 'r) = 
+  | Failure('l) 
+  | Success('r);
+
+module Result = {
+  let mapf = (res, fn) =>
+    switch res {
+    | Failure(failure) => Failure(failure)
+    | Success(success) => Success(fn(success))
+    };
+
+  let flatmapf = (res, fn:'b => result('a, 'c)) =>
+    mapf(res, fn)
+      |> rs => switch rs {
+      | Failure(f) => Failure(f)
+      | Success(s) => s
+    };
 };
