@@ -3,5 +3,6 @@ node_js:
   - "9"
 cache: yarn
 script: 
+  - yarn add coveralls
   - yarn bsb -clean-world -make-world
-  - yarn test
+  - yarn ci
