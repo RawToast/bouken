@@ -3,6 +3,7 @@ type player = {
   name: string,
   health: int,
   gold: int,
+  location: (int, int)
 };
 
 type enemy = {
@@ -10,17 +11,29 @@ type enemy = {
   health: int,
 };
 
-type item = {name: string};
-
 type tile =
   | GROUND
   | WATER
   | WALL;
 
+type occupier = 
+  | PLAYER(player)
+  | ENEMY(enemy)
+  | EMPTY;
+
 type place = {
   tile: tile,
-  items: list(item),
-  enemies: list(enemy),
+  state: occupier
+};
+
+type playerTile = {
+  tile: tile,
+  player: player
+};
+
+type enemyTile = {
+  tile: tile,
+  enemy: enemy
 };
 
 type level = {

@@ -6,7 +6,7 @@ test("Can modify a tile", (_) => {
   open Expect;
   let modifiedLevel =
     LevelBuilder.makeBlankWorld("test") 
-     |> Level.modifyTile(0, 0, {tile: WATER, items: [], enemies: []});
+     |> Level.modifyTile(0, 0, {tile: WATER, state: EMPTY});
   
     expect(modifiedLevel.map |> List.hd |> List.hd |> (i => i.tile)) |> toBe(WATER);
 });

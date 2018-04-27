@@ -3,7 +3,7 @@ open Types;
 open Rationale;
 
 module LevelBuilder = {
-  let blankPlace = {tile: GROUND, items: [], enemies: []};
+  let blankPlace = {tile: GROUND, state: EMPTY};
   let makeBlankWorld = (name: string) => {
     let emptyMap =
       RList.repeat(blankPlace, 15) |> List.map(i => RList.repeat(i, 15));
