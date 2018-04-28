@@ -1,4 +1,6 @@
 /* Basic types */
+open Js.Result;
+
 type player = {
   name: string,
   health: int,
@@ -26,16 +28,6 @@ type place = {
   state: occupier
 };
 
-type playerTile = {
-  tile: tile,
-  player: player
-};
-
-type enemyTile = {
-  tile: tile,
-  enemy: enemy
-};
-
 type level = {
   name: string,
   map: list(list(place)),
@@ -45,21 +37,6 @@ type error =
   | INVALID_STATE
   | IMPOSSIBLE_MOVE;
 
-type result('l, 'r) = 
-  | Failure('l) 
-  | Success('r);
+let error = (err) => Js.Result.Error(err);
 
-module Result = {
-  let mapf = (res, fn) =>
-    switch res {
-    | Failure(failure) => Failure(failure)
-    | Success(success) => Success(fn(success))
-    };
-
-  let flatmapf = (res, fn:'b => result('a, 'c)) =>
-    mapf(res, fn)
-      |> rs => switch rs {
-      | Failure(f) => Failure(f)
-      | Success(s) => s
-    };
-};
+let success = (ok) => Js.Result.Ok(ok);
