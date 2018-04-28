@@ -1,8 +1,11 @@
-/* Types for a level */
+/* Basic types */
+open Js.Result;
+
 type player = {
   name: string,
   health: int,
   gold: int,
+  location: (int, int)
 };
 
 type enemy = {
@@ -10,20 +13,30 @@ type enemy = {
   health: int,
 };
 
-type item = {name: string};
-
 type tile =
   | GROUND
   | WATER
   | WALL;
 
+type occupier = 
+  | PLAYER(player)
+  | ENEMY(enemy)
+  | EMPTY;
+
 type place = {
-  floor: tile,
-  items: list(item),
-  enemies: list(enemy),
+  tile: tile,
+  state: occupier
 };
 
 type level = {
   name: string,
   map: list(list(place)),
 };
+
+type error = 
+  | INVALID_STATE
+  | IMPOSSIBLE_MOVE;
+
+let error = (err) => Js.Result.Error(err);
+
+let success = (ok) => Js.Result.Ok(ok);
