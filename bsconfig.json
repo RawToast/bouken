@@ -8,6 +8,9 @@
       "dir": "src/app"
     },
     {
+      "dir": "src/ui"
+    },
+    {
       "dir": "src/test",
       "type": "dev"
     }
