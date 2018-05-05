@@ -45,8 +45,8 @@ module Level = {
   };
 
   let canMoveTo = (x, y, map: list(list(place))) => map 
-    |> RList.nth(x) 
-    |> Option.bind(_, RList.nth(y))
+    |> RList.nth(y) 
+    |> Option.bind(_, RList.nth(x))
     |> Result.ofOption(IMPOSSIBLE_MOVE)
     |> Result.bind(_, l => switch l.tile {
         | GROUND => success(l)
@@ -62,9 +62,9 @@ module Level = {
     let update = (player, map) => {
       map |>
       List.mapi((xi: int, xs: list(place)) =>
-        if (xi == x) {
+        if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
-            if (yi == y) { 
+            if (yi == x) { 
               { ...place, state: PLAYER({ ...player, location: (x, y) }) }
             } else place);
         } else xs
