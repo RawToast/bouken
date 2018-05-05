@@ -14,10 +14,10 @@ module Level = {
   let modifyTile = (x: int, y: int, newPlace: place, level: level) => {
       let updateMap =
         List.mapi((xi: int, xs: list(place)) =>
-          if (xi == x) {
+          if (xi == y) {
               xs |> 
                List.mapi((yi: int, place: place) =>
-                 if (yi == y) newPlace else place);
+                 if (yi == x) newPlace else place);
           } else xs
         );
       { name: level.name, map: updateMap(level.map) };

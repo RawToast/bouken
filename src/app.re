@@ -1,21 +1,30 @@
 [%bs.raw {|require('./app.css')|}];
 
 [@bs.module] external logo : string = "./logo.svg";
+open Level;
 
 let component = ReasonReact.statelessComponent("App");
+
+let level = LevelBuilder.makeBlankWorld("test")
+  |> Level.modifyTile(0, 0, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 1, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 2, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 3, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 4, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 5, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 6, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(7, 6, {tile: WATER, state: EMPTY})
+  |> Level.modifyTile(8, 6, {tile: WATER, state: EMPTY})
+  |> Level.modifyTile(9, 6, {tile: WATER, state: EMPTY})
+  |> Level.modifyTile(7, 7, {tile: WATER, state: EMPTY})
+  |> Level.modifyTile(8, 7, {tile: WATER, state: EMPTY})
+  |> Level.modifyTile(8, 8, {tile: WATER, state: EMPTY})
+  |> Level.modifyTile(9, 9, {tile: WATER, state: EMPTY});
 
 let make = (~message, _children) => {
   ...component,
   render: (_self) =>
     <div className="App">
-      <div className="App-header">
-        <img src=logo className="App-logo" alt="logo" />
-        <h2> (ReasonReact.stringToElement(message)) </h2>
-      </div>
-      <p className="App-intro">
-        (ReasonReact.stringToElement("To get started, edit"))
-        <code> (ReasonReact.stringToElement(" src/app.re ")) </code>
-        (ReasonReact.stringToElement("and save to reload."))
-      </p>
+      <GameMap level=(level)/>
     </div>
 };
