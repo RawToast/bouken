@@ -5,14 +5,11 @@
       "dir": "src/app"
     },
     {
-      "dir": "src/ui"
+      "dir": "src"
     },
     {
       "dir": "src/test",
       "type": "dev"
-    },
-    {
-      "dir": "src"
     }
   ],
   "bs-dependencies": [
