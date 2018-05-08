@@ -55,10 +55,24 @@ module Level = {
     });
 
   let getPlace = (x, y, map) => 
-      map |> RList.nth(x) |> Option.bind(_, RList.nth(y));
+      map |> RList.nth(y) |> Option.bind(_, RList.nth(x));
 
-  let movePlayer = (x: int, y: int, level: level) => {
+  let removeOccupant = (x, y, level) => {
+    let newMap = level.map |> 
+      List.mapi((xi: int, xs: list(place)) =>
+      if (xi == y) {
+          xs |> List.mapi((yi: int, place: place) =>
+          if (yi == x) { 
+            { ...place, state: EMPTY }
+          } else place);
+      } else xs
+    );
 
+    { name: level.name, map: newMap };
+  };
+  
+
+  let setPlayerLocation = (x: int, y: int, level: level) => {
     let update = (player, map) => {
       map |>
       List.mapi((xi: int, xs: list(place)) =>
@@ -80,4 +94,22 @@ module Level = {
           | Some(result) => success(result)
           })
   };
+
+  let movePlayer(x: int, y: int, level: level) = {
+    let playerOpt = findPlayer(level);
+    switch(playerOpt) {
+    | Some(player) => {
+      let (xl, yl) = player.location;
+      let nx = x + xl;
+      let ny = y + yl;
+
+      level 
+        |> setPlayerLocation(nx, ny)
+        |> Result.fmap(removeOccupant(xl, yl))
+    }
+    | None => error(INVALID_STATE);
+    };
+  };
+
+
 };

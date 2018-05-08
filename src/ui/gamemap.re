@@ -1,10 +1,9 @@
+open Webapi.Dom;
+open Types;
+
 let component = ReasonReact.statelessComponent("GameMap");
 
-open ReasonReact;
-open Types;
-open Webapi.Dom;
-
-let stateToElement = place => 
+let stateToElement = (place: place) => 
   switch place.state {
   | EMPTY => "."
   | PLAYER(_) => "O"
@@ -28,28 +27,27 @@ let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
     |> List.map(li => [<br/>, ...li]);
 
 
-let handleKeyPress = (evt: Dom.keyboardEvent) => {
+let handleKeyPress = (movement, evt: Dom.keyboardEvent) => {
   evt |> KeyboardEvent.code
     |> code => switch code {
-    | "KeyQ" => ()
-    | "KeyW" => ()
-    | "KeyE" => ()
-    | "KeyA" => ()
-    | "KeyS" => ()
-    | "KeyD" => ()
-    | "KeyZ" => ()
-    | "KeyX" => ()
-    | "KeyC" => ()
-    | _ => ()
+    | "KeyQ" => movement(-1, 1)
+    | "KeyW" => movement(0, 1)
+    | "KeyE" => movement(1, 1)
+    | "KeyA" => movement(-1, 0)
+    /* | "KeyS" => movement({x: 0, y: 0}) */
+    | "KeyD" => movement(1, 0)
+    | "KeyZ" => movement(-1, -1)
+    | "KeyX" => movement(0, -1)
+    | "KeyC" => movement(1, -1)
+    | _ => Js.Console.log("No");
     };
   ();
 };
 
-let make = (~level: level, _children) => {
+let make = (~level: level, ~movePlayer, _children) => {
   ...component,
   didMount: (_) =>  {
-    document |> Document.addKeyDownEventListener(handleKeyPress);
-    
+    document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer));
     NoUpdate;
   },
   render: _self =>
