@@ -1,14 +1,19 @@
 /* Basic types */
+
+type stats = {
+  health: int,
+  speed: float
+};
 type player = {
   name: string,
-  health: int,
+  stats: stats,
   gold: int,
   location: (int, int)
 };
 
 type enemy = {
   name: string,
-  health: int,
+  stats: stats,
 };
 
 type tile =
@@ -29,6 +34,12 @@ type place = {
 type level = {
   name: string,
   map: list(list(place)),
+};
+
+type game = {
+  player: player,
+  level: level,
+  turn: float
 };
 
 type error = 

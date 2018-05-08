@@ -4,17 +4,18 @@ open Types;
 open Rationale;
 
 let blankWorld = LevelBuilder.makeBlankWorld("test");
-
 let waterTile = { tile: WATER, state: EMPTY };
-let intialPlayer = { name:"test", health: 10, gold: 5, location: (0, 0) };
-let nfPlayer = { name:"test", health: 10, gold: 5, location: (9, 9) };
+
+let playerAt = (x, y) => PLAYER({name:"test", stats: { health: 10, speed: 1.0 }, gold: 5, location: (x, y)});
+let intialPlayer = { name:"test", stats: { health: 10, speed: 1.0 }, gold: 5, location: (0, 0) };
+let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0 }, gold: 5, location: (9, 9) };
 
 describe("Level.modify", () => {
   test("Can modify a tile", (_) => {
     open Expect;
     let modifiedLevel =
       blankWorld
-      |> Level.modifyTile(0, 0, {tile: WATER, state: EMPTY});
+      |> Level.modifyTile(0, 0, waterTile);
     
       expect(modifiedLevel.map |> List.hd |> List.hd |> (i => i.tile)) |> toBe(WATER);
   });
@@ -25,7 +26,7 @@ describe("Level.findPlayer", () => {
     open Expect;
     let player =
       blankWorld
-      |> Level.modifyTile(0, 0, {tile: GROUND, state: PLAYER({name:"test", health: 10, gold: 5, location: (0, 0)})}) 
+      |> Level.modifyTile(0, 0, {tile: GROUND, state: playerAt(0, 0)}) 
       |> Level.findPlayer;
     
       expect(Rationale.Option.isSome(player)) |> toEqual(true);
@@ -44,7 +45,7 @@ describe("Level.setPlayerLocation", () => {
     open Expect;
     let result =
       blankWorld
-      |> Level.modifyTile(0, 0, { tile: GROUND, state: PLAYER({ name:"test", health: 10, gold: 5, location: (0, 0) }) }) 
+      |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
       |> Level.setPlayerLocation(0, 1);
     
       expect(Result.isOk(result)) |> toEqual(true);
@@ -63,7 +64,7 @@ describe("Level.setPlayerLocation", () => {
     open Expect;
     let result =
       blankWorld
-      |> Level.modifyTile(0, 0, { tile: GROUND, state: PLAYER({ name:"test", health: 10, gold: 5, location: (0, 0) }) }) 
+      |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)}) 
       |> Level.modifyTile(0, 1, { tile: WALL, state: EMPTY }) 
       |> Level.setPlayerLocation(0, 1);
     
@@ -74,7 +75,7 @@ describe("Level.setPlayerLocation", () => {
     open Expect;
     let result =
       blankWorld
-      |> Level.modifyTile(0, 0, { tile: GROUND, state: PLAYER({ name:"test", health: 10, gold: 5, location: (0, 0) }) }) 
+      |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
       |> Level.modifyTile(0, 1, { tile: WATER, state: EMPTY }) 
       |> Level.setPlayerLocation(0, 1);
     
@@ -88,7 +89,7 @@ describe("Level.movePlayer", () => {
     open Expect;
     let result =
       blankWorld
-      |> Level.modifyTile(0, 0, { tile: GROUND, state: PLAYER({ name:"test", health: 10, gold: 5, location: (0, 0) }) }) 
+      |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
       |> Level.movePlayer(0, 1);
     
       switch result {
@@ -101,7 +102,7 @@ describe("Level.movePlayer", () => {
     open Expect;
     let result =
       blankWorld
-      |> Level.modifyTile(0, 0, { tile: GROUND, state: PLAYER({ name:"test", health: 10, gold: 5, location: (0, 0) }) }) 
+      |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
       |> Level.movePlayer(0, 1);
     
       /* expect(Result.isOk(result)) |> toEqual(true); */
@@ -116,7 +117,7 @@ describe("Level.movePlayer", () => {
     open Expect;
     let result =
       blankWorld
-      |> Level.modifyTile(0, 0, { tile: GROUND, state: PLAYER({ name:"test", health: 10, gold: 5, location: (0, 0) }) }) 
+      |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
       |> Level.movePlayer(0, 1)
       |> Rationale.Result.getOk |> Rationale.Option.default(blankWorld)
       |> Level.movePlayer(0, 1);

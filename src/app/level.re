@@ -10,6 +10,10 @@ module LevelBuilder = {
   };
 };
 
+module Tiles = {
+  let wallTile = {tile: WALL, state: EMPTY};
+};
+
 module Level = {
   let modifyTile = (x: int, y: int, newPlace: place, level: level) => {
       let updateMap =
@@ -23,6 +27,9 @@ module Level = {
       { name: level.name, map: updateMap(level.map) };
   };
 
+  let modifyTiles = (points: list((int, int)), newPlace: place, level: level) =>
+    points |> List.fold_left((l, ((x:int, y: int))) => modifyTile(x, y, newPlace, l), level);
+  
   let isPlayer = place => switch place.state {
       | EMPTY => false
       | ENEMY(_) => false
