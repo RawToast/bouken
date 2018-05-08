@@ -1,6 +1,5 @@
 [%bs.raw {|require('./app.css')|}];
 
-[@bs.module] external logo : string = "./logo.svg";
 open Level;
 open ReasonReact;
 open GameMap;
@@ -39,5 +38,5 @@ let make = (_children) => {
   render: (self) =>
     <div className="App">
       <GameMap level=(self.state) movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))/>
-      </div>
+    </div>
 };
