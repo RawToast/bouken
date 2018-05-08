@@ -1,21 +1,42 @@
 [%bs.raw {|require('./app.css')|}];
 
-[@bs.module] external logo : string = "./logo.svg";
+open Level;
+open ReasonReact;
+open GameMap;
 
-let component = ReasonReact.statelessComponent("App");
+type actions =
+  | MovePlayer(int, int);
 
-let make = (~message, _children) => {
+let component = ReasonReact.reducerComponent("App");
+
+let initLevel = LevelBuilder.makeBlankWorld("test")
+  |> Level.modifyTile(0, 0, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 1, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 2, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 3, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 4, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 5, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(0, 6, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(7, 6, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(8, 6, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(9, 6, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(7, 7, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(8, 7, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(8, 8, {tile: WALL, state: EMPTY})
+  |> Level.modifyTile(9, 9, {tile: GROUND, state: ENEMY({name: "spooky thing", health: 3})})
+  |> Level.modifyTile(6, 6, {tile: GROUND, state: PLAYER({ name:"test", health: 10, gold: 5, location: (6, 6) })});
+
+let movement = (x, y) => MovePlayer(x, y);
+
+let make = (_children) => {
   ...component,
-  render: (_self) =>
+  initialState: () => initLevel,
+  reducer: (act, level) =>
+    switch act {
+    | MovePlayer(x, y) => level |> Level.movePlayer(x, y) |> Rationale.Result.result(s => ReasonReact.Update(s), _f => NoUpdate);
+  },
+  render: (self) =>
     <div className="App">
-      <div className="App-header">
-        <img src=logo className="App-logo" alt="logo" />
-        <h2> (ReasonReact.stringToElement(message)) </h2>
-      </div>
-      <p className="App-intro">
-        (ReasonReact.stringToElement("To get started, edit"))
-        <code> (ReasonReact.stringToElement(" src/app.re ")) </code>
-        (ReasonReact.stringToElement("and save to reload."))
-      </p>
+      <GameMap level=(self.state) movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))/>
     </div>
 };

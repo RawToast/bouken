@@ -1,6 +1,4 @@
 /* Basic types */
-open Js.Result;
-
 type player = {
   name: string,
   health: int,

@@ -2,10 +2,8 @@
   "name": "reason-scripts",
   "sources": [
     {
-      "dir": "src"
-    },
-    {
-      "dir": "src/app"
+      "dir": "src",
+      "subdirs": [ "app", "ui" ]
     },
     {
       "dir": "src/test",
@@ -15,7 +13,8 @@
   "bs-dependencies": [
     "reason-react",
     "bs-jest",
-    "rationale"
+    "rationale",
+    "bs-webapi"
   ],
   "reason": {
     "react-jsx": 2
