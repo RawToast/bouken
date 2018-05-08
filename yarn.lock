@@ -1300,6 +1300,10 @@ bs-loader@^1.8.0:
     loader-utils "^1.1.0"
     read-bsconfig "^1.0.1"
 
+bs-webapi@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/bs-webapi/-/bs-webapi-0.9.1.tgz#c71cc4ae619632d53c60f2f4433fb1080803cdd6"
+
 bser@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/bser/-/bser-1.0.2.tgz#381116970b2a6deea5646dd15dd7278444b56169"

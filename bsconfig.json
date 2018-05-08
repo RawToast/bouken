@@ -18,7 +18,8 @@
   "bs-dependencies": [
     "reason-react",
     "bs-jest",
-    "rationale"
+    "rationale",
+    "bs-webapi"
   ],
   "reason": {
     "react-jsx": 2
