@@ -2,9 +2,6 @@
   "name": "reason-scripts",
   "sources": [
     {
-      "dir": "src"
-    },
-    {
       "dir": "src/app"
     },
     {
@@ -13,6 +10,9 @@
     {
       "dir": "src/test",
       "type": "dev"
+    },
+    {
+      "dir": "src"
     }
   ],
   "bs-dependencies": [
