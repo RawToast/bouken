@@ -3,7 +3,7 @@
 [@bs.module] external logo : string = "./logo.svg";
 open Level;
 open ReasonReact;
-open Gamemap;
+open GameMap;
 
 type actions =
   | MovePlayer(int, int);
