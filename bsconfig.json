@@ -2,10 +2,8 @@
   "name": "reason-scripts",
   "sources": [
     {
-      "dir": "src/app"
-    },
-    {
-      "dir": "src"
+      "dir": "src",
+      "subdirs": [ "app", "ui" ]
     },
     {
       "dir": "src/test",
