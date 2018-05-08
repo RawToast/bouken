@@ -2,7 +2,8 @@
 
 type stats = {
   health: int,
-  speed: float
+  speed: float,
+  position: float
 };
 type player = {
   name: string,

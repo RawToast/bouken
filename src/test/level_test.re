@@ -6,9 +6,9 @@ open Rationale;
 let blankWorld = LevelBuilder.makeBlankWorld("test");
 let waterTile = { tile: WATER, state: EMPTY };
 
-let playerAt = (x, y) => PLAYER({name:"test", stats: { health: 10, speed: 1.0 }, gold: 5, location: (x, y)});
-let intialPlayer = { name:"test", stats: { health: 10, speed: 1.0 }, gold: 5, location: (0, 0) };
-let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0 }, gold: 5, location: (9, 9) };
+let playerAt = (x, y) => PLAYER({name:"test", stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (x, y)});
+let intialPlayer = { name:"test", stats: { health: 10, speed: 1.0, position: 0.}, gold: 5, location: (0, 0) };
+let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (9, 9) };
 
 describe("Level.modify", () => {
   test("Can modify a tile", (_) => {
