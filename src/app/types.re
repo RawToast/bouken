@@ -32,9 +32,11 @@ type place = {
   state: occupier
 };
 
+type area = list(list(place));
+
 type level = {
   name: string,
-  map: list(list(place)),
+  map: area,
 };
 
 type game = {
@@ -50,3 +52,9 @@ type error =
 let error = (err) => Js.Result.Error(err);
 
 let success = (ok) => Js.Result.Ok(ok);
+
+let isPlayer = place => switch place.state {
+  | EMPTY => false
+  | ENEMY(_) => false
+  | PLAYER(_) => true
+  };
