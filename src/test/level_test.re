@@ -133,8 +133,9 @@ describe("Level.movePlayer", () => {
   });
 });
 
-describe("Area.findPlayer", () => {
-  test("Finds the player", (_) => {
+describe("Area", () => {
+  describe("findPlayer", () => {
+  test("Can find the player", (_) => {
     open Expect;
     let player =
       blankWorld
@@ -142,5 +143,18 @@ describe("Area.findPlayer", () => {
       |> w => w.map |> Area.findPlayer;
     
       expect(Rationale.Option.isSome(player)) |> toEqual(true);
+  });
+});
+
+  describe("findEnemy", () => {
+    test("can find an enemy", (_) => {
+      open Expect;
+      let enemy =
+        blankWorld
+        |> Level.modifyTile(0, 0, {tile: GROUND, state: ENEMY(StaticData.StaticData.initEnemy)}) 
+        |> w => w.map |> Area.findEnemy("testenemy");
+      
+        expect(Rationale.Option.isSome(enemy)) |> toEqual(true);
+    });
   });
 });

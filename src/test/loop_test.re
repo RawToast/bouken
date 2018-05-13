@@ -29,7 +29,7 @@ describe("Loop", () => {
       expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
     });
 
-    test("Increments the enemy's position", (_) => {      
+    /* test("Increments the enemy's position", (_) => {      
       let maybeEnemy = Area.findEnemy("enemy", updatedMap);
       let updatedEnemy: enemy = Option.default(defaultEnemy, maybeEnemy);
       let position = updatedEnemy.stats.position;
@@ -37,7 +37,7 @@ describe("Loop", () => {
       expect(position) |> toBe(1.);
 
       /* expect(updatedEnemy.stats) |> toEqual( { health: 10, speed: 1.0, position: 1. }); */
-    });
+    }); */
   });
 
   describe("update", () => {
