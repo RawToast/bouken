@@ -144,10 +144,18 @@ describe("Area", () => {
     
       expect(Rationale.Option.isSome(player)) |> toEqual(true);
   });
+  test("Returns none when there is no player", (_) => {
+    open Expect;
+    let player =
+      blankWorld
+      |> w => w.map |> Area.findPlayer;
+    
+      expect(Rationale.Option.isSome(player)) |> toEqual(false);
+  });
 });
 
   describe("findEnemy", () => {
-    test("can find an enemy", (_) => {
+    test("Can find an enemy", (_) => {
       open Expect;
       let enemy =
         blankWorld
@@ -155,6 +163,15 @@ describe("Area", () => {
         |> w => w.map |> Area.findEnemy("testenemy");
       
         expect(Rationale.Option.isSome(enemy)) |> toEqual(true);
+    });
+    test("Returns none when there is no enemy", (_) => {
+      open Expect;
+      let enemy =
+        blankWorld
+        |> Level.modifyTile(0, 0, {tile: GROUND, state: ENEMY(StaticData.StaticData.initEnemy)}) 
+        |> w => w.map |> Area.findEnemy("other enemy");
+      
+        expect(Rationale.Option.isSome(enemy)) |> toEqual(false);
     });
   });
 });
