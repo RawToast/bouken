@@ -24,9 +24,29 @@ module Area = {
       |> Option.default([])
       |> RList.find(state => isPlayer(state))
       |> Option.bind(_, s => switch(s.state) {
-        | EMPTY => None
-        | ENEMY(_) => None
         | PLAYER(p) => Some(p)
+        | _ => None
+      });
+  };
+
+  let findEnemy: (string, area) => option(enemy) = (id, area) => {
+    let isEnemyWithId = (id, place) => switch place.state {
+      | ENEMY(e) => e.id === id
+      | _ => false
+      };
+    let hasEnemy = (p:option(place)) => Option.isSome(p);
+
+    let findEnemyRow = (id, places) => 
+      places |> RList.find(y => isEnemyWithId(id, y));
+
+    area
+      |> RList.find(row => row |> findEnemyRow(id) |> hasEnemy)
+      |> Option.default([])
+      |> RList.find(p => isEnemyWithId(id, p))
+      |> Option.bind(_, s => switch(s.state) {
+        | EMPTY => None
+        | ENEMY(e) => Some(e)
+        | PLAYER(_) => None
       });
   };
 
@@ -70,6 +90,8 @@ module Level = {
     points |> List.fold_left((l, ((x:int, y: int))) => modifyTile(x, y, newPlace, l), level);
 
   let findPlayer = level => Area.findPlayer(level.map);
+
+  let findEnemy = (id, level) => Area.findEnemy(id, level.map);
 
   let getPlace = (x, y, map) => 
       map |> RList.nth(y) |> Option.bind(_, RList.nth(x));

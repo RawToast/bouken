@@ -5,6 +5,7 @@ type stats = {
   speed: float,
   position: float
 };
+
 type player = {
   name: string,
   stats: stats,
@@ -13,8 +14,9 @@ type player = {
 };
 
 type enemy = {
+  id: string,
   name: string,
-  stats: stats,
+  stats: stats
 };
 
 type tile =

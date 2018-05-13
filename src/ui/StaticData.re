@@ -5,7 +5,7 @@ module StaticData = {
   let listVertical = (x, y, ty) => Rationale.RList.rangeInt(1, y, ty) |> List.map(i => (x, i));
 
   let initPlayer = {name: "test", stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (6, 6)};
-  let initEnemy = {name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
+  let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
   let initLevel =
     LevelBuilder.makeBlankWorld("test")
     |> Level.modifyTiles(listVertical(0, 0, 13), Tiles.wallTile)

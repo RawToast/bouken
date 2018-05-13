@@ -132,3 +132,15 @@ describe("Level.movePlayer", () => {
       };
   });
 });
+
+describe("Area.findPlayer", () => {
+  test("Finds the player", (_) => {
+    open Expect;
+    let player =
+      blankWorld
+      |> Level.modifyTile(0, 0, {tile: GROUND, state: playerAt(0, 0)}) 
+      |> w => w.map |> Area.findPlayer;
+    
+      expect(Rationale.Option.isSome(player)) |> toEqual(true);
+  });
+});
