@@ -136,6 +136,4 @@ module Level = {
     | None => error(INVALID_STATE);
     };
   };
-
-
 };

@@ -18,6 +18,7 @@ let modifiedLevel =
       |> Level.modifyTile(5, 5, { tile: GROUND, state: enemy });
 
 describe("Loop", () => {
+
   open Expect;
 
   describe("incrementPositions", () => {
@@ -29,23 +30,23 @@ describe("Loop", () => {
       expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
     });
 
-    /* test("Increments the enemy's position", (_) => {      
-      let maybeEnemy = Area.findEnemy("enemy", updatedMap);
-      let updatedEnemy: enemy = Option.default(defaultEnemy, maybeEnemy);
-      let position = updatedEnemy.stats.position;
-      
-      expect(position) |> toBe(1.);
-
-      /* expect(updatedEnemy.stats) |> toEqual( { health: 10, speed: 1.0, position: 1. }); */
-    }); */
-  });
-
-  describe("update", () => {
-    let updatedMap: area = Loop.update(modifiedLevel.map);
+    test("Retains the player", (_) => {
+      let updatedPlayer = Area.findPlayer(updatedMap);
+      expect(Option.isSome(updatedPlayer)) |> toBe(true);
+    });
 
     test("Leaves the user active", (_) => {
       let updatedPlayer = Area.findPlayer(updatedMap) |> Option.default(defaultPlayer);
       expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
     });
+
+    /* test("Increments the enemys position", (_) => {      
+      let maybeEnemy = Area.findEnemy("enemy", updatedMap);
+      let updatedEnemy: enemy = Option.default(defaultEnemy, maybeEnemy);
+      let position: float = updatedEnemy.stats.position;
+      
+      expect(position) |> toEqual(1.);
+    }); */
   });
+
 });

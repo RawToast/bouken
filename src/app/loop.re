@@ -1,8 +1,11 @@
 open Types;
 
 module Loop = {
+
   let inc = stats => {...stats, position: stats.position +. stats.speed};
-  
+
+  let isPlayerActive = (player:player) => player.stats.position >= 1.;
+
   let incrementPositions =
     List.map((ys: list(place)) =>
       ys
@@ -20,5 +23,4 @@ module Loop = {
            }
          )
     );
-  let update = area => area |> incrementPositions;
 };
