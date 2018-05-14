@@ -1,5 +1,6 @@
-/* open Types;
+open Types;
+open Loop;
 
-module GameLoop = (Loop: Loop.Loop) => {
+module GameLoop = (L:Loop) => {
     
-}; */
+};

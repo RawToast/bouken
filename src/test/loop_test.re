@@ -1,8 +1,7 @@
-open Jest;
 open Level;
 open Types;
-open Rationale;
 open Loop;
+open Jest;
 
 let blankWorld = LevelBuilder.makeBlankWorld("test");
 
@@ -25,28 +24,27 @@ describe("Loop", () => {
     let updatedMap = Loop.incrementPositions(modifiedLevel.map);
 
     test("Increments the player's position", (_) => {      
-      let updatedPlayer = Area.findPlayer(updatedMap) |> Option.default(defaultPlayer);
+      let updatedPlayer = Area.findPlayer(updatedMap) |> Rationale.Option.default(defaultPlayer);
 
       expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
     });
 
     test("Retains the player", (_) => {
       let updatedPlayer = Area.findPlayer(updatedMap);
-      expect(Option.isSome(updatedPlayer)) |> toBe(true);
+      expect(Rationale.Option.isSome(updatedPlayer)) |> toBe(true);
     });
 
     test("Leaves the user active", (_) => {
-      let updatedPlayer = Area.findPlayer(updatedMap) |> Option.default(defaultPlayer);
+      let updatedPlayer = Area.findPlayer(updatedMap) |> Rationale.Option.default(defaultPlayer);
       expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
     });
 
     test("Increments the enemys positsion", (_) => {      
       let maybeEnemy = Area.findEnemy("enemy", updatedMap);
-      let updatedEnemy: enemy = Option.default(defaultEnemy, maybeEnemy);
+      let updatedEnemy: enemy = Rationale.Option.default(defaultEnemy, maybeEnemy);
       let position: float = updatedEnemy.stats.position;
       
       expect(position) |> toEqual(1.);
     });
   });
-
 });
