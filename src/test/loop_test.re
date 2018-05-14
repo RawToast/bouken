@@ -40,13 +40,13 @@ describe("Loop", () => {
       expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
     });
 
-    /* test("Increments the enemys position", (_) => {      
+    test("Increments the enemys positsion", (_) => {      
       let maybeEnemy = Area.findEnemy("enemy", updatedMap);
       let updatedEnemy: enemy = Option.default(defaultEnemy, maybeEnemy);
       let position: float = updatedEnemy.stats.position;
       
       expect(position) |> toEqual(1.);
-    }); */
+    });
   });
 
 });
