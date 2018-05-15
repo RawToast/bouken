@@ -1,6 +1,1 @@
-open Types;
-open Loop;
-
-module GameLoop = (L:Loop) => {
-    
-};
+module GameLoop = (L: Loop.Loopz) => {};
