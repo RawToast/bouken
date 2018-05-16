@@ -42,8 +42,8 @@ let modifiedLevel =
 
 describe("Loop", () =>
   Expect.(
-    describe("incrementPositions", () => {
-      let updatedMap = Loop.incrementPositions(modifiedLevel.map);
+    describe("incrementAll", () => {
+      let updatedMap = Loop.incrementAll(modifiedLevel.map);
       test("Increments the player's position", (_) => {
         let updatedPlayer = Area.findPlayer(updatedMap) |> Rationale.Option.default(defaultPlayer);
         expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);

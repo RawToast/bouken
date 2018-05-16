@@ -1,9 +1,8 @@
 [%bs.raw {|require('./app.css')|}];
 
-open Level;
 open ReasonReact;
-open GameMap;
-open StaticData;
+open Bouken;
+open Types;
 
 type actions =
   | MovePlayer(int, int);
@@ -12,17 +11,20 @@ let component = ReasonReact.reducerComponent("App");
 
 let movement = (x, y) => MovePlayer(x, y);
 
-let resultToUpdate = Rationale.Result.result(s => ReasonReact.Update(s), _f => NoUpdate);
+let resultToUpdate = r => switch r {
+  | Some(s) => ReasonReact.Update(s)
+  | None => NoUpdate
+};
 
 let make = (_children) => {
   ...component,
-  initialState: () => StaticData.initLevel,
-  reducer: (act, level) =>
+  initialState: () => Bouken.create("test"),
+  reducer: (act, game) =>
     switch act {
-    | MovePlayer(x, y) => level |> Level.movePlayer(x, y) |> resultToUpdate;
+    | MovePlayer(x, y) => game |> Bouken.movePlayer(x, y) |> resultToUpdate;
   },
   render: (self) =>
     <div className="App">
-      <GameMap level=(self.state) movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))/>
+      <GameMap level=(self.state.level) movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))/>
     </div>
 };

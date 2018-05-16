@@ -60,3 +60,15 @@ let isPlayer = place => switch place.state {
   | ENEMY(_) => false
   | PLAYER(_) => true
   };
+
+/* Modules */
+
+module type Positions = {
+  let isActive: stats => bool;
+  let incrementAll: area => area;
+};
+
+module type Game = {
+  let create: string => game;
+  let movePlayer: (int, int, game) => option(game)
+};

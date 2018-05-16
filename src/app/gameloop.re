@@ -1,1 +1,2 @@
-module GameLoop = (L: Loop.Loopz) => {};
+
+module GameLoop = (Positions: Types.Positions) => {};

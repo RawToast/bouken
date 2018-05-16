@@ -1,11 +1,9 @@
 open Types;
 
-module type Loopz = {let isPlayerActive: Types.player => bool; let incrementPositions: Types.area => Types.area;};
-
-module Loop: Loopz = {
+module Loop: Positions = {
   let inc = stats => {...stats, position: stats.position +. stats.speed};
-  let isPlayerActive = (player: player) => player.stats.position >= 1.;
-  let incrementPositions =
+  let isActive = stats => stats.position >= 1.;
+  let incrementAll =
     List.map((ys: list(place)) =>
       ys
       |> List.map((place: place) =>
