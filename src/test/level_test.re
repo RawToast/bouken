@@ -6,6 +6,7 @@ open Rationale;
 let blankWorld = LevelBuilder.makeBlankWorld("test");
 let waterTile = { tile: WATER, state: EMPTY };
 
+let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
 let playerAt = (x, y) => PLAYER({name:"test", stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (x, y)});
 let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (9, 9) };
 
@@ -157,9 +158,10 @@ describe("Area", () => {
   describe("findEnemy", () => {
     test("Can find an enemy", (_) => {
       open Expect;
+
       let enemy =
         blankWorld
-        |> Level.modifyTile(0, 0, {tile: GROUND, state: ENEMY(StaticData.StaticData.initEnemy)}) 
+        |> Level.modifyTile(0, 0, { tile: GROUND, state: ENEMY(initEnemy) })
         |> w => w.map |> Area.findEnemy("testenemy");
       
         expect(Rationale.Option.isSome(enemy)) |> toEqual(true);
@@ -168,7 +170,7 @@ describe("Area", () => {
       open Expect;
       let enemy =
         blankWorld
-        |> Level.modifyTile(0, 0, {tile: GROUND, state: ENEMY(StaticData.StaticData.initEnemy)}) 
+        |> Level.modifyTile(0, 0, {tile: GROUND, state: ENEMY(initEnemy)}) 
         |> w => w.map |> Area.findEnemy("other enemy");
       
         expect(Rationale.Option.isSome(enemy)) |> toEqual(false);
