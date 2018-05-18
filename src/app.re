@@ -16,12 +16,17 @@ let resultToUpdate = r => switch r {
   | None => NoUpdate
 };
 
+module PShaco: TurnLoop = Gameloop.CreateTurnLoop(Loop.Loop);
+
+module Game = Bouken.CreateGame(PShaco);
+
+
 let make = (_children) => {
   ...component,
-  initialState: () => Bouken.create("test"),
+  initialState: () => Game.create("test"),
   reducer: (act, game) =>
     switch act {
-    | MovePlayer(x, y) => game |> Bouken.movePlayer(x, y) |> resultToUpdate;
+    | MovePlayer(x, y) => game |> Game.movePlayer(x, y) |> resultToUpdate;
   },
   render: (self) =>
     <div className="App">

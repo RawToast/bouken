@@ -44,13 +44,13 @@ describe("Loop", () =>
   Expect.(
     describe("incrementAll", () => {
       let updatedMap = Loop.incrementAll(modifiedLevel.map);
-      test("Increments the player's position", (_) => {
-        let updatedPlayer = Area.findPlayer(updatedMap) |> Rationale.Option.default(defaultPlayer);
-        expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
-      });
       test("Retains the player", (_) => {
         let updatedPlayer = Area.findPlayer(updatedMap);
         expect(Rationale.Option.isSome(updatedPlayer)) |> toBe(true);
+      });
+      test("Increments the player's position", (_) => {
+        let updatedPlayer = Area.findPlayer(updatedMap) |> Rationale.Option.default(defaultPlayer);
+        expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
       });
       test("Leaves the user active", (_) => {
         let updatedPlayer = Area.findPlayer(updatedMap) |> Rationale.Option.default(defaultPlayer);

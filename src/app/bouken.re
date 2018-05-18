@@ -1,6 +1,8 @@
-module Bouken: Types.Game = {
+module CreateGame: ((Types.TurnLoop) => (Types.Game)) = (TL: Types.TurnLoop) => {
+    
     open Level;
     open Types;
+
     let listHorizontal = (x, y, tx) => Rationale.RList.rangeInt(1, x, tx) |> List.map(i => (i, y));
     let listVertical = (x, y, ty) => Rationale.RList.rangeInt(1, y, ty) |> List.map(i => (x, i));
   
@@ -18,18 +20,18 @@ module Bouken: Types.Game = {
       |> Level.modifyTile(9, 9, {tile: GROUND, state: ENEMY(initEnemy)})
       |> Level.modifyTile(6, 6, {tile: GROUND, state: PLAYER(initPlayer(name))});
     let initgame = pname => {
-      player: initPlayer(pname),
-      level: initLevel(pname),
-      turn: 0.
-    };
+        player: initPlayer(pname),
+        level: initLevel(pname),
+        turn: 0.
+      };  
 
     let create = name => initgame(name);
+
     let movePlayer = (x, y, game) => game.level |> Level.movePlayer(x, y) |> 
         Rationale.Option.ofResult |> o => switch o {
     | Some(level) => Some({ 
         ...game, 
         level: level})
     | None => None
-    };
-
+    } |> Rationale.Option.fmap(TL.continue);
 };

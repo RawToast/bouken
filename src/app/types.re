@@ -65,7 +65,12 @@ let isPlayer = place => switch place.state {
 
 module type Positions = {
   let isActive: stats => bool;
+  let increment: stats => stats;
   let incrementAll: area => area;
+};
+
+module type TurnLoop = {
+  let continue: game => game;
 };
 
 module type Game = {
