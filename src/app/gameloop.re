@@ -6,7 +6,6 @@ module CreateTurnLoop: ((Types.Positions) => (Types.TurnLoop)) = (Pos: Types.Pos
       if (Pos.isActive(game.player.stats)) {
         game;
       } else {
-          Js.Console.log("Player not active");
         let updatedGame = Pos.incrementAll(game.level.map)
           |> map => { ... game, level: { ... game.level, map: map }}
           |> g => {... g, turn: g.turn +. 1.} 

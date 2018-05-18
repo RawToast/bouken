@@ -1,4 +1,4 @@
-# Daibouken
+# Bouken
 
 Rogue-like.
 

@@ -41,6 +41,11 @@ type level = {
   map: area,
 };
 
+type playerArea = {
+  player: player,
+  area: area,
+};
+
 type game = {
   player: player,
   level: level,

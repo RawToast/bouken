@@ -14,8 +14,17 @@ module Tiles = {
   let wallTile = {tile: WALL, state: EMPTY};
 };
 
-module Area = {
-  let findPlayer = (area:area) => {
+module type AreaFun = {
+  let findPlayer: (area) => option(player); 
+  let findEnemy: (string, area) => option(enemy);
+  let canMoveTo: (int, int, area) => Js.Result.t(place, error);
+  let removeOccupant: (int, int, area) => area;
+  let movePlayer: (int, int, area) => Js.Result.t (area, error);
+  let movePlayerWithCost: (int, int, float, area) => Js.Result.t (playerArea, error);
+};
+
+module Area: AreaFun = {
+  let findPlayer = (area) => {
     let findPlayerRow = RList.find(y => isPlayer(y));
     let hasPlayer = (p:option(place)) => Option.isSome(p);
 
@@ -50,7 +59,7 @@ module Area = {
       });
   };
 
-  let canMoveTo = (x, y, map: area) => map 
+  let canMoveTo = (x, y, map: area) => {map 
     |> RList.nth(y) 
     |> Option.bind(_, RList.nth(x))
     |> Result.ofOption(IMPOSSIBLE_MOVE)
@@ -59,8 +68,9 @@ module Area = {
         | WATER => success(l)
         | WALL => error(IMPOSSIBLE_MOVE)
     });
-
-    let removeOccupant = (x, y, area) => {
+  };
+    
+  let removeOccupant = (x, y, area) => {
       area |> 
         List.mapi((xi: int, xs: list(place)) =>
         if (xi == y) {
@@ -70,7 +80,65 @@ module Area = {
             } else place);
         } else xs
       );
+  };
+
+  let setPlayerLocation = (x: int, y: int, cost: float, area: area) => {
+    let update = (player, map) => {
+      map |>
+      List.mapi((xi: int, xs: list(place)) =>
+        if (xi == y) {
+            xs |> List.mapi((yi: int, place: place) =>
+            if (yi == x) { 
+              { ...place, state: PLAYER({ ...player, location: (x, y) }) }
+            } else place);
+        } else xs
+      );
     };
+
+    canMoveTo(x, y, area) 
+      |> Result.bind(_, _r =>
+        findPlayer(area) 
+      |> Option.fmap((p: player) => {... p, stats: { ... p.stats, position: p.stats.position -. cost}})
+      |> Option.fmap(p => update(p, area) ) 
+      |> o => switch (o) {
+        | None => error(INVALID_STATE)
+        | Some(result) => success(result)
+    })
+  };
+  
+  
+  let movePlayer(x: int, y: int, area: area) = {
+    let playerOpt = findPlayer(area);
+    switch(playerOpt) {
+    | Some(player) => {
+      let (xl, yl) = player.location;
+      let nx = x + xl;
+      let ny = y + yl;
+
+      area 
+        |> setPlayerLocation(nx, ny, 0.)
+        |> Result.fmap(removeOccupant(xl, yl))
+    }
+    | None => error(INVALID_STATE);
+    };
+  };
+
+  let movePlayerWithCost(x: int, y: int, cost:float, area: area) = {
+    let playerOpt = findPlayer(area);
+    switch(playerOpt) {
+    | Some(player) => {
+      let (xl, yl) = player.location;
+      let nx = x + xl;
+      let ny = y + yl;
+
+      area 
+        |> setPlayerLocation(nx, ny, cost)
+        |> Result.fmap(removeOccupant(xl, yl))
+        |> Result.fmap(a => {player: player, area: a})
+    }
+    | None => error(INVALID_STATE);
+    };
+  };
 };
 
 module Level = {
