@@ -25,6 +25,7 @@ let make = (_children) => {
   },
   render: (self) =>
     <div className="App">
+      <GameStats player=(self.state.player) turn=(self.state.turn) />
       <GameMap level=(self.state.level) movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))/>
     </div>
 };
