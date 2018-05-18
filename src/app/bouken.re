@@ -35,12 +35,5 @@ module CreateGame: ((Types.TurnLoop) => (Types.Game)) = (TL: Types.TurnLoop) => 
                 }
             |> Rationale.Option.fmap((pa:playerArea) => {... game, player: pa.player, level: {... game.level, map: pa.area } })
             |> Rationale.Option.fmap(TL.continue);
-        /* game.level |> Level.movePlayer(x, y) |> 
-        Rationale.Option.ofResult |> o => switch o {
-        | Some(level) => Some({ 
-        ...game, 
-        level: level})
-        | None => None
-    } |> Rationale.Option.fmap(TL.continue) */
     };
 };

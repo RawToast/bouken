@@ -34,7 +34,6 @@ let handleKeyPress = (movement, evt: Dom.keyboardEvent) => {
     | "KeyW" => movement(0, 1)
     | "KeyE" => movement(1, 1)
     | "KeyA" => movement(-1, 0)
-    /* | "KeyS" => movement({x: 0, y: 0}) */
     | "KeyD" => movement(1, 0)
     | "KeyZ" => movement(-1, -1)
     | "KeyX" => movement(0, -1)

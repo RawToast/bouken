@@ -105,7 +105,6 @@ describe("Level.movePlayer", () => {
       |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
       |> Level.movePlayer(0, 1);
     
-      /* expect(Result.isOk(result)) |> toEqual(true); */
       switch result {
       | Ok(level) => 
         expect(Level.findPlayer(level) |> Rationale.Option.default(nfPlayer) |> pl => pl.location) |>  toEqual((0, 1));
@@ -122,7 +121,6 @@ describe("Level.movePlayer", () => {
       |> Rationale.Result.getOk |> Rationale.Option.default(blankWorld)
       |> Level.movePlayer(0, 1);
     
-      /* expect(Result.isOk(result)) |> toEqual(true); */
       switch result {
       | Ok(level) => {
           let ply = Level.findPlayer(level) |> Rationale.Option.default(nfPlayer);
