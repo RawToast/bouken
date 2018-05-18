@@ -1,7 +1,6 @@
 [%bs.raw {|require('./app.css')|}];
 
 open ReasonReact;
-open Bouken;
 open Types;
 
 type actions =
@@ -16,10 +15,9 @@ let resultToUpdate = r => switch r {
   | None => NoUpdate
 };
 
-module PShaco: TurnLoop = Gameloop.CreateTurnLoop(Loop.Loop);
+module BasicTurnLoop = Gameloop.CreateTurnLoop(Positions.BasicPositions);
 
-module Game = Bouken.CreateGame(PShaco);
-
+module Game = Bouken.CreateGame(BasicTurnLoop);
 
 let make = (_children) => {
   ...component,

@@ -1,6 +1,6 @@
 open Types;
 
-module Loop: Positions = {
+module BasicPositions: Positions = {
   let isActive = stats => stats.position >= 1.;
   let increment = stats => {...stats, position: stats.position +. stats.speed};
   let incrementAll =

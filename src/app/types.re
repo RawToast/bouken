@@ -67,6 +67,13 @@ let isPlayer = place => switch place.state {
   };
 
 /* Modules */
+module type Places = {
+  let findPlayer: (area) => option(player); 
+  let findEnemy: (string, area) => option(enemy);
+  let canMoveTo: (int, int, area) => Js.Result.t(place, error);
+  let removeOccupant: (int, int, area) => area;
+  let movePlayer: (int, int, float, area) => Js.Result.t (playerArea, error);
+};
 
 module type Positions = {
   let isActive: stats => bool;

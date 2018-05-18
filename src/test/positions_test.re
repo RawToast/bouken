@@ -1,8 +1,6 @@
 open Level;
-
 open Types;
-
-open Loop;
+open Positions;
 
 open Jest;
 
@@ -40,10 +38,10 @@ let modifiedLevel =
   |> Level.modifyTile(0, 0, {tile: GROUND, state: playerAt(0, 0)})
   |> Level.modifyTile(5, 5, {tile: GROUND, state: enemy});
 
-describe("Loop", () =>
+describe("BasicPositions", () =>
   Expect.(
     describe("incrementAll", () => {
-      let updatedMap = Loop.incrementAll(modifiedLevel.map);
+      let updatedMap = BasicPositions.incrementAll(modifiedLevel.map);
       test("Retains the player", (_) => {
         let updatedPlayer = Area.findPlayer(updatedMap);
         expect(Rationale.Option.isSome(updatedPlayer)) |> toBe(true);

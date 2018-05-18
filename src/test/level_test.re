@@ -1,7 +1,8 @@
-open Jest;
 open Level;
 open Types;
 open Rationale;
+
+open Jest;
 
 let blankWorld = LevelBuilder.makeBlankWorld("test");
 let waterTile = { tile: WATER, state: EMPTY };

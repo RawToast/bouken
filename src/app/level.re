@@ -14,16 +14,7 @@ module Tiles = {
   let wallTile = {tile: WALL, state: EMPTY};
 };
 
-module type AreaFun = {
-  let findPlayer: (area) => option(player); 
-  let findEnemy: (string, area) => option(enemy);
-  let canMoveTo: (int, int, area) => Js.Result.t(place, error);
-  let removeOccupant: (int, int, area) => area;
-  let movePlayer: (int, int, area) => Js.Result.t (area, error);
-  let movePlayerWithCost: (int, int, float, area) => Js.Result.t (playerArea, error);
-};
-
-module Area: AreaFun = {
+module Area: Places = {
   let findPlayer = (area) => {
     let findPlayerRow = RList.find(y => isPlayer(y));
     let hasPlayer = (p:option(place)) => Option.isSome(p);
@@ -106,24 +97,7 @@ module Area: AreaFun = {
     })
   };
   
-  
-  let movePlayer(x: int, y: int, area: area) = {
-    let playerOpt = findPlayer(area);
-    switch(playerOpt) {
-    | Some(player) => {
-      let (xl, yl) = player.location;
-      let nx = x + xl;
-      let ny = y + yl;
-
-      area 
-        |> setPlayerLocation(nx, ny, 0.)
-        |> Result.fmap(removeOccupant(xl, yl))
-    }
-    | None => error(INVALID_STATE);
-    };
-  };
-
-  let movePlayerWithCost(x: int, y: int, cost:float, area: area) = {
+  let movePlayer(x: int, y: int, cost:float, area: area) = {
     let playerOpt = findPlayer(area);
     switch(playerOpt) {
     | Some(player) => {

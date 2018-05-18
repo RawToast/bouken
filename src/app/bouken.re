@@ -28,7 +28,7 @@ module CreateGame: ((Types.TurnLoop) => (Types.Game)) = (TL: Types.TurnLoop) => 
     let create = name => initgame(name);
 
     let movePlayer = (x, y, game) => {
-        game.level.map |> Area.movePlayerWithCost(x, y, 1.) |>
+        game.level.map |> Area.movePlayer(x, y, 1.) |>
             Rationale.Option.ofResult |> o => switch o {
                 | Some(area) => Some(area)
                 | None => None
