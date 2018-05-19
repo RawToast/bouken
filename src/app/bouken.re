@@ -17,8 +17,10 @@ module CreateGame: ((Types.GameLoop) => (Types.Game)) = (TL: Types.GameLoop) => 
       |> Level.modifyTiles(listHorizontal(4, 12, 8), Tiles.wallTile)
       |> Level.modifyTiles(listVertical(14, 2, 14), Tiles.wallTile)
       |> Level.modifyTiles([(7, 6), (8, 6), (9, 6), (7, 7), (8, 7), (8, 8)], Tiles.wallTile)
+      |> Level.modifyTiles([(7, 5), (8, 5), (9, 5), (7, 4), (8, 4), (8, 3)], Tiles.waterTile)
       |> Level.modifyTile(9, 9, {tile: GROUND, state: ENEMY(initEnemy)})
-      |> Level.modifyTile(6, 6, {tile: GROUND, state: PLAYER(player)});
+      |> Level.modifyTile(6, 6, {tile: GROUND, state: PLAYER(player)})
+      |> Level.modifyTile(13, 14, { tile: STAIRS({ id: 0, level: "test2" }), state: EMPTY});
     let initgame = pname => initPlayer(pname) |> p => {
         player: p,
         level: initLevel(p),

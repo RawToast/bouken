@@ -19,8 +19,14 @@ type enemy = {
   stats: stats
 };
 
+type link = {
+  id: int,
+  level: string,
+};
+
 type tile =
   | GROUND
+  | STAIRS(link)
   | WATER
   | WALL;
 

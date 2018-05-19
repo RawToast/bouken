@@ -12,6 +12,7 @@ module LevelBuilder = {
 
 module Tiles = {
   let wallTile = {tile: WALL, state: EMPTY};
+  let waterTile = {tile: WATER, state: EMPTY};
 };
 
 module Area: Places = {
@@ -58,6 +59,7 @@ module Area: Places = {
         | GROUND => success(l)
         | WATER => success(l)
         | WALL => error(IMPOSSIBLE_MOVE)
+        | STAIRS(_) => success(l)
     });
   };
     

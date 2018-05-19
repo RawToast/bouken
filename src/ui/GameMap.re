@@ -3,9 +3,9 @@ open Types;
 
 let component = ReasonReact.statelessComponent("GameMap");
 
-let stateToElement = (place: place) => 
+let stateToElement = (place: place, default:string) => 
   switch place.state {
-  | EMPTY => "."
+  | EMPTY => default
   | PLAYER(_) => "O"
   | ENEMY(_) => "X"
   };
@@ -13,9 +13,10 @@ let stateToElement = (place: place) =>
 let tilesToElements =
   List.map(t =>
       switch (t.tile) {
-      | GROUND => stateToElement(t)
-      | WATER => "w"
+      | GROUND => stateToElement(t, ".")
+      | WATER => stateToElement(t, "w")
       | WALL => "#"
+      | STAIRS(_) => stateToElement(t, "/")
       }
     |> str => (" " ++ str)
     |> ReasonReact.stringToElement);
