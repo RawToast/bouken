@@ -48,17 +48,13 @@ describe("BasicPositions", () =>
       });
       test("Increments the player's position", (_) => {
         let updatedPlayer = Area.findPlayer(updatedMap) |> Rationale.Option.default(defaultPlayer);
-        expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
-      });
-      test("Leaves the user active", (_) => {
-        let updatedPlayer = Area.findPlayer(updatedMap) |> Rationale.Option.default(defaultPlayer);
-        expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
+        expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(defaultPlayer.stats.position);
       });
       test("Increments the enemys positsion", (_) => {
         let maybeEnemy = Area.findEnemy("enemy", updatedMap);
         let updatedEnemy: enemy = Rationale.Option.default(defaultEnemy, maybeEnemy);
         let position: float = updatedEnemy.stats.position;
-        expect(position) |> toEqual(1.);
+        expect(position) |> toBeGreaterThanOrEqual(defaultEnemy.stats.position);
       });
     })
 );
