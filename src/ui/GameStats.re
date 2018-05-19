@@ -2,10 +2,10 @@ open Types;
 
 let component = ReasonReact.statelessComponent("GameStats");
 
-let make = (~player: player, ~turn: float, _children) => {
+let make = (~player: player, ~turn: float, ~level:string, _children) => {
   ...component,
   render: _self =>
     <div className="GameStats">
-      <text>(ReasonReact.stringToElement("Turn: " ++ string_of_float(turn)))</text>
+      <text>(ReasonReact.stringToElement(level ++ " Turn: " ++ string_of_float(turn)))</text>
     </div>,
 }

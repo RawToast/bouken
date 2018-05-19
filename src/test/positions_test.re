@@ -5,7 +5,7 @@ open Positions;
 open Jest;
 open Expect;
 
-let blankWorld = LevelBuilder.makeBlankWorld("test");
+let blankWorld = LevelBuilder.makeBlankLevel("test");
 
 let basicStats = {health: 10, speed: 1.0, position: 0.0};
 

@@ -3,14 +3,20 @@ open Rationale;
 
 module LevelBuilder = {
   let blankPlace = {tile: GROUND, state: EMPTY};
-  let makeBlankWorld = (name: string) => {
+  let makeBlankLevel = (name: string) => {
     let emptyMap =
       RList.repeat(blankPlace, 15) |> List.map(i => RList.repeat(i, 15));
+    {name, map: emptyMap};
+  };
+  let makeWaterLevel = (name: string) => {
+    let emptyMap =
+      RList.repeat({tile: WATER, state: EMPTY}, 15) |> List.map(i => RList.repeat(i, 15));
     {name, map: emptyMap};
   };
 };
 
 module Tiles = {
+  let groundTile = {tile: GROUND, state: EMPTY};
   let wallTile = {tile: WALL, state: EMPTY};
   let waterTile = {tile: WATER, state: EMPTY};
 };

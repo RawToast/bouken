@@ -5,7 +5,7 @@ open Rationale;
 open Jest;
 open Expect;
 
-let blankWorld = LevelBuilder.makeBlankWorld("test");
+let blankWorld = LevelBuilder.makeBlankLevel("test");
 let waterTile = { tile: WATER, state: EMPTY };
 
 let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
