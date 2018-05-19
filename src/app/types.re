@@ -78,6 +78,12 @@ let isPlayer = place => switch place.state {
   };
 
 /* Modules */
+module type World = {
+  let create: player => world;
+  let updateLevel: (level, world) => world;
+  let currentLevel: world => option(level);
+};
+
 module type Places = {
   let findPlayer: (area) => option(player); 
   let findEnemy: (string, area) => option(enemy);

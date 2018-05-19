@@ -16,8 +16,8 @@ let resultToUpdate = r => switch r {
 };
 
 module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
+module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
 
-module Game = Bouken.CreateGame(BasicTurnLoop);
 let currentLevel = (world) => World.World.currentLevel(world) |> Rationale.Option.default(List.hd(world.levels));
 
 let make = (_children) => {

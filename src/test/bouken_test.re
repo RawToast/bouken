@@ -5,7 +5,7 @@ open Jest;
 open Expect;
 
 module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
-module Game = CreateGame(BasicTurnLoop);
+module Game = CreateGame(BasicTurnLoop, World.World);
 
 describe("Game.Create", () => {
   
