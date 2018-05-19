@@ -15,7 +15,7 @@ let resultToUpdate = r => switch r {
   | None => NoUpdate
 };
 
-module BasicTurnLoop = Gameloop.CreateTurnLoop(Positions.BasicPositions);
+module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
 
 module Game = Bouken.CreateGame(BasicTurnLoop);
 

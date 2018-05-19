@@ -1,4 +1,4 @@
-module CreateGame: ((Types.TurnLoop) => (Types.Game)) = (TL: Types.TurnLoop) => {
+module CreateGame: ((Types.GameLoop) => (Types.Game)) = (TL: Types.GameLoop) => {
     
     open Level;
     open Types;

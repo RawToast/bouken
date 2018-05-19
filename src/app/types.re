@@ -81,7 +81,7 @@ module type Positions = {
   let incrementAll: area => area;
 };
 
-module type TurnLoop = {
+module type GameLoop = {
   let continue: game => game;
 };
 

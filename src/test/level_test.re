@@ -3,6 +3,7 @@ open Types;
 open Rationale;
 
 open Jest;
+open Expect;
 
 let blankWorld = LevelBuilder.makeBlankWorld("test");
 let waterTile = { tile: WATER, state: EMPTY };
@@ -13,7 +14,6 @@ let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0, position: 0. }, g
 
 describe("Level.modify", () => {
   test("Can modify a tile", (_) => {
-    open Expect;
     let modifiedLevel =
       blankWorld
       |> Level.modifyTile(0, 0, waterTile);
@@ -24,7 +24,6 @@ describe("Level.modify", () => {
 
 describe("Level.findPlayer", () => {
   test("Finds the player", (_) => {
-    open Expect;
     let player =
       blankWorld
       |> Level.modifyTile(0, 0, {tile: GROUND, state: playerAt(0, 0)}) 
@@ -34,7 +33,6 @@ describe("Level.findPlayer", () => {
   });
 
   test("Returns empty when there is no player", (_) => {
-    open Expect;
     let player = blankWorld |> Level.findPlayer;
     
       expect(Rationale.Option.isNone(player)) |> toEqual(true);
@@ -43,7 +41,6 @@ describe("Level.findPlayer", () => {
 
 describe("Level.setPlayerLocation", () => {
   test("Moves the player when the destination is valid", (_) => {
-    open Expect;
     let result =
       blankWorld
       |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
@@ -53,7 +50,6 @@ describe("Level.setPlayerLocation", () => {
   });
 
   test("Returns an error when there is no player", (_) => {
-    open Expect;
     let result =
       Level.setPlayerLocation(0, 1, blankWorld);
     
@@ -62,7 +58,6 @@ describe("Level.setPlayerLocation", () => {
   });
 
   test("Returns an error when the target location is a wall", (_) => {
-    open Expect;
     let result =
       blankWorld
       |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)}) 
@@ -73,7 +68,6 @@ describe("Level.setPlayerLocation", () => {
   });
 
   test("Moves the player can move when the target is water", (_) => {
-    open Expect;
     let result =
       blankWorld
       |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
@@ -87,7 +81,6 @@ describe("Level.setPlayerLocation", () => {
 
 describe("Level.movePlayer", () => {
   test("Moves the player when the destination is valid", (_) => {
-    open Expect;
     let result =
       blankWorld
       |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
@@ -100,7 +93,6 @@ describe("Level.movePlayer", () => {
   });
 
   test("Updates the player when the destination is valid", (_) => {
-    open Expect;
     let result =
       blankWorld
       |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
@@ -114,7 +106,6 @@ describe("Level.movePlayer", () => {
   });
 
   test("Moves the player forward twice, when requested twice", (_) => {
-    open Expect;
     let result =
       blankWorld
       |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
@@ -136,7 +127,6 @@ describe("Level.movePlayer", () => {
 describe("Area", () => {
   describe("findPlayer", () => {
   test("Can find the player", (_) => {
-    open Expect;
     let player =
       blankWorld
       |> Level.modifyTile(0, 0, {tile: GROUND, state: playerAt(0, 0)}) 
@@ -145,7 +135,6 @@ describe("Area", () => {
       expect(Rationale.Option.isSome(player)) |> toEqual(true);
   });
   test("Returns none when there is no player", (_) => {
-    open Expect;
     let player =
       blankWorld
       |> w => w.map |> Area.findPlayer;
@@ -156,8 +145,6 @@ describe("Area", () => {
 
   describe("findEnemy", () => {
     test("Can find an enemy", (_) => {
-      open Expect;
-
       let enemy =
         blankWorld
         |> Level.modifyTile(0, 0, { tile: GROUND, state: ENEMY(initEnemy) })
@@ -166,7 +153,6 @@ describe("Area", () => {
         expect(Rationale.Option.isSome(enemy)) |> toEqual(true);
     });
     test("Returns none when there is no enemy", (_) => {
-      open Expect;
       let enemy =
         blankWorld
         |> Level.modifyTile(0, 0, {tile: GROUND, state: ENEMY(initEnemy)}) 

@@ -1,6 +1,6 @@
 open Types;
 
-module CreateTurnLoop: ((Types.Positions) => (Types.TurnLoop)) = (Pos: Types.Positions) => {
+module CreateGameLoop: ((Types.Positions) => (Types.GameLoop)) = (Pos: Types.Positions) => {
     let rec continue: game => game =
     game =>
       if (Pos.isActive(game.player.stats)) {
