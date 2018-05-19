@@ -52,9 +52,14 @@ type playerArea = {
   area: area,
 };
 
+type world = {
+  levels: list(level),
+  current: string
+};
+
 type game = {
   player: player,
-  level: level,
+  world: world,
   turn: float
 };
 

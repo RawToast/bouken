@@ -18,6 +18,7 @@ let resultToUpdate = r => switch r {
 module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
 
 module Game = Bouken.CreateGame(BasicTurnLoop);
+let currentLevel = (world) => World.World.currentLevel(world) |> Rationale.Option.default(List.hd(world.levels));
 
 let make = (_children) => {
   ...component,
@@ -29,6 +30,6 @@ let make = (_children) => {
   render: (self) =>
     <div className="App">
       <GameStats player=(self.state.player) turn=(self.state.turn) />
-      <GameMap level=(self.state.level) movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))/>
+      <GameMap level=(currentLevel(self.state.world)) movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))/>
     </div>
 };
