@@ -3,6 +3,7 @@ open Types;
 open Positions;
 
 open Jest;
+open Expect;
 
 let blankWorld = LevelBuilder.makeBlankWorld("test");
 
@@ -39,7 +40,6 @@ let modifiedLevel =
   |> Level.modifyTile(5, 5, {tile: GROUND, state: enemy});
 
 describe("BasicPositions", () =>
-  Expect.(
     describe("incrementAll", () => {
       let updatedMap = BasicPositions.incrementAll(modifiedLevel.map);
       test("Retains the player", (_) => {
@@ -61,5 +61,4 @@ describe("BasicPositions", () =>
         expect(position) |> toEqual(1.);
       });
     })
-  )
 );

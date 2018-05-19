@@ -76,6 +76,7 @@ module type Places = {
 };
 
 module type Positions = {
+  let divisor: float;
   let isActive: stats => bool;
   let increment: stats => stats;
   let incrementAll: area => area;
