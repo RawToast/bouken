@@ -1,14 +1,22 @@
 /* Basic types */
+
+type stats = {
+  health: int,
+  speed: float,
+  position: float
+};
+
 type player = {
   name: string,
-  health: int,
+  stats: stats,
   gold: int,
   location: (int, int)
 };
 
 type enemy = {
+  id: string,
   name: string,
-  health: int,
+  stats: stats
 };
 
 type tile =
@@ -26,9 +34,22 @@ type place = {
   state: occupier
 };
 
+type area = list(list(place));
+
 type level = {
   name: string,
-  map: list(list(place)),
+  map: area,
+};
+
+type playerArea = {
+  player: player,
+  area: area,
+};
+
+type game = {
+  player: player,
+  level: level,
+  turn: float
 };
 
 type error = 
@@ -38,3 +59,33 @@ type error =
 let error = (err) => Js.Result.Error(err);
 
 let success = (ok) => Js.Result.Ok(ok);
+
+let isPlayer = place => switch place.state {
+  | EMPTY => false
+  | ENEMY(_) => false
+  | PLAYER(_) => true
+  };
+
+/* Modules */
+module type Places = {
+  let findPlayer: (area) => option(player); 
+  let findEnemy: (string, area) => option(enemy);
+  let canMoveTo: (int, int, area) => Js.Result.t(place, error);
+  let removeOccupant: (int, int, area) => area;
+  let movePlayer: (int, int, float, area) => Js.Result.t (playerArea, error);
+};
+
+module type Positions = {
+  let isActive: stats => bool;
+  let increment: stats => stats;
+  let incrementAll: area => area;
+};
+
+module type GameLoop = {
+  let continue: game => game;
+};
+
+module type Game = {
+  let create: string => game;
+  let movePlayer: (int, int, game) => option(game)
+};
