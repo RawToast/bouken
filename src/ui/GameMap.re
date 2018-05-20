@@ -28,7 +28,7 @@ let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
     |> List.map(li => [<br/>, ...li]);
 
 
-let handleKeyPress = (movement, evt: Dom.keyboardEvent) => {
+let handleKeyPress = (movement, stairs, evt: Dom.keyboardEvent) => {
   evt |> KeyboardEvent.code
     |> code => switch code {
     | "KeyQ" => movement(-1, 1)
@@ -39,15 +39,16 @@ let handleKeyPress = (movement, evt: Dom.keyboardEvent) => {
     | "KeyZ" => movement(-1, -1)
     | "KeyX" => movement(0, -1)
     | "KeyC" => movement(1, -1)
+    | "KeyS" => stairs()
     | _ => Js.Console.log("No");
     };
   ();
 };
 
-let make = (~level: level, ~movePlayer, _children) => {
+let make = (~level: level, ~movePlayer, ~takeStairs, _children) => {
   ...component,
   didMount: (_) =>  {
-    document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer));
+    document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer, takeStairs));
     NoUpdate;
   },
   render: _self =>

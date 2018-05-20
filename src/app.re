@@ -4,7 +4,8 @@ open ReasonReact;
 open Types;
 
 type actions =
-  | MovePlayer(int, int);
+  | MovePlayer(int, int)
+  | TakeStairs;
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -26,10 +27,15 @@ let make = (_children) => {
   reducer: (act, game) =>
     switch act {
     | MovePlayer(x, y) => game |> Game.movePlayer(x, y) |> resultToUpdate;
+    | TakeStairs => game |> Game.useStairs |> resultToUpdate;
   },
   render: (self) =>
     <div className="App">
       <GameStats player=(self.state.player) turn=(self.state.turn) level={self.state.world.current}/>
-      <GameMap level=(currentLevel(self.state.world)) movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))/>
+      <GameMap 
+        level=(currentLevel(self.state.world)) 
+        movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))
+        takeStairs=(self.reduce(() => TakeStairs))
+        />
     </div>
 };
