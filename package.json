@@ -10,8 +10,8 @@
     "reason-scripts": "0.8.0"
   },
   "scripts": {
-    "heroku": "npm install -g reason-react && npm install -g serve && yarn && npm link bs-platform && yarn build && serve -s build -p 3000",
     "start": "react-scripts start",
+    "heroku": "react-scripts build",
     "clean": "bsb -clean-world && rm -rf lib",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
@@ -22,8 +22,7 @@
   },
   "devDependencies": {
     "bs-jest": "^0.3.2",
-    "reason-react": "^0.3.4",
-    "serve": "^6.5.7"
+    "reason-react": "^0.3.4"
   },
   "jest": {
     "collectCoverageFrom": [
