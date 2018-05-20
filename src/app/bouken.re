@@ -35,11 +35,13 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
   };
 
   let useStairs = game => {
-    let levelOpt = W.currentLevel(game.world);
-    let (x, y) = game.player.location;
+    let (cx, cy) = game.player.location;
+    let currentLevel = W.currentLevel(game.world) 
+      |> Option.fmap(Level.removeOccupant(cx, cy));
     
-    let currentLink: option(link) = levelOpt |>
+    let currentLink: option(link) = currentLevel |>
       Option.bind(_, level => {
+        let (x, y) = game.player.location;
         Area.getPlace(x, y, level.map)
           |> Option.bind(_, p => switch (p.tile) {
             | STAIRS(link) => Some(link)
@@ -56,29 +58,22 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
       levelStairs;
     });
 
-    let maybeLink = place => switch place.tile {
-      | STAIRS(link) => Some(link)
-      | _ => None
-      };
-
     let coord: (option(level), option(place)) => option((int, int)) = (optL, optP) => 
       Option.bind(optL, level => {
         Option.bind(optP, place => {
-          let optLoc = l => Option.bind(l, link => Area.locationOfStairs(link.id, level.map));
-
-          maybeLink(place) |> optLoc;
+          switch place.tile {
+            | STAIRS(link) => Area.locationOfStairs(link.id, level.map)
+            | _ => None
+            }
         })
     });
     
-    let linkedLevel = Option.bind(currentLink, l => findLinkedLevel(l));
+    let linkedLevel = Option.bind(currentLink, findLinkedLevel);
     let linkedPlace = findLinkLocation(currentLink);
 
     let positionOpt = coord(linkedLevel, linkedPlace);
 
-    let (cx, cy) = game.player.location;
-    let newPrevLevel = levelOpt |> Option.fmap(Level.removeOccupant(cx, cy));
-
-    Option.bind(newPrevLevel, prevLevel => {
+    Option.bind(currentLevel, prevLevel => {
       Option.bind(positionOpt, pos => {
         let (x, y) = pos;
         linkedLevel |> Option.bind(_, l => {
@@ -86,7 +81,7 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
           let current = l.name;
           let pre = {
             ... game, 
-            player: {... game.player, location: (x, y)},
+            player: {... game.player, location: (x, y), stats: {... game.player.stats, position: game.player.stats.position -. 1.5 }},
             world: { levels: world.levels, current: current } 
           };
 
@@ -99,6 +94,6 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
           Some({ ... pre, world: nextWorld});
         });
       });
-    });
+    }) |> Option.fmap(GL.continue);
   };
 };
