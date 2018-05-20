@@ -41,5 +41,7 @@ module World: World = {
     { ... world, levels: newLevels };
   };
 
-  let currentLevel = (world) => world.levels |> Rationale.RList.find(l => l.name == world.current);
+  let selectLevel = (name, world) => world.levels |> Rationale.RList.find(l => l.name == name);
+
+  let currentLevel = (world) => selectLevel(world.current, world);
 };
