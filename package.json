@@ -10,7 +10,8 @@
     "reason-scripts": "0.8.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "yarn && npm link bs-platform && yarn build && serve -s build -p 3000",
+    "dev": "react-scripts start",
     "clean": "bsb -clean-world && rm -rf lib",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
@@ -21,7 +22,8 @@
   },
   "devDependencies": {
     "bs-jest": "^0.3.2",
-    "reason-react": "^0.3.4"
+    "reason-react": "^0.3.4",
+    "serve": "^6.5.7"
   },
   "jest": {
     "collectCoverageFrom": [
