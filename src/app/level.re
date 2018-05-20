@@ -3,18 +3,65 @@ open Rationale;
 
 module LevelBuilder = {
   let blankPlace = {tile: GROUND, state: EMPTY};
-  let makeBlankWorld = (name: string) => {
+  let makeBlankLevel = (name: string) => {
     let emptyMap =
       RList.repeat(blankPlace, 15) |> List.map(i => RList.repeat(i, 15));
+    {name, map: emptyMap};
+  };
+  let makeWaterLevel = (name: string) => {
+    let emptyMap =
+      RList.repeat({tile: WATER, state: EMPTY}, 15) |> List.map(i => RList.repeat(i, 15));
     {name, map: emptyMap};
   };
 };
 
 module Tiles = {
+  let groundTile = {tile: GROUND, state: EMPTY};
   let wallTile = {tile: WALL, state: EMPTY};
+  let waterTile = {tile: WATER, state: EMPTY};
 };
 
 module Area: Places = {
+
+  let findStairs = (id, area: list(list(place))) => {
+
+    let findStairsRow = id => RList.find(y => switch(y.tile) {
+    | STAIRS(link) => link.id == id
+    | _ => false
+    });
+
+    area
+     |> RList.find(row => row |> findStairsRow(id) |> Option.isSome)
+     |> Option.default([])
+     |> RList.find(place => switch(place.tile) {
+      | STAIRS(link) => link.id == id
+      | _ => false 
+     })
+  };
+
+
+  let locationOfStairs = (id, area: list(list(place))) => {
+    let findStairsRow = id => RList.findIndex(y => switch(y.tile) {
+    | STAIRS(link) => link.id == id
+    | _ => false
+    });
+
+    let idx = area |> RList.findIndex(row => row |> findStairsRow(id) |> Option.isSome);
+
+    Option.bind(idx, y => {
+      area 
+        |> List.nth(_, y) 
+        |> findStairsRow(id)
+        |> Option.fmap(x => (x, y));
+    });
+  };
+
+
+  let getPlace = (x, y, area) =>
+    area 
+      |> RList.nth(y)
+      |> Option.bind(_, RList.nth(x));
+
   let findPlayer = (area) => {
     let findPlayerRow = RList.find(y => isPlayer(y));
     let hasPlayer = (p:option(place)) => Option.isSome(p);
@@ -58,6 +105,7 @@ module Area: Places = {
         | GROUND => success(l)
         | WATER => success(l)
         | WALL => error(IMPOSSIBLE_MOVE)
+        | STAIRS(_) => success(l)
     });
   };
     
@@ -96,6 +144,27 @@ module Area: Places = {
         | Some(result) => success(result)
     })
   };
+
+  let setPlayerAt = (x: int, y: int, player: player, cost: float, area: area) => {
+    let update = (player, map) => {
+      map |>
+      List.mapi((xi: int, xs: list(place)) =>
+        if (xi == y) {
+            xs |> List.mapi((yi: int, place: place) =>
+            if (yi == x) { 
+              { ...place, state: PLAYER({ ...player, location: (x, y) }) }
+            } else place);
+        } else xs
+      );
+    };
+
+    canMoveTo(x, y, area) 
+      |> Result.fmap(r => {
+        let updatedPlayer = {... player, stats: { ... player.stats, position: player.stats.position -. cost}};
+        let updatedArea = update(updatedPlayer, area);
+        updatedArea;
+      });
+  };
   
   let movePlayer(x: int, y: int, cost:float, area: area) = {
     let playerOpt = findPlayer(area);
@@ -105,10 +174,12 @@ module Area: Places = {
       let nx = x + xl;
       let ny = y + yl;
 
+      let newPlayer = { ... player, location: (nx, ny)};
+
       area 
         |> setPlayerLocation(nx, ny, cost)
         |> Result.fmap(removeOccupant(xl, yl))
-        |> Result.fmap(a => {player: player, area: a})
+        |> Result.fmap(a => {player: newPlayer, area: a})
     }
     | None => error(INVALID_STATE);
     };

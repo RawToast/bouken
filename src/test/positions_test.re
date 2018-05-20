@@ -3,8 +3,9 @@ open Types;
 open Positions;
 
 open Jest;
+open Expect;
 
-let blankWorld = LevelBuilder.makeBlankWorld("test");
+let blankWorld = LevelBuilder.makeBlankLevel("test");
 
 let basicStats = {health: 10, speed: 1.0, position: 0.0};
 
@@ -39,7 +40,6 @@ let modifiedLevel =
   |> Level.modifyTile(5, 5, {tile: GROUND, state: enemy});
 
 describe("BasicPositions", () =>
-  Expect.(
     describe("incrementAll", () => {
       let updatedMap = BasicPositions.incrementAll(modifiedLevel.map);
       test("Retains the player", (_) => {
@@ -48,18 +48,13 @@ describe("BasicPositions", () =>
       });
       test("Increments the player's position", (_) => {
         let updatedPlayer = Area.findPlayer(updatedMap) |> Rationale.Option.default(defaultPlayer);
-        expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
-      });
-      test("Leaves the user active", (_) => {
-        let updatedPlayer = Area.findPlayer(updatedMap) |> Rationale.Option.default(defaultPlayer);
-        expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(1.);
+        expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(defaultPlayer.stats.position);
       });
       test("Increments the enemys positsion", (_) => {
         let maybeEnemy = Area.findEnemy("enemy", updatedMap);
         let updatedEnemy: enemy = Rationale.Option.default(defaultEnemy, maybeEnemy);
         let position: float = updatedEnemy.stats.position;
-        expect(position) |> toEqual(1.);
+        expect(position) |> toBeGreaterThanOrEqual(defaultEnemy.stats.position);
       });
     })
-  )
 );

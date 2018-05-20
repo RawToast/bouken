@@ -19,8 +19,14 @@ type enemy = {
   stats: stats
 };
 
+type link = {
+  id: int,
+  level: string,
+};
+
 type tile =
   | GROUND
+  | STAIRS(link)
   | WATER
   | WALL;
 
@@ -46,9 +52,14 @@ type playerArea = {
   area: area,
 };
 
+type world = {
+  levels: list(level),
+  current: string
+};
+
 type game = {
   player: player,
-  level: level,
+  world: world,
   turn: float
 };
 
@@ -67,15 +78,27 @@ let isPlayer = place => switch place.state {
   };
 
 /* Modules */
+module type World = {
+  let create: player => world;
+  let updateLevel: (level, world) => world;
+  let currentLevel: world => option(level);
+  let selectLevel: (string, world) => option(level);
+};
+
 module type Places = {
   let findPlayer: (area) => option(player); 
   let findEnemy: (string, area) => option(enemy);
   let canMoveTo: (int, int, area) => Js.Result.t(place, error);
   let removeOccupant: (int, int, area) => area;
   let movePlayer: (int, int, float, area) => Js.Result.t (playerArea, error);
+  let setPlayerAt: (int, int, player, float, area) => Js.Result.t (area, error);
+  let getPlace: (int, int, area) => option(place);
+  let findStairs: (int, area) => option(place);
+  let locationOfStairs: (int, area) => option((int, int));
 };
 
 module type Positions = {
+  let divisor: float;
   let isActive: stats => bool;
   let increment: stats => stats;
   let incrementAll: area => area;
@@ -87,5 +110,6 @@ module type GameLoop = {
 
 module type Game = {
   let create: string => game;
-  let movePlayer: (int, int, game) => option(game)
+  let movePlayer: (int, int, game) => option(game);
+  let useStairs: game => option(game);
 };

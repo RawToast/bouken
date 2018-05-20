@@ -3,9 +3,9 @@ open Types;
 
 let component = ReasonReact.statelessComponent("GameMap");
 
-let stateToElement = (place: place) => 
+let stateToElement = (place: place, default:string) => 
   switch place.state {
-  | EMPTY => "."
+  | EMPTY => default
   | PLAYER(_) => "O"
   | ENEMY(_) => "X"
   };
@@ -13,9 +13,10 @@ let stateToElement = (place: place) =>
 let tilesToElements =
   List.map(t =>
       switch (t.tile) {
-      | GROUND => stateToElement(t)
-      | WATER => "w"
+      | GROUND => stateToElement(t, ".")
+      | WATER => stateToElement(t, "w")
       | WALL => "#"
+      | STAIRS(_) => stateToElement(t, "/")
       }
     |> str => (" " ++ str)
     |> ReasonReact.stringToElement);
@@ -27,7 +28,7 @@ let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
     |> List.map(li => [<br/>, ...li]);
 
 
-let handleKeyPress = (movement, evt: Dom.keyboardEvent) => {
+let handleKeyPress = (movement, stairs, evt: Dom.keyboardEvent) => {
   evt |> KeyboardEvent.code
     |> code => switch code {
     | "KeyQ" => movement(-1, 1)
@@ -38,15 +39,16 @@ let handleKeyPress = (movement, evt: Dom.keyboardEvent) => {
     | "KeyZ" => movement(-1, -1)
     | "KeyX" => movement(0, -1)
     | "KeyC" => movement(1, -1)
+    | "KeyS" => stairs()
     | _ => Js.Console.log("No");
     };
   ();
 };
 
-let make = (~level: level, ~movePlayer, _children) => {
+let make = (~level: level, ~movePlayer, ~takeStairs, _children) => {
   ...component,
   didMount: (_) =>  {
-    document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer));
+    document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer, takeStairs));
     NoUpdate;
   },
   render: _self =>

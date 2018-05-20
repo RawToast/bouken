@@ -1,16 +1,26 @@
 open Types;
 
 module CreateGameLoop: ((Types.Positions) => (Types.GameLoop)) = (Pos: Types.Positions) => {
-    let rec continue: game => game =
+  open World;
+
+  let loopCost = (1. /. Pos.divisor);
+  let rec continue: game => game =
     game =>
       if (Pos.isActive(game.player.stats)) {
         game;
       } else {
-        let updatedGame = Pos.incrementAll(game.level.map)
-          |> map => { ... game, level: { ... game.level, map: map }}
-          |> g => {... g, turn: g.turn +. 1.} 
-          |> g => {... g, player: {... g.player, stats: Pos.increment(g.player.stats)}};
-          
-        continue(updatedGame);
-      };
-  };
+        let maybeGame = game.world 
+          |> World.currentLevel
+          |> Rationale.Option.fmap(l => {
+            let area = Pos.incrementAll(l.map);
+            let world = World.updateLevel( {...l, map: area }, game.world);
+            { ...game, world: world, turn: game.turn +. loopCost }
+            })
+          |> Rationale.Option.fmap(g => {... g, player: {... g.player, stats: Pos.increment(g.player.stats)}});
+
+        switch maybeGame {
+        | None => game
+        | Some(g) => continue(g)
+        };
+    };
+};

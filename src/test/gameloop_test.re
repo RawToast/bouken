@@ -3,7 +3,7 @@ open Jest;
 open Expect;
 
 module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
-module Game = Bouken.CreateGame(BasicTurnLoop);
+module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
 
 describe("TurnLoop.continue", () => {
   
