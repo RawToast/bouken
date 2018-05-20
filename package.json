@@ -10,8 +10,8 @@
     "reason-scripts": "0.8.0"
   },
   "scripts": {
-    "start": "yarn && npm link bs-platform && yarn build && serve -s build -p 3000",
-    "dev": "react-scripts start",
+    "heroku": "npm install -g reason-react && npm install -g serve && yarn && npm link bs-platform && yarn build && serve -s build -p 3000",
+    "start": "react-scripts start",
     "clean": "bsb -clean-world && rm -rf lib",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
