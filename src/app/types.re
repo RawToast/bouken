@@ -105,5 +105,6 @@ module type GameLoop = {
 
 module type Game = {
   let create: string => game;
-  let movePlayer: (int, int, game) => option(game)
+  let movePlayer: (int, int, game) => option(game);
+  let useStairs: game => game;
 };

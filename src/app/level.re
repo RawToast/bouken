@@ -113,10 +113,12 @@ module Area: Places = {
       let nx = x + xl;
       let ny = y + yl;
 
+      let newPlayer = { ... player, location: (nx, ny)};
+
       area 
         |> setPlayerLocation(nx, ny, cost)
         |> Result.fmap(removeOccupant(xl, yl))
-        |> Result.fmap(a => {player: player, area: a})
+        |> Result.fmap(a => {player: newPlayer, area: a})
     }
     | None => error(INVALID_STATE);
     };

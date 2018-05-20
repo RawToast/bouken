@@ -15,7 +15,6 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
   let create = name => initgame(name);
 
   let movePlayer = (x, y, game) => {
-
     let level = W.currentLevel(game.world);
 
     level |> 
@@ -30,8 +29,14 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
 
                   let world = W.updateLevel(xx, game.world);
 
+                  let (posx, posy) = pa.player.location;
                   {... game, player: pa.player, world: world };
               }))
       |> Option.fmap(GL.continue);
+  };
+
+  let useStairs = game => {
+    
+    game;
   };
 };
