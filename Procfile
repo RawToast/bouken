@@ -1,2 +1,2 @@
-release: npm install -g react-scripts && npm install -g reason-react && npm install -g serve && yarn && yarn prepare && yarn heroku
+release: npm install -g react-scripts serve && npm link bs-platform && yarn build
 web: serve -s build -p $PORT
