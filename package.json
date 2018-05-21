@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "heroku": "react-scripts build",
+    "heroku": "bsb -make-world && react-scripts build",
     "clean": "bsb -clean-world && rm -rf lib",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
