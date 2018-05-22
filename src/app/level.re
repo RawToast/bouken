@@ -56,7 +56,6 @@ module Area: Places = {
     });
   };
 
-
   let getPlace = (x, y, area) =>
     area 
       |> RList.nth(y)
@@ -106,6 +105,7 @@ module Area: Places = {
         | WATER => success(l)
         | WALL => error(IMPOSSIBLE_MOVE)
         | STAIRS(_) => success(l)
+        | EXIT => success(l)
     });
   };
     

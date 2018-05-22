@@ -30,7 +30,7 @@ module World: World = {
 
     let level3 = LevelBuilder.makeBlankLevel("Floor 3")
       |> Level.modifyTile(3, 3, { tile: STAIRS({ id: 1, level: "Floor 2" }), state: EMPTY})
-      |> Level.modifyTile(3, 3, { tile: EXIT, state: EMPTY});
+      |> Level.modifyTile(5, 8, { tile: EXIT, state: EMPTY});
 
     { levels: [ initLevel(player), level2, level3 ], current: "Floor 1"  }
   };
