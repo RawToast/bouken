@@ -3,15 +3,15 @@ open Types;
 
 let component = ReasonReact.statelessComponent("GameMap");
 
-let stateToElement = (place: place, default:string) => 
+module GameElements = {
+  let stateToElement = (place: place, default:string) => 
   switch place.state {
   | EMPTY => default
   | PLAYER(_) => "O"
   | ENEMY(_) => "X"
   };
 
-let tilesToElements =
-  List.map(t =>
+  let tilesToElements = List.map(t =>
       switch (t.tile) {
       | GROUND => stateToElement(t, ".")
       | WATER => stateToElement(t, "w")
@@ -21,12 +21,12 @@ let tilesToElements =
       }
     |> str => (" " ++ str)
     |> ReasonReact.stringToElement);
-
-
-let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
+  let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
   (map) => map
     |> List.map(es => es |> tilesToElements)
     |> List.map(li => [<br/>, ...li]);
+
+};
 
 
 let handleKeyPress = (movement, stairs, evt: Dom.keyboardEvent) => {
@@ -55,10 +55,10 @@ let make = (~level: level, ~movePlayer, ~takeStairs, _children) => {
   render: _self =>
     <div className="GameMap">
       (
-        asElements(level.map)
+        GameElements.asElements(level.map)
           |> List.rev
           |> List.map(ts => ts |> Array.of_list |> ReasonReact.arrayToElement)
           |> Array.of_list |> ReasonReact.arrayToElement
       )
     </div>,
-}
+};

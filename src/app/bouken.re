@@ -96,4 +96,17 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
       });
     }) |> Option.fmap(GL.continue);
   };
+
+  let useExit = game => {
+    let calculateScore = game => {
+      let baseScore = 1000;
+      let turnPenalty = int_of_float((game.turn /. 5.));
+      let goldBonus = game.player.gold;
+      let healthBonus = game.player.stats.health * 2;
+  
+      baseScore + healthBonus + goldBonus - turnPenalty;
+    };
+    let winBonus = 5000;
+    winBonus + calculateScore(game);
+  };
 };

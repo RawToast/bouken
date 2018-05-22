@@ -4,13 +4,13 @@ RUN npm install -g serve react-scripts
 
 COPY package.json yarn.lock bsconfig.json  ./
 
-RUN yarn
+RUN yarn >/dev/null 2>&1
 
 COPY public ./public
 
 COPY src ./src
 
-RUN yarn && npm link bs-platform && yarn build
+RUN yarn --silent && npm link bs-platform && yarn build
 
 EXPOSE 3000
 

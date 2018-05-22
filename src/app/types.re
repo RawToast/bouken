@@ -113,4 +113,5 @@ module type Game = {
   let create: string => game;
   let movePlayer: (int, int, game) => option(game);
   let useStairs: game => option(game);
+  let useExit: game => int;
 };
