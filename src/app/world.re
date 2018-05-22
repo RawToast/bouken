@@ -29,7 +29,8 @@ module World: World = {
       |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (5, 8), (6, 8)], Tiles.groundTile);
 
     let level3 = LevelBuilder.makeBlankLevel("Floor 3")
-    |> Level.modifyTile(3, 3, { tile: STAIRS({ id: 1, level: "Floor 2" }), state: EMPTY});
+      |> Level.modifyTile(3, 3, { tile: STAIRS({ id: 1, level: "Floor 2" }), state: EMPTY})
+      |> Level.modifyTile(3, 3, { tile: EXIT, state: EMPTY});
 
     { levels: [ initLevel(player), level2, level3 ], current: "Floor 1"  }
   };

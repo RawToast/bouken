@@ -17,6 +17,7 @@ let tilesToElements =
       | WATER => stateToElement(t, "w")
       | WALL => "#"
       | STAIRS(_) => stateToElement(t, "/")
+      | EXIT => stateToElement(t, "e")
       }
     |> str => (" " ++ str)
     |> ReasonReact.stringToElement);

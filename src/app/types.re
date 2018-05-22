@@ -28,7 +28,8 @@ type tile =
   | GROUND
   | STAIRS(link)
   | WATER
-  | WALL;
+  | WALL
+  | EXIT;
 
 type occupier = 
   | PLAYER(player)
