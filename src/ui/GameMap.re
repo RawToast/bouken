@@ -17,7 +17,7 @@ module GameElements = {
       | WATER => stateToElement(t, "w")
       | WALL => "#"
       | STAIRS(_) => stateToElement(t, "/")
-      | EXIT => stateToElement(t, "e")
+      | EXIT(_) => stateToElement(t, "e")
       }
     |> str => (" " ++ str)
     |> ReasonReact.stringToElement);

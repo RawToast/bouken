@@ -105,7 +105,7 @@ module Area: Places = {
         | WATER => success(l)
         | WALL => error(IMPOSSIBLE_MOVE)
         | STAIRS(_) => success(l)
-        | EXIT => success(l)
+        | EXIT(_) => success(l)
     });
   };
     

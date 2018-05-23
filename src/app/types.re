@@ -29,7 +29,7 @@ type tile =
   | STAIRS(link)
   | WATER
   | WALL
-  | EXIT;
+  | EXIT(int);
 
 type occupier = 
   | PLAYER(player)
@@ -67,6 +67,10 @@ type game = {
 type error = 
   | INVALID_STATE
   | IMPOSSIBLE_MOVE;
+
+type exitResult = 
+  | END_GAME(int)
+  | CONTINUE_GAME(game);
 
 let error = (err) => Js.Result.Error(err);
 
@@ -113,5 +117,5 @@ module type Game = {
   let create: string => game;
   let movePlayer: (int, int, game) => option(game);
   let useStairs: game => option(game);
-  let useExit: game => int;
+  let useExit: game => exitResult;
 };

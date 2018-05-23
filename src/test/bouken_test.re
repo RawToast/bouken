@@ -9,16 +9,6 @@ module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
 module Game = CreateGame(BasicTurnLoop, World.World);
 
 
-describe("Game", () => {
-  describe("Create", () => {
-    test("Creates a new game", (_) => {
-      let initGame = Game.create("dave");
-      expect(initGame.player.name) |> toBe("dave");
-    });
-  });
-});
-
-
 describe("Game.Create", () => {
   test("Creates a new game", (_) => {
     let initGame = Game.create("dave");
@@ -34,16 +24,18 @@ describe("Game.MovePlayer", () => {
   | None => initGame
   };
 
-  test("Returns some when the move is possible", (_) => {
-    expect(Option.isSome(optGame)) |> toBe(true);
-  });
-
   test("Initially the player is located at (6, 6)", (_) => {
     expect(initGame.player.location) |> toEqual((6, 6));
   });
 
-  test("The Player's location is updated", (_) => {
-    expect(newGame.player.location) |> toEqual((5, 5));
+  describe("When the move is possible", () => {
+    test("Returns some", (_) => {
+      expect(Option.isSome(optGame)) |> toBe(true);
+    });
+  
+    test("The Player's location is updated to (5,5)", (_) => {
+      expect(newGame.player.location) |> toEqual((5, 5));
+    });
   });
 });
 
@@ -54,27 +46,80 @@ describe("Game.UseStairs", () => {
     |> Option.bind(_, Game.useStairs) 
     |> Option.default(initGame);
 
-  test("Updates player's location", (_) => {
-    expect(newGame.player.location) |> toEqual((0, 9));
+  describe("When the player is on an exit", () => {
+    test("Updates player's location", (_) => {
+      expect(newGame.player.location) |> toEqual((0, 9));
+    });
+
+    test("Moves the current level", (_) => {
+      expect(newGame.world.current) |> toEqual("Floor 2");
+    });
+
+    test("Updates the world map", (_) => {
+      let place = newGame.world |>
+        World.World.currentLevel |>
+          Option.bind(_, lv => 
+            Level.Area.getPlace(0, 9, lv.map))
+          |> Option.default({ tile: GROUND, state: EMPTY });
+      
+      let isPlayer = switch place.state {
+      | PLAYER(_) => true;
+      | _ => false;
+      };
+
+      expect(isPlayer) |> toEqual(true);
+    });
   });
+});
 
-  test("Moves the current level", (_) => {
-    expect(newGame.world.current) |> toEqual("Floor 2");
-  });
-
-
-  test("Updates the world map", (_) => {
-    let place = newGame.world |>
-      World.World.currentLevel |>
-        Option.bind(_, lv => 
-          Level.Area.getPlace(0, 9, lv.map))
-        |> Option.default({ tile: GROUND, state: EMPTY });
-    
-    let isPlayer = switch place.state {
-    | PLAYER(_) => true;
-    | _ => false;
+describe("Game.ExitGame", () => {
+  let game = Game.create("dave");
+  let exitGame = game => game |> Game.useExit |> r => switch r {
+    | END_GAME(score) => (true, score)
+    | CONTINUE_GAME(_) => (false, 0)
     };
 
-    expect(isPlayer) |> toEqual(true);
+  describe("When the player is on an exit", () => {
+    let newLevel = Level.LevelBuilder.makeBlankLevel("Floor 1") 
+    |> Level.Level.modifyTile(6, 6, 
+      {tile: EXIT(100), 
+        state: PLAYER({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 
+        gold: 5, 
+        location: (6, 6)})});
+
+    let newWorld = World.World.updateLevel(newLevel, game.world);
+    let initGame = { ... game, world: newWorld};
+
+    let (exited, score) = exitGame(initGame);
+
+    test("The player exits the game", (_) => {
+      expect(exited) |> toBe(true);
+    });
+
+    test("A score is calculated", (_) => {
+      expect(score) |> toBeGreaterThan(1);
+    });
+  });
+
+  describe("When the player is not on an exit", () => {
+    let newLevel = Level.LevelBuilder.makeBlankLevel("Floor 1")
+      |> Level.Level.modifyTile(6, 6, 
+        {tile: GROUND, 
+          state: PLAYER({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 
+          gold: 5, 
+          location: (6, 6)})});
+
+    let newWorld = World.World.updateLevel(newLevel, game.world);
+    let initGame = { ... game, world: newWorld};
+
+    let (exited, score) = exitGame(initGame);
+
+    test("The player does not exit the game", (_) => {
+      expect(exited) |> toBe(false);
+    });
+
+    test("No score is calculated", (_) => {
+      expect(score) |> toEqual(0);
+    });
   });
 });
