@@ -60,10 +60,10 @@ describe("Game.UseStairs", () => {
         World.World.currentLevel |>
           Option.bind(_, lv => 
             Level.Area.getPlace(0, 9, lv.map))
-          |> Option.default({ tile: GROUND, state: EMPTY });
+          |> Option.default({ tile: GROUND, state: Empty });
       
       let isPlayer = switch place.state {
-      | PLAYER(_) => true;
+      | Player(_) => true;
       | _ => false;
       };
 
@@ -75,15 +75,15 @@ describe("Game.UseStairs", () => {
 describe("Game.ExitGame", () => {
   let game = Game.create("dave");
   let exitGame = game => game |> Game.useExit |> r => switch r {
-    | END_GAME(score) => (true, score)
-    | CONTINUE_GAME(_) => (false, 0)
+    | EndGame(score) => (true, score)
+    | ContinueGame(_) => (false, 0)
     };
 
   describe("When the player is on an exit", () => {
     let newLevel = Level.LevelBuilder.makeBlankLevel("Floor 1") 
     |> Level.Level.modifyTile(6, 6, 
       {tile: EXIT(100), 
-        state: PLAYER({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 
+        state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 
         gold: 5, 
         location: (6, 6)})});
 
@@ -105,7 +105,7 @@ describe("Game.ExitGame", () => {
     let newLevel = Level.LevelBuilder.makeBlankLevel("Floor 1")
       |> Level.Level.modifyTile(6, 6, 
         {tile: GROUND, 
-          state: PLAYER({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 
+          state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 
           gold: 5, 
           location: (6, 6)})});
 

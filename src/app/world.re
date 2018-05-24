@@ -19,18 +19,18 @@ module World: World = {
         |> Level.modifyTiles(listVertical(14, 2, 14), Tiles.wallTile)
         |> Level.modifyTiles([(7, 6), (8, 6), (9, 6), (7, 7), (8, 7), (8, 8)], Tiles.wallTile)
         |> Level.modifyTiles([(7, 5), (8, 5), (9, 5), (7, 4), (8, 4), (8, 3)], Tiles.waterTile)
-        |> Level.modifyTile(9, 9, {tile: GROUND, state: ENEMY(initEnemy)})
-        |> Level.modifyTile(6, 6, {tile: GROUND, state: PLAYER(player)})
-        |> Level.modifyTile(13, 14, { tile: STAIRS({ id: 0, level: "Floor 2" }), state: EMPTY});
+        |> Level.modifyTile(9, 9, {tile: GROUND, state: Enemy(initEnemy)})
+        |> Level.modifyTile(6, 6, {tile: GROUND, state: Player(player)})
+        |> Level.modifyTile(13, 14, { tile: STAIRS({ id: 0, level: "Floor 2" }), state: Empty});
 
     let level2 = LevelBuilder.makeWaterLevel("Floor 2")
-      |> Level.modifyTile(0, 9, { tile: STAIRS({ id: 0, level: "Floor 1" }), state: EMPTY})
-      |> Level.modifyTile(13, 1, { tile: STAIRS({ id: 1, level: "Floor 3" }), state: EMPTY})
+      |> Level.modifyTile(0, 9, { tile: STAIRS({ id: 0, level: "Floor 1" }), state: Empty})
+      |> Level.modifyTile(13, 1, { tile: STAIRS({ id: 1, level: "Floor 3" }), state: Empty})
       |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (5, 8), (6, 8)], Tiles.groundTile);
 
     let level3 = LevelBuilder.makeBlankLevel("Floor 3")
-      |> Level.modifyTile(3, 3, { tile: STAIRS({ id: 1, level: "Floor 2" }), state: EMPTY})
-      |> Level.modifyTile(5, 8, { tile: EXIT(1000), state: EMPTY});
+      |> Level.modifyTile(3, 3, { tile: STAIRS({ id: 1, level: "Floor 2" }), state: Empty})
+      |> Level.modifyTile(5, 8, { tile: EXIT(1000), state: Empty});
 
     { levels: [ initLevel(player), level2, level3 ], current: "Floor 1"  }
   };

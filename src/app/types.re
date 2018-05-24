@@ -32,9 +32,9 @@ type tile =
   | EXIT(int);
 
 type occupier = 
-  | PLAYER(player)
-  | ENEMY(enemy)
-  | EMPTY;
+  | Player(player)
+  | Enemy(enemy)
+  | Empty;
 
 type place = {
   tile: tile,
@@ -65,21 +65,21 @@ type game = {
 };
 
 type error = 
-  | INVALID_STATE
-  | IMPOSSIBLE_MOVE;
+  | InvalidState
+  | ImpossibleMove;
 
 type exitResult = 
-  | END_GAME(int)
-  | CONTINUE_GAME(game);
+  | EndGame(int)
+  | ContinueGame(game);
 
 let error = (err) => Js.Result.Error(err);
 
 let success = (ok) => Js.Result.Ok(ok);
 
 let isPlayer = place => switch place.state {
-  | EMPTY => false
-  | ENEMY(_) => false
-  | PLAYER(_) => true
+  | Empty => false
+  | Enemy(_) => false
+  | Player(_) => true
   };
 
 /* Modules */

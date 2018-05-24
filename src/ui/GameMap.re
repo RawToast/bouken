@@ -6,9 +6,9 @@ let component = ReasonReact.statelessComponent("GameMap");
 module GameElements = {
   let stateToElement = (place: place, default:string) => 
   switch place.state {
-  | EMPTY => default
-  | PLAYER(_) => "O"
-  | ENEMY(_) => "X"
+  | Empty => default
+  | Player(_) => "O"
+  | Enemy(_) => "X"
   };
 
   let tilesToElements = List.map(t =>
@@ -29,7 +29,7 @@ module GameElements = {
 };
 
 
-let handleKeyPress = (movement, stairs, evt: Dom.keyboardEvent) => {
+let handleKeyPress = (movement, stairs, useExit, evt: Dom.keyboardEvent) => {
   evt |> KeyboardEvent.code
     |> code => switch code {
     | "KeyQ" => movement(-1, 1)
@@ -40,16 +40,16 @@ let handleKeyPress = (movement, stairs, evt: Dom.keyboardEvent) => {
     | "KeyZ" => movement(-1, -1)
     | "KeyX" => movement(0, -1)
     | "KeyC" => movement(1, -1)
-    | "KeyS" => stairs()
+    | "KeyS" => useExit(); stairs()
     | _ => Js.Console.log("No");
     };
   ();
 };
 
-let make = (~level: level, ~movePlayer, ~takeStairs, _children) => {
+let make = (~level: level, ~movePlayer, ~takeStairs, ~useExit, _children) => {
   ...component,
   didMount: (_) =>  {
-    document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer, takeStairs));
+    document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer, takeStairs, useExit));
     NoUpdate;
   },
   render: _self =>

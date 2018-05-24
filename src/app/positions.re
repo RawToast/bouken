@@ -9,9 +9,9 @@ module BasicPositions: Positions = {
       ys
       |> List.map((place: place) =>
            switch (place.state) {
-           | EMPTY => place
-           | PLAYER(p) => {...place, state: PLAYER({...p, stats: increment(p.stats)})}
-           | ENEMY(e) => {...place, state: ENEMY({...e, stats: increment(e.stats)})}
+           | Empty => place
+           | Player(p) => {...place, state: Player({...p, stats: increment(p.stats)})}
+           | Enemy(e) => {...place, state: Enemy({...e, stats: increment(e.stats)})}
            }
          )
     );

@@ -121,8 +121,8 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
     let baseBonus = 1000;
 
     switch(currentExitScore) {
-    | Some(score) => END_GAME(score + baseBonus + calculateScore(game));
-    | None => CONTINUE_GAME(game)
+    | Some(score) => EndGame(score + baseBonus + calculateScore(game));
+    | None => ContinueGame(game)
     }
   };
 };

@@ -2,7 +2,7 @@ open Types;
 open Rationale;
 
 module LevelBuilder = {
-  let blankPlace = {tile: GROUND, state: EMPTY};
+  let blankPlace = {tile: GROUND, state: Empty};
   let makeBlankLevel = (name: string) => {
     let emptyMap =
       RList.repeat(blankPlace, 15) |> List.map(i => RList.repeat(i, 15));
@@ -10,15 +10,15 @@ module LevelBuilder = {
   };
   let makeWaterLevel = (name: string) => {
     let emptyMap =
-      RList.repeat({tile: WATER, state: EMPTY}, 15) |> List.map(i => RList.repeat(i, 15));
+      RList.repeat({tile: WATER, state: Empty}, 15) |> List.map(i => RList.repeat(i, 15));
     {name, map: emptyMap};
   };
 };
 
 module Tiles = {
-  let groundTile = {tile: GROUND, state: EMPTY};
-  let wallTile = {tile: WALL, state: EMPTY};
-  let waterTile = {tile: WATER, state: EMPTY};
+  let groundTile = {tile: GROUND, state: Empty};
+  let wallTile = {tile: WALL, state: Empty};
+  let waterTile = {tile: WATER, state: Empty};
 };
 
 module Area: Places = {
@@ -70,14 +70,14 @@ module Area: Places = {
       |> Option.default([])
       |> RList.find(state => isPlayer(state))
       |> Option.bind(_, s => switch(s.state) {
-        | PLAYER(p) => Some(p)
+        | Player(p) => Some(p)
         | _ => None
       });
   };
 
   let findEnemy: (string, area) => option(enemy) = (id, area) => {
     let isEnemyWithId = (id, place) => switch place.state {
-      | ENEMY(e) => e.id === id
+      | Enemy(e) => e.id === id
       | _ => false
       };
     let hasEnemy = (p:option(place)) => Option.isSome(p);
@@ -90,20 +90,20 @@ module Area: Places = {
       |> Option.default([])
       |> RList.find(p => isEnemyWithId(id, p))
       |> Option.bind(_, s => switch(s.state) {
-        | EMPTY => None
-        | ENEMY(e) => Some(e)
-        | PLAYER(_) => None
+        | Empty => None
+        | Enemy(e) => Some(e)
+        | Player(_) => None
       });
   };
 
   let canMoveTo = (x, y, map: area) => {map 
     |> RList.nth(y) 
     |> Option.bind(_, RList.nth(x))
-    |> Result.ofOption(IMPOSSIBLE_MOVE)
+    |> Result.ofOption(ImpossibleMove)
     |> Result.bind(_, l => switch l.tile {
         | GROUND => success(l)
         | WATER => success(l)
-        | WALL => error(IMPOSSIBLE_MOVE)
+        | WALL => error(ImpossibleMove)
         | STAIRS(_) => success(l)
         | EXIT(_) => success(l)
     });
@@ -115,7 +115,7 @@ module Area: Places = {
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
             if (yi == x) { 
-              { ...place, state: EMPTY }
+              { ...place, state: Empty }
             } else place);
         } else xs
       );
@@ -128,7 +128,7 @@ module Area: Places = {
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
             if (yi == x) { 
-              { ...place, state: PLAYER({ ...player, location: (x, y) }) }
+              { ...place, state: Player({ ...player, location: (x, y) }) }
             } else place);
         } else xs
       );
@@ -140,7 +140,7 @@ module Area: Places = {
       |> Option.fmap((p: player) => {... p, stats: { ... p.stats, position: p.stats.position -. cost}})
       |> Option.fmap(p => update(p, area) ) 
       |> o => switch (o) {
-        | None => error(INVALID_STATE)
+        | None => error(InvalidState)
         | Some(result) => success(result)
     })
   };
@@ -152,7 +152,7 @@ module Area: Places = {
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
             if (yi == x) { 
-              { ...place, state: PLAYER({ ...player, location: (x, y) }) }
+              { ...place, state: Player({ ...player, location: (x, y) }) }
             } else place);
         } else xs
       );
@@ -181,7 +181,7 @@ module Area: Places = {
         |> Result.fmap(removeOccupant(xl, yl))
         |> Result.fmap(a => {player: newPlayer, area: a})
     }
-    | None => error(INVALID_STATE);
+    | None => error(InvalidState);
     };
   };
 };
@@ -218,7 +218,7 @@ module Level = {
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
             if (yi == x) { 
-              { ...place, state: PLAYER({ ...player, location: (x, y) }) }
+              { ...place, state: Player({ ...player, location: (x, y) }) }
             } else place);
         } else xs
       );
@@ -229,7 +229,7 @@ module Level = {
        findPlayer(level) 
           |> Option.fmap(p => { name: level.name, map: update(p, level.map) }) 
           |> o => switch (o) {
-          | None => error(INVALID_STATE)
+          | None => error(InvalidState)
           | Some(result) => success(result)
           })
   };
@@ -246,7 +246,7 @@ module Level = {
         |> setPlayerLocation(nx, ny)
         |> Result.fmap(removeOccupant(xl, yl))
     }
-    | None => error(INVALID_STATE);
+    | None => error(InvalidState);
     };
   };
 };

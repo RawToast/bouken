@@ -5,7 +5,8 @@ open Types;
 
 type actions =
   | MovePlayer(int, int)
-  | TakeStairs;
+  | TakeStairs
+  | UseExit;
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -28,6 +29,10 @@ let make = (_children) => {
     switch act {
     | MovePlayer(x, y) => game |> Game.movePlayer(x, y) |> resultToUpdate;
     | TakeStairs => game |> Game.useStairs |> resultToUpdate;
+    | UseExit => game |> Game.useExit |> e => switch e {
+    | EndGame(score) => NoUpdate
+    | ContinueGame(_) => NoUpdate
+    };
   },
   render: (self) =>
     <div className="App">
@@ -36,6 +41,7 @@ let make = (_children) => {
         level=(currentLevel(self.state.world)) 
         movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))
         takeStairs=(self.reduce(() => TakeStairs))
+        useExit=(self.reduce(() => UseExit))
         />
     </div>
 };
