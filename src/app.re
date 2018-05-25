@@ -46,8 +46,8 @@ let make = (_children) => {
     | TakeStairs => route |> ifGameFlatMap(Game.useStairs(_)) |> Rationale.Option.fmap(g => InGame(g)) |> resultToUpdate
     | MovePlayer(x, y) => route |> ifGameFlatMap(Game.movePlayer(x, y)) |> Rationale.Option.fmap(g => InGame(g)) |> resultToUpdate
     | UseExit => route |> ifGameMap(Game.useExit) |> Option.fmap( e => switch e {
-      | Types.ContinueGame(game) => InGame(game)
-      | Types.EndGame(score) => EndGame("Dave", score)
+      | ContinueGame(game) => InGame(game)
+      | EndGame(score, name) => EndGame(name, score)
     }) |> resultToUpdate
     | ChangeRoute(r) => NoUpdate
   },

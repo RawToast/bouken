@@ -75,7 +75,7 @@ describe("Game.UseStairs", () => {
 describe("Game.ExitGame", () => {
   let game = Game.create("dave");
   let exitGame = game => game |> Game.useExit |> r => switch r {
-    | EndGame(score) => (true, score)
+    | EndGame(score, _) => (true, score)
     | ContinueGame(_) => (false, 0)
     };
 

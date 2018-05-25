@@ -69,7 +69,7 @@ type error =
   | ImpossibleMove;
 
 type exitResult = 
-  | EndGame(int)
+  | EndGame(int, string)
   | ContinueGame(game);
 
 let error = (err) => Js.Result.Error(err);
