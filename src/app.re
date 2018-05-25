@@ -2,7 +2,7 @@
 
 open ReasonReact;
 open Types;
-open GameView;
+open Rationale;
 
 type route =
   | Home
@@ -24,6 +24,8 @@ let resultToUpdate = (r: option(route)) => switch r {
   | None => NoUpdate
 };
 
+let gameToUpdate = g => g |> Option.fmap(g => InGame(g)) |> resultToUpdate;
+
 let ifGameMap = (f, route) => switch(route) {
   | InGame(g) => Some(f(g))
   |  _ => None
@@ -36,15 +38,14 @@ let ifGameFlatMap = (f, route) => switch(route) {
 
 module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
 module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
-open Rationale;
 
 let make = (_children) => {
   ...component,
   initialState: () => Home,
-  reducer: (act, route: route) =>
+  reducer: (act, route) =>
     switch act { /* These are returning 'Game' and need to return 'Route' */
-    | TakeStairs => route |> ifGameFlatMap(Game.useStairs(_)) |> Rationale.Option.fmap(g => InGame(g)) |> resultToUpdate
-    | MovePlayer(x, y) => route |> ifGameFlatMap(Game.movePlayer(x, y)) |> Rationale.Option.fmap(g => InGame(g)) |> resultToUpdate
+    | TakeStairs => route |> ifGameFlatMap(Game.useStairs(_)) |> gameToUpdate
+    | MovePlayer(x, y) => route |> ifGameFlatMap(Game.movePlayer(x, y)) |> gameToUpdate
     | UseExit => route |> ifGameMap(Game.useExit) |> Option.fmap( e => switch e {
       | ContinueGame(game) => InGame(game)
       | EndGame(score, name) => EndGame(name, score)
