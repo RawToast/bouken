@@ -1,16 +1,16 @@
 
-open ReasonReact;open Types;
-
+open ReasonReact;
+open Types;
 
 let component = ReasonReact.reducerComponent("StartView");
 
-let make = (_children) => {
+let make = (~startGame, _children) => {
   ...component,
-  initialState: () => "",
+  initialState: () => "Test",
   reducer: (state: string, _ext) =>  ReasonReact.Update(state),
-  render: (_) => 
+  render: (self) => 
     <div>
-      <button label="Hey" />
-      
+      <input onChange=(evt => self.reduce(() => ReactDOMRe.domElementToObj(ReactEventRe.Form.target(evt))##value)())></input>
+      <button onClick=(_ => startGame(self.state))>(stringToElement("Start Game"))</button>
     </div>
 };

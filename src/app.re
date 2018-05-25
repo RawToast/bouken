@@ -18,7 +18,8 @@ type appAction =
   | StartGame(string);
 
 type action = 
-  | GameAction(gameAction);
+  | GameAction(gameAction)
+  | AppAction(appAction);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -58,12 +59,24 @@ let make = (_children) => {
   initialState: () => Home,
   reducer: (act: action , route) => switch act {
   | GameAction(gameAction) => handleGameAction(gameAction, route)
+  | AppAction(appAction) => switch appAction {
+    | StartGame(name) => ReasonReact.Update(InGame(Game.create(name)))
+  };
   },
   render: (self) => {
     <div className="App">
       (switch self.state {
-      | Home => <StartView />
-      | EndGame(name, score) => (ReasonReact.stringToElement(name ++ " scored " ++ string_of_int(score) ++ " points"))
+      | Home => 
+        <StartView 
+          startGame=(string => self.reduce(() => AppAction(StartGame(string)))())
+        />
+      | EndGame(name, score) => 
+        <div>
+          (ReasonReact.stringToElement(name ++ " scored " ++ string_of_int(score) ++ " points"))
+          <StartView 
+            startGame=(string => self.reduce(() => AppAction(StartGame(string)))())
+          />
+        </div>
       | InGame(game) => 
           <GameView 
             game=(game)
