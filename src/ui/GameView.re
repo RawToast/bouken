@@ -1,4 +1,3 @@
-/* [%bs.raw {|require('./app.css')|}];
 
 open ReasonReact;
 open Types;
@@ -9,9 +8,8 @@ let component = ReasonReact.statelessComponent("GameView");
 
 let make = (~game: game, ~movePlayer, ~takeStairs, ~useExit, _children) => {
   ...component,
-  initialState: () => Home,
-  render: (self) => 
-    <div class="GameView">
+  render: (_) => 
+    <div>
       <GameStats player=(game.player) turn=(game.turn) level=(game.world.current) />
       <GameMap 
           level=(currentLevel(game.world)) 
@@ -20,4 +18,4 @@ let make = (~game: game, ~movePlayer, ~takeStairs, ~useExit, _children) => {
           useExit=(useExit)
           />
     </div>
-}; */
+};

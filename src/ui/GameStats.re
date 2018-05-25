@@ -1,4 +1,4 @@
-/* open Types;
+open Types;
 
 let component = ReasonReact.statelessComponent("GameStats");
 
@@ -8,4 +8,4 @@ let make = (~player: player, ~turn: float, ~level:string, _children) => {
     <div className="GameStats">
       <text>(ReasonReact.stringToElement(level ++ " Turn: " ++ string_of_float(turn)))</text>
     </div>,
-} */
+}

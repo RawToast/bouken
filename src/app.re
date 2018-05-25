@@ -2,6 +2,7 @@
 
 open ReasonReact;
 open Types;
+open GameView;
 
 type route =
   | Home
@@ -18,46 +19,51 @@ let component = ReasonReact.reducerComponent("App");
 
 let movement = (x, y) => MovePlayer(x, y);
 
-let resultToUpdate = r => switch r {
+let resultToUpdate = (r: option(route)) => switch r {
   | Some(s) => ReasonReact.Update(s)
   | None => NoUpdate
 };
 
-let ifGame = (f, route) => switch(route) {
+let ifGameMap = (f, route) => switch(route) {
+  | InGame(g) => Some(f(g))
+  |  _ => None
+};
+
+let ifGameFlatMap = (f, route) => switch(route) {
   | InGame(g) => f(g)
-  |  _ => NoUpdate
+  |  _ => None
 };
 
 module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
 module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
+open Rationale;
 
 let make = (_children) => {
   ...component,
   initialState: () => Home,
   reducer: (act, route: route) =>
     switch act { /* These are returning 'Game' and need to return 'Route' */
-    | MovePlayer(x, y) => route |> ifGame(Game.movePlayer(x, y) |> resultToUpdate)
-    | TakeStairs => route |> ifGame((Game.useStairs |> resultToUpdate))
-    | UseExit => route |> ifGame(Game.useExit |> e => switch e {
-      | EndGame(score) => NoUpdate
-      | ContinueGame(_) => NoUpdate
-    })
-    | ChangeRoute(r) => ReasonReact.Update(r)
+    | TakeStairs => route |> ifGameFlatMap(Game.useStairs(_)) |> Rationale.Option.fmap(g => InGame(g)) |> resultToUpdate
+    | MovePlayer(x, y) => route |> ifGameFlatMap(Game.movePlayer(x, y)) |> Rationale.Option.fmap(g => InGame(g)) |> resultToUpdate
+    | UseExit => route |> ifGameMap(Game.useExit) |> Option.fmap( e => switch e {
+      | Types.ContinueGame(game) => InGame(game)
+      | Types.EndGame(score) => EndGame("Dave", score)
+    }) |> resultToUpdate
+    | ChangeRoute(r) => NoUpdate
   },
   render: (self) => {
     <div className="App">
-/*       
       (switch self.state {
       | Home => (ReasonReact.stringToElement("dave"))
       | EndGame(name, score) => (ReasonReact.stringToElement(name))
       | InGame(game) => 
           <GameView 
-            game=(game), 
+            game=(game)
             movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))
             takeStairs=(self.reduce(() => TakeStairs))
             useExit=(self.reduce(() => UseExit))
           />
-      }) */
+      })
     </div>
     },
 };
