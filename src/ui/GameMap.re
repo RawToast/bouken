@@ -60,5 +60,5 @@ let make = (~level: level, ~movePlayer, ~takeStairs, ~useExit, _children) => {
           |> List.map(ts => ts |> Array.of_list |> ReasonReact.arrayToElement)
           |> Array.of_list |> ReasonReact.arrayToElement
       )
-    </div>,
+    </div>
 };

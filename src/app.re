@@ -31,7 +31,6 @@ let ifGame = (f, route) => switch(route) {
 module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
 module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
 
-let currentLevel = (world) => World.World.currentLevel(world) |> Rationale.Option.default(List.hd(world.levels));
 
 let make = (_children) => {
   ...component,
@@ -46,21 +45,19 @@ let make = (_children) => {
     })
     | ChangeRoute(r) => ReasonReact.Update(r)
   },
-  render: (self) =>
+  render: (self) => {
     <div className="App">
       (switch self.state {
       | Home => (ReasonReact.stringToElement("dave"))
       | EndGame(name, score) => (ReasonReact.stringToElement(name))
       | InGame(game) => 
-          <div>
-            <GameStats player=(game.player) turn=(game.turn) level=(game.world.current) />
-            <GameMap 
-              level=(currentLevel(game.world)) 
-              movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))
-              takeStairs=(self.reduce(() => TakeStairs))
-              useExit=(self.reduce(() => UseExit))
-              />
-          </div>
+          <GameView 
+            game=(game), 
+            movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))
+            takeStairs=(self.reduce(() => TakeStairs))
+            useExit=(self.reduce(() => UseExit))
+          />
       })
     </div>
+    },
 };
