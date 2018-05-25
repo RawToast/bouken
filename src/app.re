@@ -54,14 +54,16 @@ let handleGameAction = (act, route) => switch act { /* These are returning 'Game
     }) |> resultToUpdate
 };
 
+open Webapi.Dom;
+
 let make = (_children) => {
   ...component,
   initialState: () => Home,
   reducer: (act: action , route) => switch act {
-  | GameAction(gameAction) => handleGameAction(gameAction, route)
-  | AppAction(appAction) => switch appAction {
-    | StartGame(name) => ReasonReact.Update(InGame(Game.create(name)))
-  };
+    | GameAction(gameAction) => handleGameAction(gameAction, route)
+    | AppAction(appAction) => switch appAction {
+      | StartGame(name) => ReasonReact.Update(InGame(Game.create(name)))
+    };
   },
   render: (self) => {
     <div className="App">
@@ -72,10 +74,8 @@ let make = (_children) => {
         />
       | EndGame(name, score) => 
         <div>
-          (ReasonReact.stringToElement(name ++ " scored " ++ string_of_int(score) ++ " points"))
-          <StartView 
-            startGame=(string => self.reduce(() => AppAction(StartGame(string)))())
-          />
+          <div>(ReasonReact.stringToElement(name ++ " scored " ++ string_of_int(score) ++ " points"))</div>
+          <button onClick=(_ => Location.reload(location))>(stringToElement("Try again"))</button>
         </div>
       | InGame(game) => 
           <GameView 

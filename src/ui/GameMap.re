@@ -52,6 +52,10 @@ let make = (~level: level, ~movePlayer, ~takeStairs, ~useExit, _children) => {
     document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer, takeStairs, useExit));
     NoUpdate;
   },
+  willUnmount: (_) => {
+    Js.Console.log("Discouncd");
+    document |> Document.removeKeyDownEventListener(handleKeyPress(movePlayer, takeStairs, useExit));
+  },
   render: _self =>
     <div className="GameMap">
       (
