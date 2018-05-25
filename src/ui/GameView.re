@@ -1,4 +1,4 @@
-[%bs.raw {|require('./app.css')|}];
+/* [%bs.raw {|require('./app.css')|}];
 
 open ReasonReact;
 open Types;
@@ -20,4 +20,4 @@ let make = (~game: game, ~movePlayer, ~takeStairs, ~useExit, _children) => {
           useExit=(useExit)
           />
     </div>
-};
+}; */

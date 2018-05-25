@@ -1,4 +1,4 @@
-open Webapi.Dom;
+/* open Webapi.Dom;
 open Types;
 
 let component = ReasonReact.statelessComponent("GameMap");
@@ -61,4 +61,4 @@ let make = (~level: level, ~movePlayer, ~takeStairs, ~useExit, _children) => {
           |> Array.of_list |> ReasonReact.arrayToElement
       )
     </div>
-};
+}; */

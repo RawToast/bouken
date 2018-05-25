@@ -5,9 +5,8 @@ module BasicPositions: Positions = {
   let isActive = stats => stats.position >= 1.;
   let increment = stats => {...stats, position: stats.position +. (stats.speed /. divisor)};
   let incrementAll =
-    List.map((ys: list(place)) =>
-      ys
-      |> List.map((place: place) =>
+    List.map(
+      List.map((place: place) =>
            switch (place.state) {
            | Empty => place
            | Player(p) => {...place, state: Player({...p, stats: increment(p.stats)})}

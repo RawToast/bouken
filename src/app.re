@@ -5,7 +5,7 @@ open Types;
 
 type route =
   | Home
-  | InGame(game)
+  | InGame(Types.game)
   | EndGame(string, int);
 
 type actions =
@@ -31,14 +31,13 @@ let ifGame = (f, route) => switch(route) {
 module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
 module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
 
-
 let make = (_children) => {
   ...component,
   initialState: () => Home,
   reducer: (act, route: route) =>
-    switch act {
+    switch act { /* These are returning 'Game' and need to return 'Route' */
     | MovePlayer(x, y) => route |> ifGame(Game.movePlayer(x, y) |> resultToUpdate)
-    | TakeStairs => route |> ifGame(Game.useStairs |> resultToUpdate)
+    | TakeStairs => route |> ifGame((Game.useStairs |> resultToUpdate))
     | UseExit => route |> ifGame(Game.useExit |> e => switch e {
       | EndGame(score) => NoUpdate
       | ContinueGame(_) => NoUpdate
@@ -47,6 +46,7 @@ let make = (_children) => {
   },
   render: (self) => {
     <div className="App">
+/*       
       (switch self.state {
       | Home => (ReasonReact.stringToElement("dave"))
       | EndGame(name, score) => (ReasonReact.stringToElement(name))
@@ -57,7 +57,7 @@ let make = (_children) => {
             takeStairs=(self.reduce(() => TakeStairs))
             useExit=(self.reduce(() => UseExit))
           />
-      })
+      }) */
     </div>
     },
 };
