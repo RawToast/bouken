@@ -9,11 +9,16 @@ type route =
   | InGame(Types.game)
   | EndGame(string, int);
 
-type actions =
+type gameAction =
   | MovePlayer(int, int)
   | TakeStairs
-  | UseExit
-  | ChangeRoute(route);
+  | UseExit;
+
+type appAction = 
+  | StartGame(string);
+
+type action = 
+  | GameAction(gameAction);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -39,30 +44,32 @@ let ifGameFlatMap = (f, route) => switch(route) {
 module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
 module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
 
-let make = (_children) => {
-  ...component,
-  initialState: () => Home,
-  reducer: (act, route) =>
-    switch act { /* These are returning 'Game' and need to return 'Route' */
-    | TakeStairs => route |> ifGameFlatMap(Game.useStairs(_)) |> gameToUpdate
-    | MovePlayer(x, y) => route |> ifGameFlatMap(Game.movePlayer(x, y)) |> gameToUpdate
-    | UseExit => route |> ifGameMap(Game.useExit) |> Option.fmap( e => switch e {
+let handleGameAction = (act, route) => switch act { /* These are returning 'Game' and need to return 'Route' */
+  | TakeStairs => route |> ifGameFlatMap(Game.useStairs(_)) |> gameToUpdate
+  | MovePlayer(x, y) => route |> ifGameFlatMap(Game.movePlayer(x, y)) |> gameToUpdate
+  | UseExit => route |> ifGameMap(Game.useExit) |> Option.fmap( e => switch e {
       | ContinueGame(game) => InGame(game)
       | EndGame(score, name) => EndGame(name, score)
     }) |> resultToUpdate
-    | ChangeRoute(r) => NoUpdate
+};
+
+let make = (_children) => {
+  ...component,
+  initialState: () => Home,
+  reducer: (act: action , route) => switch act {
+  | GameAction(gameAction) => handleGameAction(gameAction, route)
   },
   render: (self) => {
     <div className="App">
       (switch self.state {
-      | Home => (ReasonReact.stringToElement("dave"))
-      | EndGame(name, score) => (ReasonReact.stringToElement(name))
+      | Home => <StartView />
+      | EndGame(name, score) => (ReasonReact.stringToElement(name ++ " scored " ++ string_of_int(score) ++ " points"))
       | InGame(game) => 
           <GameView 
             game=(game)
-            movePlayer=(x => self.reduce((y) => MovePlayer(x, y)))
-            takeStairs=(self.reduce(() => TakeStairs))
-            useExit=(self.reduce(() => UseExit))
+            movePlayer=(x => self.reduce((y) => GameAction(MovePlayer(x, y))))
+            takeStairs=(self.reduce(() => GameAction(TakeStairs)))
+            useExit=(self.reduce(() => GameAction(UseExit)))
           />
       })
     </div>
