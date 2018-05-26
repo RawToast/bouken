@@ -6,10 +6,10 @@ open Jest;
 open Expect;
 
 let blankWorld = LevelBuilder.makeBlankLevel("test");
-let waterTile = { tile: WATER, state: EMPTY };
+let waterTile = { tile: WATER, state: Empty };
 
 let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
-let playerAt = (x, y) => PLAYER({name:"test", stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (x, y)});
+let playerAt = (x, y) => Player({name:"test", stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (x, y)});
 let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (9, 9) };
 
 describe("Level.modify", () => {
@@ -61,7 +61,7 @@ describe("Level.setPlayerLocation", () => {
     let result =
       blankWorld
       |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)}) 
-      |> Level.modifyTile(0, 1, { tile: WALL, state: EMPTY }) 
+      |> Level.modifyTile(0, 1, { tile: WALL, state: Empty }) 
       |> Level.setPlayerLocation(0, 1);
     
       expect(Result.isError(result)) |> toEqual(true);
@@ -71,7 +71,7 @@ describe("Level.setPlayerLocation", () => {
     let result =
       blankWorld
       |> Level.modifyTile(0, 0, { tile: GROUND, state: playerAt(0, 0)})
-      |> Level.modifyTile(0, 1, { tile: WATER, state: EMPTY }) 
+      |> Level.modifyTile(0, 1, { tile: WATER, state: Empty }) 
       |> Level.setPlayerLocation(0, 1);
     
       expect(Result.isOk(result)) |> toEqual(true);
@@ -147,7 +147,7 @@ describe("Area", () => {
     test("Can find an enemy", (_) => {
       let enemy =
         blankWorld
-        |> Level.modifyTile(0, 0, { tile: GROUND, state: ENEMY(initEnemy) })
+        |> Level.modifyTile(0, 0, { tile: GROUND, state: Enemy(initEnemy) })
         |> w => w.map |> Area.findEnemy("testenemy");
       
         expect(Rationale.Option.isSome(enemy)) |> toEqual(true);
@@ -155,7 +155,7 @@ describe("Area", () => {
     test("Returns none when there is no enemy", (_) => {
       let enemy =
         blankWorld
-        |> Level.modifyTile(0, 0, {tile: GROUND, state: ENEMY(initEnemy)}) 
+        |> Level.modifyTile(0, 0, {tile: GROUND, state: Enemy(initEnemy)}) 
         |> w => w.map |> Area.findEnemy("other enemy");
       
         expect(Rationale.Option.isSome(enemy)) |> toEqual(false);

@@ -30,9 +30,9 @@ let defaultPlayer = {
   location: ((-9), (-9)),
 };
 
-let playerAt = (x, y) => PLAYER({name: "test", stats: basicStats, gold: 5, location: (x, y)});
+let playerAt = (x, y) => Player({name: "test", stats: basicStats, gold: 5, location: (x, y)});
 
-let enemy = ENEMY({id: "enemy", name: "enemy", stats: basicStats});
+let enemy = Enemy({id: "enemy", name: "enemy", stats: basicStats});
 
 let modifiedLevel =
   blankWorld

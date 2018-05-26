@@ -96,4 +96,33 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
       });
     }) |> Option.fmap(GL.continue);
   };
+
+  let useExit = game => {
+    let currentLevel = W.currentLevel(game.world);
+
+    let currentExitScore: option(int) = currentLevel |>
+      Option.bind(_, level => {
+        let (x, y) = game.player.location;
+        Area.getPlace(x, y, level.map)
+          |> Option.bind(_, p => switch (p.tile) {
+            | EXIT(score) => Some(score)
+            | _ => None
+          });
+      });
+
+    let calculateScore = game => {
+      let baseScore = 1000;
+      let turnPenalty = int_of_float((game.turn /. 5.));
+      let goldBonus = game.player.gold;
+      let healthBonus = game.player.stats.health * 2;
+  
+      baseScore + healthBonus + goldBonus - turnPenalty;
+    };
+    let baseBonus = 1000;
+
+    switch(currentExitScore) {
+    | Some(score) => EndGame((score + baseBonus + calculateScore(game)), game.player.name);
+    | None => ContinueGame(game)
+    }
+  };
 };
