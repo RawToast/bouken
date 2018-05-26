@@ -52,7 +52,7 @@ describe("Game.UseStairs", () => {
     });
 
     test("Moves the current level", (_) => {
-      expect(newGame.world.current) |> toEqual("Floor 2");
+      expect(newGame.world.current) |> toEqual("Dungeon 2");
     });
 
     test("Updates the world map", (_) => {
@@ -80,7 +80,7 @@ describe("Game.ExitGame", () => {
     };
 
   describe("When the player is on an exit", () => {
-    let newLevel = Level.LevelBuilder.makeBlankLevel("Floor 1") 
+    let newLevel = Level.LevelBuilder.makeBlankLevel("Dungeon 1") 
     |> Level.Level.modifyTile(6, 6, 
       {tile: EXIT(100), 
         state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 

@@ -13,6 +13,12 @@ module LevelBuilder = {
       RList.repeat({tile: WATER, state: Empty}, 15) |> List.map(i => RList.repeat(i, 15));
     {name, map: emptyMap};
   };
+
+  let makeLevel = (name, sizeX, sizeY, defaultTile) => {
+    let emptyMap =
+      RList.repeat({tile: defaultTile, state: Empty}, sizeY) |> List.map(i => RList.repeat(i, sizeX));
+    {name, map: emptyMap};
+  };
 };
 
 module Tiles = {
