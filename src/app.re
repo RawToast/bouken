@@ -45,7 +45,7 @@ let ifGameFlatMap = (f, route) => switch(route) {
 module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
 module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
 
-let handleGameAction = (act, route) => switch act { /* These are returning 'Game' and need to return 'Route' */
+let handleGameAction = (act, route) => switch act {
   | TakeStairs => route |> ifGameFlatMap(Game.useStairs(_)) |> gameToUpdate
   | MovePlayer(x, y) => route |> ifGameFlatMap(Game.movePlayer(x, y)) |> gameToUpdate
   | UseExit => route |> ifGameMap(Game.useExit) |> Option.fmap( e => switch e {
