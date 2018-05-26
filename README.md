@@ -10,8 +10,8 @@ Rogue-like.
 - [x] Basic UI
 - [x] Keyboard based movement
 - [x] Multiple levels
-- [ ] Goal
-- [ ] Score
+- [x] Goal
+- [x] Score
 - [ ] Enemies
 - [ ] Player attack
 - [ ] Terrain
