@@ -20,7 +20,7 @@ module GameElements = {
       | EXIT(_) => stateToElement(t, "e")
       }
     |> str => (" " ++ str)
-    |> ReasonReact.stringToElement);
+    |> ReasonReact.string);
   let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
   (map) => map
     |> List.map(es => es |> tilesToElements)
@@ -50,15 +50,14 @@ let make = (~level: level, ~movePlayer, ~takeStairs, ~useExit, _children) => {
   ...component,
   didMount: (_) =>  {
     document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer, takeStairs, useExit));
-    NoUpdate;
   },
   render: _self =>
     <div className="GameMap">
       (
         GameElements.asElements(level.map)
           |> List.rev
-          |> List.map(ts => ts |> Array.of_list |> ReasonReact.arrayToElement)
-          |> Array.of_list |> ReasonReact.arrayToElement
+          |> List.map(ts => ts |> Array.of_list |> ReasonReact.array)
+          |> Array.of_list |> ReasonReact.array
       )
     </div>
 };

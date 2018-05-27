@@ -12,7 +12,7 @@
   ],
   "bs-dependencies": [
     "reason-react",
-    "bs-jest",
+    "@glennsl/bs-jest",
     "rationale",
     "bs-webapi"
   ],
