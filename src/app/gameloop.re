@@ -18,8 +18,11 @@ module CreateGameLoop: ((Types.Positions) => (Types.GameLoop)) = (Pos: Types.Pos
         /* This code should be moved to another module */
         let findActiveEnemies = area => 
           area |> List.mapi((xi: int, xs: list(place)) => 
-            xs |> List.mapi((yi: int, place: place) => /*todo*/ place)
-          ) |> List.flatten;
+            xs |> List.mapi((yi: int, place: place) => switch place.state {
+            | Enemy(e) => [ { enemy: e, position: (xi, yi) }]
+            | _ => []
+            } )
+          ) |> List.flatten |> List.flatten;
 
         let activeEnemies: list(enemyInfo) = game.world 
           |> World.currentLevel
