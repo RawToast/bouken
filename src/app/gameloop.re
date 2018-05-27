@@ -9,26 +9,30 @@ module CreateGameLoop: ((Types.Positions) => (Types.GameLoop)) = (Pos: Types.Pos
     enemy: enemy,
     position: (int, int)
   };
+/* This code should be moved to another module */
+let findActiveEnemies = area => 
+area |> List.mapi((xi: int, xs: list(place)) => 
+  xs |> List.mapi((yi: int, place: place) => switch place.state {
+  | Enemy(e) => [ { enemy: e, position: (xi, yi) }]
+  | _ => []
+  } ) |> List.flatten
+) |> List.flatten;
+  
   let loopCost = (1. /. Pos.divisor);
   let rec continue: game => game =
-    game =>
-      if (Pos.isActive(game.player.stats)) {
-        game;
-      } else {
-        /* This code should be moved to another module */
-        let findActiveEnemies = area => 
-          area |> List.mapi((xi: int, xs: list(place)) => 
-            xs |> List.mapi((yi: int, place: place) => switch place.state {
-            | Enemy(e) => [ { enemy: e, position: (xi, yi) }]
-            | _ => []
-            } )
-          ) |> List.flatten |> List.flatten;
-
-        let activeEnemies: list(enemyInfo) = game.world 
+    game => {
+      let activeEnemies: list(enemyInfo) = game.world 
           |> World.currentLevel
           |> Option.fmap(l => findActiveEnemies(l.map))
           |> Option.default([]);
 
+      if (Pos.isActive(game.player.stats)) {
+        game;
+      } else if (List.length(activeEnemies) >= 1) {
+        Js.Console.log("Enemy is active");
+        game;
+      } else {
+        /* No one is active */
         let maybeGame = game.world 
           |> World.currentLevel
           |> Rationale.Option.fmap(l => {
@@ -43,4 +47,5 @@ module CreateGameLoop: ((Types.Positions) => (Types.GameLoop)) = (Pos: Types.Pos
         | Some(g) => continue(g)
         };
     };
+  };
 };
