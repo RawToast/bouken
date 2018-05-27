@@ -165,7 +165,7 @@ module Area: Places = {
     };
 
     canMoveTo(x, y, area) 
-      |> Result.fmap(r => {
+      |> Result.fmap(_ => {
         let updatedPlayer = {... player, stats: { ... player.stats, position: player.stats.position -. cost}};
         let updatedArea = update(updatedPlayer, area);
         updatedArea;

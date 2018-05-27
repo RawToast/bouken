@@ -70,19 +70,19 @@ let make = (_children) => {
       (switch self.state {
       | Home => 
         <StartView 
-          startGame=(string => self.reduce(() => AppAction(StartGame(string)))())
+          startGame=(string => self.send(AppAction(StartGame(string))))
         />
       | EndGame(name, score) => 
         <div>
-          <div>(ReasonReact.stringToElement(name ++ " scored " ++ string_of_int(score) ++ " points"))</div>
-          <button onClick=(_ => Location.reload(location))>(stringToElement("Try again"))</button>
+          <div>(ReasonReact.string(name ++ " scored " ++ string_of_int(score) ++ " points"))</div>
+          <button onClick=(_ => Location.reload(location))>(string("Try again"))</button>
         </div>
       | InGame(game) => 
-          <GameView 
+          <GameView
             game=(game)
-            movePlayer=(x => self.reduce((y) => GameAction(MovePlayer(x, y))))
-            takeStairs=(self.reduce(() => GameAction(TakeStairs)))
-            useExit=(self.reduce(() => GameAction(UseExit)))
+            takeStairs=(() => self.send(GameAction(TakeStairs)))
+            useExit=(() => self.send(GameAction(UseExit)))
+            movePlayer=((x, y) => self.send(GameAction(MovePlayer(x, y))))
           />
       })
     </div>
