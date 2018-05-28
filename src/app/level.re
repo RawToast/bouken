@@ -171,6 +171,27 @@ module Area: Places = {
         updatedArea;
       });
   };
+
+  let setEnemyAt = (x: int, y: int, enemy: enemy, cost: float, area: area) => {
+    let update = (enemy, map) => {
+      map |>
+      List.mapi((xi: int, xs: list(place)) =>
+        if (xi == y) {
+            xs |> List.mapi((yi: int, place: place) =>
+            if (yi == x) { 
+              { ...place, state: Enemy(enemy) }
+            } else place);
+        } else xs
+      );
+    };
+
+    canMoveTo(x, y, area) 
+      |> Result.fmap(_ => {
+        let updatedEnemy = {... enemy, stats: { ... enemy.stats, position: enemy.stats.position -. cost}};
+        let updatedArea = update(updatedEnemy, area);
+        updatedArea;
+      });
+  };
   
   let movePlayer(x: int, y: int, cost:float, area: area) = {
     let playerOpt = findPlayer(area);

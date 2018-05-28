@@ -6,7 +6,7 @@ module World: World = {
 
   let listHorizontal = (x, y, tx) => RList.rangeInt(1, x, tx) |> List.map(i => (i, y));
   let listVertical = (x, y, ty) => RList.rangeInt(1, y, ty) |> List.map(i => (x, i));
-  let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
+  let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 0.5, position: 0. }};
   let newEnemy = id => {id: id, name: "zombie", stats: { health: 3, speed: 1.0, position: 0. }};
 
   let create = player => {

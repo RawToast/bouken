@@ -1,5 +1,4 @@
 /* Basic types */
-
 type stats = {
   health: int,
   speed: float,
@@ -97,6 +96,7 @@ module type Places = {
   let removeOccupant: (int, int, area) => area;
   let movePlayer: (int, int, float, area) => Js.Result.t (playerArea, error);
   let setPlayerAt: (int, int, player, float, area) => Js.Result.t (area, error);
+  let setEnemyAt: (int, int, enemy, float, area) => Js.Result.t (area, error);
   let getPlace: (int, int, area) => option(place);
   let findStairs: (int, area) => option(place);
   let locationOfStairs: (int, area) => option((int, int));

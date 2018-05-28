@@ -1,4 +1,3 @@
-
 open ReasonReact;
 
 let component = ReasonReact.reducerComponent("StartView");
