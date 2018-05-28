@@ -143,12 +143,12 @@ module Area: Places = {
     canMoveTo(x, y, area) 
       |> Result.bind(_, _r =>
         findPlayer(area) 
-      |> Option.fmap((p: player) => {... p, stats: { ... p.stats, position: p.stats.position -. cost}})
-      |> Option.fmap(p => update(p, area) ) 
-      |> o => switch (o) {
-        | None => error(InvalidState)
-        | Some(result) => success(result)
-    })
+        |> Option.fmap((p: player) => {... p, stats: { ... p.stats, position: p.stats.position -. cost}})
+        |> Option.fmap(p => update(p, area) ) 
+        |> o => switch (o) {
+          | None => error(InvalidState)
+          | Some(result) => success(result)
+      })
   };
 
   let setPlayerAt = (x: int, y: int, player: player, cost: float, area: area) => {
@@ -173,13 +173,13 @@ module Area: Places = {
   };
 
   let setEnemyAt = (x: int, y: int, enemy: enemy, cost: float, area: area) => {
-    let update = (enemy, map) => {
+    let update = (e, map) => {
       map |>
       List.mapi((xi: int, xs: list(place)) =>
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
             if (yi == x) { 
-              { ...place, state: Enemy(enemy) }
+              { ...place, state: Enemy(e) }
             } else place);
         } else xs
       );
@@ -187,7 +187,7 @@ module Area: Places = {
 
     canMoveTo(x, y, area) 
       |> Result.fmap(_ => {
-        let updatedEnemy = {... enemy, stats: { ... enemy.stats, position: enemy.stats.position -. cost}};
+        let updatedEnemy = {... enemy, stats: { ... enemy.stats, position: (enemy.stats.position -. cost)}};
         let updatedArea = update(updatedEnemy, area);
         updatedArea;
       });

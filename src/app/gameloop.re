@@ -32,6 +32,7 @@ let findActiveEnemies = area =>
         /* relocate */
         let levelOpt = World.currentLevel(game.world);
         let activeEnemy = List.hd(activeEnemies);
+        Js.Console.log(activeEnemy.enemy.name ++ " is active");        
         
         let setEnemy = (area, enemyInfo) => {
           let (x, y) = enemyInfo.position;
@@ -85,11 +86,13 @@ let findActiveEnemies = area =>
           };
         };
 
-        let updatedLevel = Option.bind(levelOpt, level => {
+        let updatedGame = Option.bind(levelOpt, level => {
           if (canAttack(level.map, activeEnemy)) {
+            Js.Console.log(activeEnemy.enemy.name ++ " can attack");
 
-            attack(activeEnemy, level.map)
-               |> Option.fmap(r => {
+            setEnemy(level.map, activeEnemy) 
+              |> Option.bind(_, map => attack(activeEnemy, map))
+              |> Option.fmap(r => {
               let (area, player) = r;
 
               {...level, map: area}
@@ -97,6 +100,7 @@ let findActiveEnemies = area =>
                 |> w => {...game, world: w, player: player}
             })
           } else {
+            Js.Console.log("is sleeping");
             /* Wait / sleep */
             setEnemy(level.map, activeEnemy) 
             |> Option.fmap(map => {...level, map: map })
@@ -104,8 +108,12 @@ let findActiveEnemies = area =>
             |> Option.fmap(w => {...game, world: w})
           }
         });
-        
-        Option.default(game, updatedLevel);
+        Js.Console.log("is some " ++ string_of_bool(Option.isSome(updatedGame)));
+
+        switch updatedGame {
+          | None => game
+          | Some(g) => continue(g)
+          };
       } else {
         /* No one is active */
         let maybeGame = game.world 
