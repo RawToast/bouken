@@ -4,11 +4,11 @@ open Rationale;
 module CreateGameLoop: ((Types.Positions) => (Types.GameLoop)) = (Pos: Types.Positions) => {
   open World;
 
-  /* let enemyLogic = enemy => enemy; */
   type enemyInfo = {
     enemy: enemy,
     position: (int, int)
   };
+
 /* This code should be moved to another module */
 let findActiveEnemies = area => 
   area |> List.mapi((xi: int, xs: list(place)) => 
@@ -29,6 +29,7 @@ let findActiveEnemies = area =>
       if (Pos.isActive(game.player.stats)) {
         game;
       } else if (List.length(activeEnemies) >= 1) {
+        /* relocate */
         let levelOpt = World.currentLevel(game.world);
         let activeEnemy = List.hd(activeEnemies);
         Js.Console.log(activeEnemy.enemy.name ++ " is active");        
@@ -38,12 +39,44 @@ let findActiveEnemies = area =>
           Level.Area.setEnemyAt(x, y, enemyInfo.enemy, 1., area) |> Rationale.Option.ofResult
         };
 
-        let updatedLevel = Option.bind(levelOpt, level => 
-          setEnemy(level.map, activeEnemy) 
+        let canAttack = (area, enemyInfo) => {
+          let (x, y) = enemyInfo.position;
+          let targetX = [(x-1), x, (x+1)] |> List.filter(x => x >= 0);
+          let targetY = [(y-1), y, (y+1)] |> List.filter(y => y >= 0);
+          let targets = targetY |> List.map(y => (targetX |> List.map(x => (x, y)))) |> List.flatten;
+          
+          let attackable = targets 
+            |> List.filter(pos => {
+              let (x, y) = pos;
+              Level.Area.getPlace(x, y, area)
+                |> Option.fmap(p => isPlayer(p))
+                |> Option.default(false)
+            }
+          );
+
+          if (List.length(attackable) >= 1) {
+            true
+          } else {
+            false
+          };
+        };
+
+        let updatedLevel = Option.bind(levelOpt, level => {
+          if (canAttack(level.map, activeEnemy)) {
+            Js.Console.log(activeEnemy.enemy.name ++ " can attack");
+
+            setEnemy(level.map, activeEnemy) 
             |> Option.fmap(map => {...level, map: map })
-            |> Option.fmap(l => World.updateLevel(l,game.world))
+            |> Option.fmap(l => World.updateLevel(l, game.world))
             |> Option.fmap(w => {...game, world: w})
-        );
+          } else {
+            /* Wait / sleep */
+            setEnemy(level.map, activeEnemy) 
+            |> Option.fmap(map => {...level, map: map })
+            |> Option.fmap(l => World.updateLevel(l, game.world))
+            |> Option.fmap(w => {...game, world: w})
+          }
+        });
         
         Option.default(game, updatedLevel);
       } else {

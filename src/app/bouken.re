@@ -28,7 +28,6 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
                   let nl = { ... l, map: pa.area};
                   let world = W.updateLevel(nl, game.world);
 
-                  let (posx, posy) = pa.player.location;
                   {... game, player: pa.player, world: world };
               }))
       |> Option.fmap(GL.continue);
