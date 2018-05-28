@@ -39,13 +39,7 @@ let findActiveEnemies = area =>
           Level.Area.setEnemyAt(x, y, enemyInfo.enemy, 1., area) |> Rationale.Option.ofResult
         };
 
-        let canAttack = (area, enemyInfo) => {
-          let (x, y) = enemyInfo.position;
-          let targetX = [(x-1), x, (x+1)] |> List.filter(x => x >= 0);
-          let targetY = [(y-1), y, (y+1)] |> List.filter(y => y >= 0);
-          let targets = targetY |> List.map(y => (targetX |> List.map(x => (x, y)))) |> List.flatten;
-          
-          let attackable = targets 
+        let attackablePlaces = (targets, area) => targets 
             |> List.filter(pos => {
               let (x, y) = pos;
               Level.Area.getPlace(x, y, area)
@@ -54,10 +48,41 @@ let findActiveEnemies = area =>
             }
           );
 
+        let findTargets = (~range=1, enemyInfo) => {
+          let (x, y) = enemyInfo.position;
+          let targetX = [(x-range), x, (x+range)] |> List.filter(x => x >= 0);
+          let targetY = [(y-range), y, (y+range)] |> List.filter(y => y >= 0);
+          targetY |> List.map(y => (targetX |> List.map(x => (x, y)))) |> List.flatten;
+        };
+
+        let canAttack = (~range=1, area, enemyInfo) => {
+          let targets = findTargets(~range=range, enemyInfo);
+          let attackable = attackablePlaces(targets, area);
+
           if (List.length(attackable) >= 1) {
             true
           } else {
             false
+          };
+        };
+
+        let attack = (enemyInfo, area) => {
+          let targets = enemyInfo |> findTargets |> attackablePlaces(_, area);
+          if (List.length(targets) >= 1) {
+            let (x,y) = List.hd(targets);
+            let place = Level.Area.getPlace(x, y, area);
+
+            Option.bind(place, place =>
+                switch place.state {
+                  | Player(p) => Some(p)
+                  | _ => None;
+                })
+              |> Option.fmap((player:player) => { ...player, stats: {...player.stats, health: player.stats.health - 1} } )
+              |> Option.bind(_, player => Level.Area.setPlayerAt(x, y, player, 0., area) 
+                |> Option.ofResult 
+                |> Option.fmap(area => (area, player)));
+            } else {
+            None
           };
         };
 
@@ -66,9 +91,14 @@ let findActiveEnemies = area =>
             Js.Console.log(activeEnemy.enemy.name ++ " can attack");
 
             setEnemy(level.map, activeEnemy) 
-            |> Option.fmap(map => {...level, map: map })
-            |> Option.fmap(l => World.updateLevel(l, game.world))
-            |> Option.fmap(w => {...game, world: w})
+              |> Option.bind(_, map => attack(activeEnemy, map))
+               |> Option.fmap(r => {
+              let (area, player) = r;
+
+              {...level, map: area}
+                |> lvl => World.updateLevel(lvl, game.world)
+                |> w => {...game, world: w, player: player}
+            })
           } else {
             /* Wait / sleep */
             setEnemy(level.map, activeEnemy) 
