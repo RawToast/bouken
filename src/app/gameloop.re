@@ -32,7 +32,6 @@ let findActiveEnemies = area =>
         /* relocate */
         let levelOpt = World.currentLevel(game.world);
         let activeEnemy = List.hd(activeEnemies);
-        Js.Console.log(activeEnemy.enemy.name ++ " is active");        
         
         let setEnemy = (area, enemyInfo) => {
           let (x, y) = enemyInfo.position;
@@ -89,8 +88,7 @@ let findActiveEnemies = area =>
         let updatedLevel = Option.bind(levelOpt, level => {
           if (canAttack(level.map, activeEnemy)) {
 
-            setEnemy(level.map, activeEnemy) 
-              |> Option.bind(_, map => attack(activeEnemy, map))
+            attack(activeEnemy, level.map)
                |> Option.fmap(r => {
               let (area, player) = r;
 
