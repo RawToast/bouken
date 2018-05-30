@@ -42,7 +42,8 @@ let ifGameFlatMap = (f, route) => switch(route) {
   |  _ => None
 };
 
-module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
+module Positions = Positions.BasicPositions;
+module BasicTurnLoop = Gameloop.CreateGameLoop(Positions, Gameloop.CreateEnemyLoop(Positions, Level.Area));
 module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
 
 let handleGameAction = (act, route) => switch act {

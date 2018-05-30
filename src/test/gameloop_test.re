@@ -2,7 +2,8 @@ open Types;
 open Jest;
 open Expect;
 
-module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
+module Positions = Positions.BasicPositions;
+module BasicTurnLoop = Gameloop.CreateGameLoop(Positions, Gameloop.CreateEnemyLoop(Positions, Level.Area));
 module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
 
 describe("TurnLoop.continue", () => {

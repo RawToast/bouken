@@ -18,6 +18,11 @@ type enemy = {
   stats: stats
 };
 
+type enemyInfo = {
+  enemy: enemy,
+  location: (int, int)
+};
+
 type link = {
   id: int,
   level: string,
