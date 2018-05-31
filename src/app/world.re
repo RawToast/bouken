@@ -1,14 +1,27 @@
 open Types;
 
 module World: World = {
-  open Rationale;
+  let updateLevel = (level, world) => { 
+    let newLevels = world.levels 
+      |> List.map(l => if (level.name == l.name) { level } else { l });
+    
+    { ... world, levels: newLevels };
+  };
+
+  let selectLevel = (name, world) => world.levels |> Rationale.RList.find(l => l.name == name);
+
+  let currentLevel = (world) => selectLevel(world.current, world);
+};
+
+
+module Builder: WorldBuilder = {
   open Level;
+  open Rationale;
 
   let listHorizontal = (x, y, tx) => RList.rangeInt(1, x, tx) |> List.map(i => (i, y));
   let listVertical = (x, y, ty) => RList.rangeInt(1, y, ty) |> List.map(i => (x, i));
   let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 0.5, position: 0. }};
   let newEnemy = id => {id: id, name: id, stats: { health: 3, speed: 0.8, position: 0. }};
-
   let create = player => {
     let initLevel = player =>
         LevelBuilder.makeBlankLevel("Dungeon 1")
@@ -70,15 +83,4 @@ module World: World = {
 
     { levels: [ initLevel(player), swamp, cave, level2, level3, level4, level5], current: "Dungeon 1"  }
   };
-
-  let updateLevel = (level, world) => { 
-    let newLevels = world.levels 
-      |> List.map(l => if (level.name == l.name) { level } else { l });
-    
-    { ... world, levels: newLevels };
-  };
-
-  let selectLevel = (name, world) => world.levels |> Rationale.RList.find(l => l.name == name);
-
-  let currentLevel = (world) => selectLevel(world.current, world);
 };

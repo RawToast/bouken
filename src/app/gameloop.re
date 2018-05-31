@@ -6,9 +6,14 @@ module type EnemyLoop = {
   let setEnemy: (area, enemyInfo) => option(area);
   let attackablePlaces: (list((int, int)), area) => list((int, int));
   let findTargets: (~range: int=?, Types.enemyInfo) => list((int, int))
+
+  let canAttack: (~range: int=?, Types.area, Types.enemyInfo) => bool;
+  let attack: (Types.enemyInfo, Types.area) => option((Types.area, Types.player));
+  let enemyLogic: (Types.enemyInfo, Types.level, Types.game) => option(Types.game);
 };
 
-module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places) => {
+module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: World) => {
+  
   let findActiveEnemies = area => 
     area |> List.mapi((xi: int, xs: list(place)) => 
       xs |> List.mapi((yi: int, place: place) => switch place.state {
@@ -36,12 +41,67 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places) => {
     let targetY = [(y-range), y, (y+range)] |> List.filter(y => y >= 0);
     targetY |> List.map(y => (targetX |> List.map(x => (x, y)))) |> List.flatten;
   };
+
+
+
+  let canAttack = (~range=1, area, enemyInfo) => {
+    let targets = findTargets(~range=range, enemyInfo);
+    let attackable = attackablePlaces(targets, area);
+
+    if (List.length(attackable) >= 1) {
+      true
+    } else {
+      false
+    };
+  };
+
+  let attack = (enemyInfo, area) => {
+    let targets = enemyInfo |> findTargets |> attackablePlaces(_, area);
+    if (List.length(targets) >= 1) {
+      let (x,y) = List.hd(targets);
+      let place = Places.getPlace(x, y, area);
+
+      Option.bind(place, place =>
+          switch place.state {
+            | Player(p) => Some(p)
+            | _ => None;
+          })
+        |> Option.fmap((player:player) => { ...player, stats: {...player.stats, health: player.stats.health - 1} } )
+        |> Option.bind(_, player => Places.setPlayerAt(x, y, player, 0., area) 
+          |> Option.ofResult 
+          |> Option.fmap(area => (area, player)));
+      } else {
+      None
+    };
+  };
+
+  let enemyLogic = (activeEnemy, level, game) => {
+    if (canAttack(level.map, activeEnemy)) {
+      Js.Console.log(activeEnemy.enemy.name ++ " can attack");
+
+      setEnemy(level.map, activeEnemy) 
+        |> Option.bind(_, map => attack(activeEnemy, map))
+        |> Option.fmap(r => {
+        let (area, player) = r;
+
+        {...level, map: area}
+          |> lvl => World.updateLevel(lvl, game.world)
+          |> w => {...game, world: w, player: player}
+      })
+    } else {
+      Js.Console.log("is sleeping");
+      /* Wait / sleep */
+      setEnemy(level.map, activeEnemy) 
+      |> Option.fmap(map => {...level, map: map })
+      |> Option.fmap(l => World.updateLevel(l, game.world))
+      |> Option.fmap(w => {...game, world: w})
+    }
+  };
 };
 
 module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
   open World;
 
-/* This code should be moved to another module */
   let loopCost = (1. /. Pos.divisor);
   let rec continue: game => game =
     game => {
@@ -58,59 +118,9 @@ module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
         let activeEnemy = List.hd(activeEnemies);
         Js.Console.log(activeEnemy.enemy.name ++ " is active");        
 
-        let canAttack = (~range=1, area, enemyInfo) => {
-          let targets = EL.findTargets(~range=range, enemyInfo);
-          let attackable = EL.attackablePlaces(targets, area);
-
-          if (List.length(attackable) >= 1) {
-            true
-          } else {
-            false
-          };
-        };
-
-        let attack = (enemyInfo, area) => {
-          let targets = enemyInfo |> EL.findTargets |> EL.attackablePlaces(_, area);
-          if (List.length(targets) >= 1) {
-            let (x,y) = List.hd(targets);
-            let place = Level.Area.getPlace(x, y, area);
-
-            Option.bind(place, place =>
-                switch place.state {
-                  | Player(p) => Some(p)
-                  | _ => None;
-                })
-              |> Option.fmap((player:player) => { ...player, stats: {...player.stats, health: player.stats.health - 1} } )
-              |> Option.bind(_, player => Level.Area.setPlayerAt(x, y, player, 0., area) 
-                |> Option.ofResult 
-                |> Option.fmap(area => (area, player)));
-            } else {
-            None
-          };
-        };
-
-        let updatedGame = Option.bind(levelOpt, level => {
-          if (canAttack(level.map, activeEnemy)) {
-            Js.Console.log(activeEnemy.enemy.name ++ " can attack");
-
-            EL.setEnemy(level.map, activeEnemy) 
-              |> Option.bind(_, map => attack(activeEnemy, map))
-              |> Option.fmap(r => {
-              let (area, player) = r;
-
-              {...level, map: area}
-                |> lvl => World.updateLevel(lvl, game.world)
-                |> w => {...game, world: w, player: player}
-            })
-          } else {
-            Js.Console.log("is sleeping");
-            /* Wait / sleep */
-            EL.setEnemy(level.map, activeEnemy) 
-            |> Option.fmap(map => {...level, map: map })
-            |> Option.fmap(l => World.updateLevel(l, game.world))
-            |> Option.fmap(w => {...game, world: w})
-          }
-        });
+        let updatedGame = Option.bind(levelOpt, level =>
+          EL.enemyLogic(activeEnemy, level, game)
+        );
         Js.Console.log("is some " ++ string_of_bool(Option.isSome(updatedGame)));
 
         switch updatedGame {

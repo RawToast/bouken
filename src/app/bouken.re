@@ -1,4 +1,5 @@
-module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.GameLoop, W: Types.World) => {
+module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.Game)) = 
+  (GL: Types.GameLoop, W: Types.World, WB: Types.WorldBuilder) => {
     
   open Rationale;
   open Level;
@@ -8,7 +9,7 @@ module CreateGame: ((Types.GameLoop, Types.World) => (Types.Game)) = (GL: Types.
 
   let initgame = pname => initPlayer(pname) |> p => {
       player: p,
-      world: W.create(p),
+      world: WB.create(p),
       turn: 0.
       };
 

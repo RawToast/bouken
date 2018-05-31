@@ -88,10 +88,13 @@ let isPlayer = place => switch place.state {
 
 /* Modules */
 module type World = {
-  let create: player => world;
   let updateLevel: (level, world) => world;
   let currentLevel: world => option(level);
   let selectLevel: (string, world) => option(level);
+};
+
+module type WorldBuilder = {
+  let create: player => world;
 };
 
 module type Places = {
