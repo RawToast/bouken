@@ -1,6 +1,5 @@
 open Types;
 open Rationale;
-open Enemy;
 
 module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
   open World;
