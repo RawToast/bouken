@@ -123,13 +123,10 @@ module type GameLoop = {
 
 module type EnemyLoop = {
   let findActiveEnemies: area => list(enemyInfo);
-  let setEnemy: (area, enemyInfo) => option(area);
-  let attackablePlaces: (list((int, int)), area) => list((int, int));
-  let findTargets: (~range: int=?, enemyInfo) => list((int, int))
 
   let canAttack: (~range: int=?, area, enemyInfo) => bool;
   let attack: (enemyInfo, area) => option((area, player));
-  let enemyLogic: (enemyInfo, level, game) => option(game);
+  let takeTurn: (enemyInfo, level, game) => option(game);
 };
 
 module type Game = {

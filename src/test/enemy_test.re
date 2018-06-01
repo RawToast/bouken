@@ -19,8 +19,6 @@ describe("EnemyLoop", () => {
 
   let blankLevel = Level.LevelBuilder.makeBlankLevel("Dungeon 1");
 
-  
-
   describe("findActiveEnemies", () => {
     let level = blankLevel
         |> Level.Level.modifyTile(0, 0, { tile: GROUND, state: Enemy(activeEnemy)})
@@ -33,7 +31,7 @@ describe("EnemyLoop", () => {
     });
   });
 
-  describe("enemyLogic", () => {
+  describe("takeTurn", () => {
     open Rationale.Option;
     let active = quickEnemy("1", 1.);
     let newLevel = blankLevel
@@ -43,17 +41,14 @@ describe("EnemyLoop", () => {
     let newWorld = World.World.updateLevel(newLevel, game.world);
 
     let initGame = { ... game, world: newWorld};
-    let postLoop = EnemyLoop.enemyLogic({ enemy: active, location: (0, 0) }, newLevel, initGame);
+    let postLoop = EnemyLoop.takeTurn({ enemy: active, location: (0, 0) }, newLevel, initGame);
 
     test("Does not change the current level", (_) => {
       let level = postLoop >>= (game => World.World.currentLevel(game.world));
-
-      /* let level = World.World.currentLevel(initGame.world); */
-
       expect(Rationale.Option.isSome(level)) |> toBe(true);
     });
 
-    test("Does not change the current level", (_) => {
+    test("Resets the active enemies position", (_) => {
       let activeEnemies = postLoop >>= (game => World.World.currentLevel(game.world))
         |> Rationale.Option.fmap(l => EnemyLoop.findActiveEnemies(l.map))
         |> Rationale.Option.fmap(List.length)

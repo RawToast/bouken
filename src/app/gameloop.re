@@ -21,7 +21,7 @@ module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
         Js.Console.log(activeEnemy.enemy.name ++ " is active");        
 
         let updatedGame = Option.bind(levelOpt, level =>
-          EL.enemyLogic(activeEnemy, level, game)
+          EL.takeTurn(activeEnemy, level, game)
         );
         Js.Console.log("is some " ++ string_of_bool(Option.isSome(updatedGame)));
 
