@@ -4,8 +4,8 @@ open Rationale;
 module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: World) => {
 
   let findActiveEnemies = area => 
-    area |> List.mapi((xi: int, xs: list(place)) => 
-      xs |> List.mapi((yi: int, place: place) => switch place.state {
+    area |> List.mapi((yi: int, xs: list(place)) => 
+      xs |> List.mapi((xi: int, place: place) => switch place.state {
       | Enemy(e) => if(Pos.isActive(e.stats)){[ { enemy: e, location: (xi, yi) }]} else {[]}
       | _ => []
       } ) |> List.flatten

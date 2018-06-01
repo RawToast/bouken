@@ -3,10 +3,8 @@ open Types;
 open Jest;
 open Expect;
 
-module Positions = Positions.BasicPositions;
-module EnemyLoop = Enemy.CreateEnemyLoop(Positions, Level.Area, World.World);
-module BasicTurnLoop = Gameloop.CreateGameLoop(Positions, EnemyLoop);
-module Game = Bouken.CreateGame(BasicTurnLoop, World.World, World.Builder);
+module EnemyLoop = Modules.EnemyLoop;
+module Game = Modules.Game;
 
 describe("EnemyLoop", () => {
   let game = Game.create("dave");
@@ -21,7 +19,7 @@ describe("EnemyLoop", () => {
 
   describe("findActiveEnemies", () => {
     let level = blankLevel
-        |> Level.Level.modifyTile(0, 0, { tile: GROUND, state: Enemy(activeEnemy)})
+        |> Level.Level.modifyTile(0, 5, { tile: GROUND, state: Enemy(activeEnemy)})
         |> Level.Level.modifyTile(10, 10, { tile: GROUND, state: Enemy({...activeEnemy, id: "alt"})});
 
     let activeEnemies = EnemyLoop.findActiveEnemies(level.map);
@@ -29,19 +27,39 @@ describe("EnemyLoop", () => {
     test("Finds any active enemies", (_) => {
         expect(List.length(activeEnemies)) |> toEqual(2);
     });
+
+    test("Includes the first enemies location", (_) => {
+      let activeEnemies = EnemyLoop.findActiveEnemies(level.map);
+
+      expect(activeEnemies 
+        |> Rationale.RList.any(ei => {
+          let (x, y) = ei.location;
+          (x == 10) && (y == 10)}))
+        |> toBe(true);
+    });
+
+    test("Includes the second enemies location", (_) => {
+      let activeEnemies = EnemyLoop.findActiveEnemies(level.map);
+
+      expect(activeEnemies 
+        |> Rationale.RList.any(ei => {
+          let (x, y) = ei.location;
+          (x == 0) && (y == 5)}))
+        |> toBe(true);
+    });
   });
 
   describe("takeTurn", () => {
     open Rationale.Option;
     let active = quickEnemy("1", 1.);
     let newLevel = blankLevel
-      |> Level.Level.modifyTile(0, 0, { tile: GROUND, state: Enemy(active) })
+      |> Level.Level.modifyTile(1, 0, { tile: GROUND, state: Enemy(active) })
       |> Level.Level.modifyTile(10, 10, { tile: GROUND, state: Enemy(quickEnemy("2", 0.5)) });
 
     let newWorld = World.World.updateLevel(newLevel, game.world);
 
     let initGame = { ... game, world: newWorld};
-    let postLoop = EnemyLoop.takeTurn({ enemy: active, location: (0, 0) }, newLevel, initGame);
+    let postLoop = EnemyLoop.takeTurn({ enemy: active, location: (1, 0) }, newLevel, initGame);
 
     test("Does not change the current level", (_) => {
       let level = postLoop >>= (game => World.World.currentLevel(game.world));

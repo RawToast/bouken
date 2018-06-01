@@ -42,9 +42,7 @@ let ifGameFlatMap = (f, route) => switch(route) {
   |  _ => None
 };
 
-module Positions = Positions.BasicPositions;
-module BasicTurnLoop = Gameloop.CreateGameLoop(Positions, Enemy.CreateEnemyLoop(Positions, Level.Area, World.World));
-module Game = Bouken.CreateGame(BasicTurnLoop, World.World, World.Builder);
+module Game = Modules.Game;
 
 let handleGameAction = (act, route) => switch act {
   | TakeStairs => route |> ifGameFlatMap(Game.useStairs(_)) |> gameToUpdate

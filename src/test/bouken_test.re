@@ -1,14 +1,10 @@
-open Bouken;
 open Types;
 open Rationale;
 
 open Jest;
 open Expect;
 
-module Positions = Positions.BasicPositions;
-module BasicTurnLoop = Gameloop.CreateGameLoop(Positions, Enemy.CreateEnemyLoop(Positions, Level.Area, World.World));
-module Game = CreateGame(BasicTurnLoop, World.World, World.Builder);
-
+module Game = Modules.Game;
 
 describe("Game.Create", () => {
   test("Creates a new game", (_) => {
