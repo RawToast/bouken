@@ -34,6 +34,7 @@ describe("EnemyLoop", () => {
   });
 
   describe("enemyLogic", () => {
+    open Rationale.Option;
     let active = quickEnemy("1", 1.);
     let newLevel = blankLevel
       |> Level.Level.modifyTile(0, 0, { tile: GROUND, state: Enemy(active) })
@@ -45,9 +46,20 @@ describe("EnemyLoop", () => {
     let postLoop = EnemyLoop.enemyLogic({ enemy: active, location: (0, 0) }, newLevel, initGame);
 
     test("Does not change the current level", (_) => {
-      let level = World.World.currentLevel(initGame.world);
+      let level = postLoop >>= (game => World.World.currentLevel(game.world));
+
+      /* let level = World.World.currentLevel(initGame.world); */
 
       expect(Rationale.Option.isSome(level)) |> toBe(true);
+    });
+
+    test("Does not change the current level", (_) => {
+      let activeEnemies = postLoop >>= (game => World.World.currentLevel(game.world))
+        |> Rationale.Option.fmap(l => EnemyLoop.findActiveEnemies(l.map))
+        |> Rationale.Option.fmap(List.length)
+        |> Rationale.Option.default(99);
+
+      expect(activeEnemies) |> toBe(0);
     });
   });
 });

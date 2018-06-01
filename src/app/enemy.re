@@ -44,18 +44,19 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     };
 
     let attack = (enemyInfo, area) => {
+      open Rationale.Option;
       let targets = enemyInfo |> findTargets |> attackablePlaces(_, area);
       if (List.length(targets) >= 1) {
         let (x,y) = List.hd(targets);
         let place = Places.getPlace(x, y, area);
-  
-        Option.bind(place, place =>
+
+        place >>= (place =>
             switch place.state {
               | Player(p) => Some(p)
               | _ => None;
             })
           |> Option.fmap((player:player) => { ...player, stats: {...player.stats, health: player.stats.health - 1} } )
-          |> Option.bind(_, player => Places.setPlayerAt(x, y, player, 0., area) 
+          >>= (player => Places.setPlayerAt(x, y, player, 0., area) 
             |> Option.ofResult 
             |> Option.fmap(area => (area, player)));
         } else {
