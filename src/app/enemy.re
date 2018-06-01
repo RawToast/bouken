@@ -2,7 +2,7 @@ open Types;
 open Rationale;
 
 module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: World) => {
-  
+
     let findActiveEnemies = area => 
       area |> List.mapi((xi: int, xs: list(place)) => 
         xs |> List.mapi((yi: int, place: place) => switch place.state {
@@ -10,11 +10,12 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
         | _ => []
         } ) |> List.flatten
       ) |> List.flatten;
-  
+
     let setEnemy = (area, enemyInfo) => {
       let (x, y) = enemyInfo.location;
       Places.setEnemyAt(x, y, enemyInfo.enemy, 1., area) |> Rationale.Option.ofResult
     };
+
     let attackablePlaces = (targets, area) => targets 
         |> List.filter(pos => {
           let (x, y) = pos;
@@ -23,16 +24,14 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
             |> Option.default(false)
         }
       );
-  
+
     let findTargets = (~range=1, enemyInfo) => {
       let (x, y) = enemyInfo.location;
       let targetX = [(x-range), x, (x+range)] |> List.filter(x => x >= 0);
       let targetY = [(y-range), y, (y+range)] |> List.filter(y => y >= 0);
       targetY |> List.map(y => (targetX |> List.map(x => (x, y)))) |> List.flatten;
     };
-  
-  
-  
+
     let canAttack = (~range=1, area, enemyInfo) => {
       let targets = findTargets(~range=range, enemyInfo);
       let attackable = attackablePlaces(targets, area);
@@ -43,7 +42,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
         false
       };
     };
-  
+
     let attack = (enemyInfo, area) => {
       let targets = enemyInfo |> findTargets |> attackablePlaces(_, area);
       if (List.length(targets) >= 1) {
