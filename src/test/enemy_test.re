@@ -17,6 +17,19 @@ describe("EnemyLoop", () => {
 
   let blankLevel = Level.LevelBuilder.makeBlankLevel("Dungeon 1");
 
+  let gameWithAttackablePlayer = (game) => {
+    let (x, y) = game.player.location;
+    let newLevel = blankLevel
+      |> Level.Level.modifyTile(
+        x, y + 1, 
+        { tile: GROUND, state: Enemy(activeEnemy) })
+      |> Level.Level.modifyTile(
+        x, y, 
+        { tile: GROUND, state: Player(game.player) });
+    let newWorld = World.World.updateLevel(newLevel, game.world);
+    ({ ... game, world: newWorld}, newLevel);
+  };
+
   describe("findActiveEnemies", () => {
     let level = blankLevel
         |> Level.Level.modifyTile(0, 5, { tile: GROUND, state: Enemy(activeEnemy)})
@@ -66,13 +79,29 @@ describe("EnemyLoop", () => {
       expect(Rationale.Option.isSome(level)) |> toBe(true);
     });
 
-    test("Resets the active enemies position", (_) => {
+    test("Resets any sleeping enemies position", (_) => {
       let activeEnemies = postLoop >>= (game => World.World.currentLevel(game.world))
         |> Rationale.Option.fmap(l => EnemyLoop.findActiveEnemies(l.map))
         |> Rationale.Option.fmap(List.length)
         |> Rationale.Option.default(99);
 
       expect(activeEnemies) |> toBe(0);
+    });
+  });
+
+  describe("can attack", () => {
+    test("returns true when the player is in range", (_) => {
+      let (_, level) = gameWithAttackablePlayer(game);
+      let canAttack = EnemyLoop.canAttack(level.map, { enemy: activeEnemy, location: (6, 7)} );
+
+      expect(canAttack) |> toBe(true);
+    });
+
+    test("and false true when the player is not in range", (_) => {
+      let (_, level) = gameWithAttackablePlayer(game);
+      let canAttack = EnemyLoop.canAttack(level.map, { enemy: activeEnemy, location: (3, 3)} );
+
+      expect(canAttack) |> toBe(false);
     });
   });
 });
