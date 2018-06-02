@@ -1,14 +1,34 @@
 open Types;
+open Rationale;
 
-module CreateGameLoop: ((Types.Positions) => (Types.GameLoop)) = (Pos: Types.Positions) => {
+module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
   open World;
 
   let loopCost = (1. /. Pos.divisor);
   let rec continue: game => game =
-    game =>
+    game => {
+      let activeEnemies: list(enemyInfo) = game.world 
+          |> World.currentLevel
+          |> Option.fmap(l => EL.findActiveEnemies(l.map))
+          |> Option.default([]);
+
       if (Pos.isActive(game.player.stats)) {
         game;
+      } else if (List.length(activeEnemies) >= 1) {
+        /* relocate */
+        let levelOpt = World.currentLevel(game.world);
+        let activeEnemy = List.hd(activeEnemies);
+
+        let updatedGame = Option.bind(levelOpt, level =>
+          EL.takeTurn(activeEnemy, level, game)
+        );
+
+        switch updatedGame {
+          | None => game
+          | Some(g) => continue(g)
+          };
       } else {
+        /* No one is active */
         let maybeGame = game.world 
           |> World.currentLevel
           |> Rationale.Option.fmap(l => {
@@ -23,4 +43,5 @@ module CreateGameLoop: ((Types.Positions) => (Types.GameLoop)) = (Pos: Types.Pos
         | Some(g) => continue(g)
         };
     };
+  };
 };

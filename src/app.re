@@ -2,12 +2,12 @@
 
 open ReasonReact;
 open Types;
-open Rationale;
+open Webapi.Dom;
 
-type route =
+type view =
   | Home
   | InGame(Types.game)
-  | EndGame(string, int);
+  | Score(string, int);
 
 type gameAction =
   | MovePlayer(int, int)
@@ -25,42 +25,31 @@ let component = ReasonReact.reducerComponent("App");
 
 let movement = (x, y) => MovePlayer(x, y);
 
-let resultToUpdate = (r: option(route)) => switch r {
-  | Some(s) => ReasonReact.Update(s)
-  | None => NoUpdate
-};
-
-let gameToUpdate = g => g |> Option.fmap(g => InGame(g)) |> resultToUpdate;
-
-let ifGameMap = (f, route) => switch(route) {
-  | InGame(g) => Some(f(g))
-  |  _ => None
-};
-
-let ifGameFlatMap = (f, route) => switch(route) {
+let mapGameOrError = (f, view) => switch(view) {
   | InGame(g) => f(g)
-  |  _ => None
+  |  _ => Error("Wrong app state")
 };
 
-module BasicTurnLoop = Gameloop.CreateGameLoop(Positions.BasicPositions);
-module Game = Bouken.CreateGame(BasicTurnLoop, World.World);
-
-let handleGameAction = (act, route) => switch act {
-  | TakeStairs => route |> ifGameFlatMap(Game.useStairs(_)) |> gameToUpdate
-  | MovePlayer(x, y) => route |> ifGameFlatMap(Game.movePlayer(x, y)) |> gameToUpdate
-  | UseExit => route |> ifGameMap(Game.useExit) |> Option.fmap( e => switch e {
-      | ContinueGame(game) => InGame(game)
-      | EndGame(score, name) => EndGame(name, score)
-    }) |> resultToUpdate
+let update = (result) => switch result {
+  | Ok(game) => InGame(game) |> r => ReasonReact.Update(r)
+  | EndGame(score, name) => Score(name, score) |> r => ReasonReact.Update(r)
+  | Error(error) => Js.Console.error(error); ReasonReact.NoUpdate
 };
 
-open Webapi.Dom;
+module Game = Modules.Game;
+
+let handleGameAction = (act, view) => switch act {
+  | TakeStairs => view |> mapGameOrError(Game.useStairs(_)) |> update
+  | MovePlayer(x, y) => view |> mapGameOrError(Game.movePlayer(x, y)) |> update
+  | UseExit => view |> mapGameOrError(Game.useExit) |> update
+};
+
 
 let make = (_children) => {
   ...component,
   initialState: () => Home,
-  reducer: (act: action , route) => switch act {
-    | GameAction(gameAction) => handleGameAction(gameAction, route)
+  reducer: (act: action , view) => switch act {
+    | GameAction(gameAction) => handleGameAction(gameAction, view)
     | AppAction(appAction) => switch appAction {
       | StartGame(name) => ReasonReact.Update(InGame(Game.create(name)))
     };
@@ -72,7 +61,7 @@ let make = (_children) => {
         <StartView 
           startGame=(string => self.send(AppAction(StartGame(string))))
         />
-      | EndGame(name, score) => 
+      | Score(name, score) => 
         <div>
           <div>(ReasonReact.string(name ++ " scored " ++ string_of_int(score) ++ " points"))</div>
           <button onClick=(_ => Location.reload(location))>(string("Try again"))</button>

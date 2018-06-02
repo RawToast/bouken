@@ -1,14 +1,27 @@
 open Types;
 
 module World: World = {
-  open Rationale;
+  let updateLevel = (level, world) => { 
+    let newLevels = world.levels 
+      |> List.map(l => if (level.name == l.name) { level } else { l });
+    
+    { ... world, levels: newLevels };
+  };
+
+  let selectLevel = (name, world) => world.levels |> Rationale.RList.find(l => l.name == name);
+
+  let currentLevel = (world) => selectLevel(world.current, world);
+};
+
+
+module Builder: WorldBuilder = {
   open Level;
+  open Rationale;
 
   let listHorizontal = (x, y, tx) => RList.rangeInt(1, x, tx) |> List.map(i => (i, y));
   let listVertical = (x, y, ty) => RList.rangeInt(1, y, ty) |> List.map(i => (x, i));
-  let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
-  let newEnemy = id => {id: id, name: "zombie", stats: { health: 3, speed: 1.0, position: 0. }};
-
+  let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 0.5, position: 0. }};
+  let newEnemy = id => {id: id, name: id, stats: { health: 3, speed: 0.8, position: 0. }};
   let create = player => {
     let initLevel = player =>
         LevelBuilder.makeBlankLevel("Dungeon 1")
@@ -29,7 +42,10 @@ module World: World = {
     let swamp = LevelBuilder.makeWaterLevel("Swamp")
       |> Level.modifyTile(0, 9, { tile: STAIRS({ id: 0, level: "Dungeon 1" }), state: Empty})
       |> Level.modifyTile(13, 1, { tile: STAIRS({ id: 1, level: "Cave" }), state: Empty})
-      |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (5, 8), (6, 8)], Tiles.groundTile);
+      |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (5, 8), (6, 8)], Tiles.groundTile)
+      |> Level.modifyTile(4, 10, {tile: GROUND, state: Enemy(newEnemy("z1"))})
+      |> Level.modifyTile(9, 8, {tile: GROUND, state: Enemy(newEnemy("z2"))})
+      |> Level.modifyTile(11, 2, {tile: GROUND, state: Enemy(newEnemy("z3"))});
 
     let cave = LevelBuilder.makeLevel("Cave", 20, 6, WALL)
       |> Level.modifyTiles(listHorizontal(1, 1, 19), Tiles.groundTile)
@@ -38,7 +54,8 @@ module World: World = {
       |> Level.modifyTiles([(8, 5), (9, 6), (4, 4), (5, 4), (13, 4), (14, 4)], Tiles.groundTile)
       |> Level.modifyTile(19, 5, { tile: STAIRS({ id: 2, level: "Dungeon 4" }), state: Empty})
       |> Level.modifyTile(0, 3, { tile: STAIRS({ id: 1, level: "Swamp" }), state: Empty})
-      |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (5, 8), (6, 8)], Tiles.groundTile);
+      |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (5, 8), (6, 8)], Tiles.groundTile)
+      |> Level.modifyTile(8, 2, {tile: GROUND, state: Enemy(newEnemy("z1"))});
 
     let level2 = LevelBuilder.makeBlankLevel("Dungeon 2")
       |> Level.modifyTile(0, 9, { tile: STAIRS({ id: 1, level: "Dungeon 1" }), state: Empty})
@@ -66,15 +83,4 @@ module World: World = {
 
     { levels: [ initLevel(player), swamp, cave, level2, level3, level4, level5], current: "Dungeon 1"  }
   };
-
-  let updateLevel = (level, world) => { 
-    let newLevels = world.levels 
-      |> List.map(l => if (level.name == l.name) { level } else { l });
-    
-    { ... world, levels: newLevels };
-  };
-
-  let selectLevel = (name, world) => world.levels |> Rationale.RList.find(l => l.name == name);
-
-  let currentLevel = (world) => selectLevel(world.current, world);
 };

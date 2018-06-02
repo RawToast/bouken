@@ -1,10 +1,11 @@
 open Types;
 
 module BasicPositions: Positions = {
-  let divisor = 2.;
+  let divisor = 10.;
   let isActive = stats => stats.position >= 1.;
   let increment = stats => {...stats, position: stats.position +. (stats.speed /. divisor)};
   let incrementAll =
+
     List.map(
       List.map((place: place) =>
            switch (place.state) {

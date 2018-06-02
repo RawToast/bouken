@@ -1,4 +1,3 @@
-
 open ReasonReact;
 
 let component = ReasonReact.reducerComponent("StartView");
@@ -10,8 +9,11 @@ let make = (~startGame, _children) => {
   render: (self) => {
     <div>
       <h3>(string("Bouken"))</h3>
-      <input onChange=(evt => self.send(ReactDOMRe.domElementToObj(ReactEventRe.Form.target(evt))##value))></input>
-      <div><button onClick=(evt => startGame(self.state))>(string("Start"))</button></div>
+      <input 
+        onChange=(evt => self.send(ReactDOMRe.domElementToObj(ReactEventRe.Form.target(evt))##value))
+        onKeyPress=(evt => if (ReactEventRe.Keyboard.key(evt) == "Enter") { 
+          startGame(self.state)
+        })></input>
     </div>
   }
 };

@@ -1,5 +1,4 @@
 /* Basic types */
-
 type stats = {
   health: int,
   speed: float,
@@ -17,6 +16,11 @@ type enemy = {
   id: string,
   name: string,
   stats: stats
+};
+
+type enemyInfo = {
+  enemy: enemy,
+  location: (int, int)
 };
 
 type link = {
@@ -68,9 +72,10 @@ type error =
   | InvalidState
   | ImpossibleMove;
 
-type exitResult = 
+type actionResult = 
+  | Ok(game)
   | EndGame(int, string)
-  | ContinueGame(game);
+  | Error(string);
 
 let error = (err) => Js.Result.Error(err);
 
@@ -84,10 +89,13 @@ let isPlayer = place => switch place.state {
 
 /* Modules */
 module type World = {
-  let create: player => world;
   let updateLevel: (level, world) => world;
   let currentLevel: world => option(level);
   let selectLevel: (string, world) => option(level);
+};
+
+module type WorldBuilder = {
+  let create: player => world;
 };
 
 module type Places = {
@@ -97,6 +105,7 @@ module type Places = {
   let removeOccupant: (int, int, area) => area;
   let movePlayer: (int, int, float, area) => Js.Result.t (playerArea, error);
   let setPlayerAt: (int, int, player, float, area) => Js.Result.t (area, error);
+  let setEnemyAt: (int, int, enemy, float, area) => Js.Result.t (area, error);
   let getPlace: (int, int, area) => option(place);
   let findStairs: (int, area) => option(place);
   let locationOfStairs: (int, area) => option((int, int));
@@ -113,9 +122,36 @@ module type GameLoop = {
   let continue: game => game;
 };
 
+module type EnemyLoop = {
+  let findActiveEnemies: area => list(enemyInfo);
+  let canAttack: (~range: int=?, area, enemyInfo) => bool;
+  let attack: (enemyInfo, area) => option((area, player));
+  let takeTurn: (enemyInfo, level, game) => option(game);
+};
+
 module type Game = {
   let create: string => game;
-  let movePlayer: (int, int, game) => option(game);
-  let useStairs: game => option(game);
-  let useExit: game => exitResult;
+  let movePlayer: (int, int, game) => actionResult;
+  let useStairs: game => actionResult;
+  let useExit: game => actionResult;
+};
+
+module Operators = {
+  let isOk = r => switch(r) {
+    | Ok(gam) => true
+    | _ => false
+    };
+  
+  /* flatMap on ActionResult */
+  let (|>>) = (r, f) => switch(r) {
+    | Ok(gam) => f(gam)
+    | Error(err) => Error(err)
+    | EndGame(score, name) => EndGame(score, name)
+    };
+  
+  /* Default operator */
+  let (|?) = (r, g) => switch(r) {
+    | Ok(gam) => gam
+    | _ => g
+    };
 };
