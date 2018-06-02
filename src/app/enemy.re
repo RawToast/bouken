@@ -67,8 +67,6 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
 
   let takeTurn = (activeEnemy, level, game) => {
     if (canAttack(level.map, activeEnemy)) {
-      Js.Console.log(activeEnemy.enemy.name ++ " can attack");
-
       setEnemy(level.map, activeEnemy) 
         |> Option.bind(_, map => attack(activeEnemy, map))
         |> Option.fmap(r => {

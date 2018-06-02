@@ -18,12 +18,10 @@ module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
         /* relocate */
         let levelOpt = World.currentLevel(game.world);
         let activeEnemy = List.hd(activeEnemies);
-        Js.Console.log(activeEnemy.enemy.name ++ " is active");        
 
         let updatedGame = Option.bind(levelOpt, level =>
           EL.takeTurn(activeEnemy, level, game)
         );
-        Js.Console.log("is some " ++ string_of_bool(Option.isSome(updatedGame)));
 
         switch updatedGame {
           | None => game
