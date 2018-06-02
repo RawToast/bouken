@@ -33,6 +33,8 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 ## Key
 
+`O` Player
+
 `.` Ground
 
 `#` Wall
@@ -45,7 +47,7 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 `e` Exit
 
-## Deploy
+## Deployment
 
 The provided dockerfile can be used to deploy the app using [Now](https://zeit.co/now)
 

@@ -33,6 +33,8 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
       else EndGame(calculateScore(game), game.player.name);
     };
 
+    let canMove = Area.canMoveTo(~overwrite=false, x, y);
+
     level |> 
       Option.bind(_, l =>
           l.map |> Area.movePlayer(x, y, 1.) |>

@@ -1,5 +1,6 @@
 open Types;
 open Rationale;
+open Rationale.Option;
 
 module LevelBuilder = {
   let blankPlace = {tile: GROUND, state: Empty};
@@ -8,6 +9,7 @@ module LevelBuilder = {
       RList.repeat(blankPlace, 15) |> List.map(i => RList.repeat(i, 15));
     {name, map: emptyMap};
   };
+  
   let makeWaterLevel = (name: string) => {
     let emptyMap =
       RList.repeat({tile: WATER, state: Empty}, 15) |> List.map(i => RList.repeat(i, 15));
@@ -45,7 +47,6 @@ module Area: Places = {
      })
   };
 
-
   let locationOfStairs = (id, area: list(list(place))) => {
     let findStairsRow = id => RList.findIndex(y => switch(y.tile) {
     | STAIRS(link) => link.id == id
@@ -62,10 +63,7 @@ module Area: Places = {
     });
   };
 
-  let getPlace = (x, y, area) =>
-    area 
-      |> RList.nth(y)
-      |> Option.bind(_, RList.nth(x));
+  let getPlace = (x, y, area) => area |> RList.nth(y) >>= RList.nth(x);
 
   let findPlayer = (area) => {
     let findPlayerRow = RList.find(y => isPlayer(y));
@@ -75,10 +73,10 @@ module Area: Places = {
       |> RList.find(row => row |> findPlayerRow |> hasPlayer)
       |> Option.default([])
       |> RList.find(state => isPlayer(state))
-      |> Option.bind(_, s => switch(s.state) {
+      >>= place => switch place.state {
         | Player(p) => Some(p)
         | _ => None
-      });
+      };
   };
 
   let findEnemy: (string, area) => option(enemy) = (id, area) => {
@@ -102,12 +100,16 @@ module Area: Places = {
       });
   };
 
-  let canMoveTo = (x, y, map: area) => {map 
-    |> RList.nth(y) 
-    |> Option.bind(_, RList.nth(x))
+  let isEmpty = (p:place) => switch p.state {
+    | Empty => true
+    | _ => false
+  };
+
+  let canMoveTo = (~overwrite=true, x, y, map: area) => {map 
+    |> RList.nth(y) >>= RList.nth(x)
     |> Result.ofOption(ImpossibleMove)
     |> Result.bind(_, l => switch l.tile {
-        | GROUND => success(l)
+        | GROUND => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
         | WATER => success(l)
         | WALL => error(ImpossibleMove)
         | STAIRS(_) => success(l)
@@ -194,21 +196,22 @@ module Area: Places = {
   };
   
   let movePlayer(x: int, y: int, cost:float, area: area) = {
+    open Rationale.Result;
     let playerOpt = findPlayer(area);
     switch(playerOpt) {
-    | Some(player) => {
-      let (xl, yl) = player.location;
-      let nx = x + xl;
-      let ny = y + yl;
+      | Some(player) => {
+        let (xl, yl) = player.location;
+        let nx = x + xl;
+        let ny = y + yl;
 
-      let newPlayer = { ... player, location: (nx, ny)};
+        let newPlayer = { ... player, location: (nx, ny)};
 
-      area 
-        |> setPlayerLocation(nx, ny, cost)
-        |> Result.fmap(removeOccupant(xl, yl))
-        |> Result.fmap(a => {player: newPlayer, area: a})
-    }
-    | None => error(InvalidState);
+        area |> canMoveTo(~overwrite=false, nx, ny)
+          >>= _ => setPlayerLocation(nx, ny, cost, area)
+          |> Result.fmap(removeOccupant(xl, yl))
+          |> Result.fmap(a => {player: newPlayer, area: a})
+      }
+      | None => error(InvalidState);
     };
   };
 };
@@ -233,8 +236,7 @@ module Level = {
 
   let findEnemy = (id, level) => Area.findEnemy(id, level.map);
 
-  let getPlace = (x, y, map) => 
-      map |> RList.nth(y) |> Option.bind(_, RList.nth(x));
+  let getPlace = (x, y, map) => map |> RList.nth(y) >>= RList.nth(x);
 
   let removeOccupant = (x, y, level) => { ...level, map: Area.removeOccupant(x, y, level.map) };
 
