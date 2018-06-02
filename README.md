@@ -1,6 +1,6 @@
 # Bouken
 
-Rogue-like.
+ASCII rogue-like.
 
 [![Build Status](https://travis-ci.org/RawToast/bouken.svg?branch=master)](https://travis-ci.org/RawToast/bouken)
 [![Coverage Status](https://coveralls.io/repos/github/RawToast/bouken/badge.svg?branch=master)](https://coveralls.io/github/RawToast/daibouken?branch=master)
@@ -18,19 +18,33 @@ Rogue-like.
 
 ## Controls
 
-The player can move in 8 directions:
+The player can move in 8 directions with:
 
-q w e
+ `q` `w` `e`
 
-a . d
+ `a` 🐾 `d`
 
-z x c
+ `z` `x` `c`
 
 The player can attack by moving in the direction of an enemy.
 
 Stairs `/` can be taken in either direction using `s`
 
 The player can win the game using an exit `e` using `s`, but remember some exits score more points than others.
+
+## Key
+
+`.` Ground
+
+`#` Wall
+
+`w` Shallow water
+
+`X` Enemy
+
+`/` Stairs
+
+`/` Exit
 
 ## Deploy
 
