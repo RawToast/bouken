@@ -72,9 +72,10 @@ type error =
   | InvalidState
   | ImpossibleMove;
 
-type exitResult = 
+type actionResult = 
+  | Ok(game)
   | EndGame(int, string)
-  | ContinueGame(game);
+  | Error(string);
 
 let error = (err) => Js.Result.Error(err);
 
@@ -123,7 +124,6 @@ module type GameLoop = {
 
 module type EnemyLoop = {
   let findActiveEnemies: area => list(enemyInfo);
-
   let canAttack: (~range: int=?, area, enemyInfo) => bool;
   let attack: (enemyInfo, area) => option((area, player));
   let takeTurn: (enemyInfo, level, game) => option(game);
@@ -131,7 +131,27 @@ module type EnemyLoop = {
 
 module type Game = {
   let create: string => game;
-  let movePlayer: (int, int, game) => option(game);
-  let useStairs: game => option(game);
-  let useExit: game => exitResult;
+  let movePlayer: (int, int, game) => actionResult;
+  let useStairs: game => actionResult;
+  let useExit: game => actionResult;
+};
+
+module Operators = {
+  let isOk = r => switch(r) {
+    | Ok(gam) => true
+    | _ => false
+    };
+  
+  /* flatMap on ActionResult */
+  let (|>>) = (r, f) => switch(r) {
+    | Ok(gam) => f(gam)
+    | Error(err) => Error(err)
+    | EndGame(score, name) => EndGame(score, name)
+    };
+  
+  /* Default operator */
+  let (|?) = (r, g) => switch(r) {
+    | Ok(gam) => gam
+    | _ => g
+    };
 };

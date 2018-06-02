@@ -3,6 +3,7 @@ open Rationale;
 
 open Jest;
 open Expect;
+open Types.Operators;
 
 module Game = Modules.Game;
 
@@ -17,8 +18,8 @@ describe("Game.MovePlayer", () => {
   let initGame = Game.create("davey");
   let optGame = initGame |> Game.movePlayer(-1, -1);
   let newGame = optGame |> g => switch(g) {
-  | Some(gam) => gam
-  | None => initGame
+  | Ok(gam) => gam
+  | _ => initGame
   };
 
   test("Initially the player is located at (6, 6)", (_) => {
@@ -27,7 +28,7 @@ describe("Game.MovePlayer", () => {
 
   describe("When the move is possible", () => {
     test("Returns some", (_) => {
-      expect(Option.isSome(optGame)) |> toBe(true);
+      expect(isOk(optGame)) |> toBe(true);
     });
   
     test("The Player's location is updated to (5,5)", (_) => {
@@ -39,9 +40,9 @@ describe("Game.MovePlayer", () => {
 describe("Game.UseStairs", () => {
   let initGame = Game.create("dave");
   let newGame = initGame 
-    |> Game.movePlayer(7, 8) 
-    |> Option.bind(_, Game.useStairs) 
-    |> Option.default(initGame);
+    |> Game.movePlayer(7, 8)
+    |>> Game.useStairs
+    |? initGame;
 
   describe("When the player is on an exit", () => {
     test("Updates player's location", (_) => {
@@ -73,7 +74,7 @@ describe("Game.ExitGame", () => {
   let game = Game.create("dave");
   let exitGame = game => game |> Game.useExit |> r => switch r {
     | EndGame(score, _) => (true, score)
-    | ContinueGame(_) => (false, 0)
+    | _ => (false, 0)
     };
 
   describe("When the player is on an exit", () => {

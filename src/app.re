@@ -25,32 +25,23 @@ let component = ReasonReact.reducerComponent("App");
 
 let movement = (x, y) => MovePlayer(x, y);
 
-let resultToUpdate = (r: option(route)) => switch r {
-  | Some(s) => ReasonReact.Update(s)
-  | None => NoUpdate
-};
-
-let gameToUpdate = g => g |> Option.fmap(g => InGame(g)) |> resultToUpdate;
-
-let ifGameMap = (f, route) => switch(route) {
-  | InGame(g) => Some(f(g))
-  |  _ => None
-};
-
-let ifGameFlatMap = (f, route) => switch(route) {
+let mapGameOrError = (f, route) => switch(route) {
   | InGame(g) => f(g)
-  |  _ => None
+  |  _ => Error("Wrong app state")
+};
+
+let update = (result) => switch result {
+  | Ok(game) => InGame(game) |> r => ReasonReact.Update(r)
+  | EndGame(score, name) => EndGame(name, score) |> r => ReasonReact.Update(r)
+  | Error(error) => Js.Console.error(error); ReasonReact.NoUpdate
 };
 
 module Game = Modules.Game;
 
 let handleGameAction = (act, route) => switch act {
-  | TakeStairs => route |> ifGameFlatMap(Game.useStairs(_)) |> gameToUpdate
-  | MovePlayer(x, y) => route |> ifGameFlatMap(Game.movePlayer(x, y)) |> gameToUpdate
-  | UseExit => route |> ifGameMap(Game.useExit) |> Option.fmap( e => switch e {
-      | ContinueGame(game) => InGame(game)
-      | EndGame(score, name) => EndGame(name, score)
-    }) |> resultToUpdate
+  | TakeStairs => route |> mapGameOrError(Game.useStairs(_)) |> update
+  | MovePlayer(x, y) => route |> mapGameOrError(Game.movePlayer(x, y)) |> update
+  | UseExit => route |> mapGameOrError(Game.useExit) |> update
 };
 
 open Webapi.Dom;

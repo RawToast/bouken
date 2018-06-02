@@ -14,7 +14,6 @@ let make = (~startGame, _children) => {
         onKeyPress=(evt => if (ReactEventRe.Keyboard.key(evt) == "Enter") { 
           startGame(self.state)
         })></input>
-      <div><button onClick=(_ => startGame(self.state))>(string("Start"))</button></div>
     </div>
   }
 };

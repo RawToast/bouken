@@ -15,8 +15,23 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
 
   let create = name => initgame(name);
 
+  let calculateScore = game => {
+    let baseScore = 1000;
+    let turnPenalty = int_of_float((game.turn /. 5.));
+    let goldBonus = game.player.gold;
+    let healthBonus = game.player.stats.health * 2;
+
+    baseScore + healthBonus + goldBonus - turnPenalty;
+  };
+
+
   let movePlayer = (x, y, game) => {
     let level = W.currentLevel(game.world);
+
+    let gameToRes = game => {
+      if (game.player.stats.health > 0) Ok(game)
+      else EndGame(calculateScore(game), game.player.name);
+    };
 
     level |> 
       Option.bind(_, l =>
@@ -31,7 +46,11 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
 
                   {... game, player: pa.player, world: world };
               }))
-      |> Option.fmap(GL.continue);
+      |> Option.fmap(GL.continue)
+      |> optRes => switch optRes {
+        | Some(game) => gameToRes(game)
+        | None => Error("Unable to move player")
+        }
   };
 
   let useStairs = game => {
@@ -94,7 +113,12 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
           Some({ ... pre, world: nextWorld});
         });
       });
-    }) |> Option.fmap(GL.continue);
+    }) 
+    |> Option.fmap(GL.continue)
+    |> optRes => switch optRes {
+      | Some(game) => Ok(game)
+      | None => Error("Unable to use stairs")
+    }
   };
 
   let useExit = game => {
@@ -110,19 +134,11 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
           });
       });
 
-    let calculateScore = game => {
-      let baseScore = 1000;
-      let turnPenalty = int_of_float((game.turn /. 5.));
-      let goldBonus = game.player.gold;
-      let healthBonus = game.player.stats.health * 2;
-  
-      baseScore + healthBonus + goldBonus - turnPenalty;
-    };
     let baseBonus = 1000;
 
     switch(currentExitScore) {
     | Some(score) => EndGame((score + baseBonus + calculateScore(game)), game.player.name);
-    | None => ContinueGame(game)
+    | None => Ok(game)
     }
   };
 };
