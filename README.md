@@ -12,7 +12,8 @@ ASCII rogue-like.
 - [x] Multiple levels
 - [x] Goal
 - [x] Score
-- [ ] Enemies
+- [x] Enemies
+- [ ] Moving Enemies
 - [x] Player attack
 
 ## Controls
