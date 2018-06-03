@@ -5,7 +5,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
   open Level;
   open Types;
 
-  let initPlayer = name => {name: name, stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (6, 6)};
+  let initPlayer = name => {name: name, stats: { health: 10, speed: 1.0, position: 0. }, gold: 0, location: (6, 6)};
 
   let initgame = pname => initPlayer(pname) |> p => {
       player: p,
@@ -18,7 +18,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
   let calculateScore = game => {
     let baseScore = 1000;
     let turnPenalty = int_of_float((game.turn /. 5.));
-    let goldBonus = game.player.gold;
+    let goldBonus = game.player.gold * 10;
     let healthBonus = game.player.stats.health * 2;
 
     baseScore + healthBonus + goldBonus - turnPenalty;
