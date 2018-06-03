@@ -101,7 +101,7 @@ module type WorldBuilder = {
 module type Places = {
   let findPlayer: (area) => option(player); 
   let findEnemy: (string, area) => option(enemy);
-  let canMoveTo: (int, int, area) => Js.Result.t(place, error);
+  let canMoveTo: (~overwrite:bool=?, int, int, area) => Js.Result.t(place, error);
   let removeOccupant: (int, int, area) => area;
   let movePlayer: (int, int, float, area) => Js.Result.t (playerArea, error);
   let setPlayerAt: (int, int, player, float, area) => Js.Result.t (area, error);
@@ -131,6 +131,7 @@ module type EnemyLoop = {
 
 module type Game = {
   let create: string => game;
+  let attack: (int, int, game) => actionResult;
   let movePlayer: (int, int, game) => actionResult;
   let useStairs: game => actionResult;
   let useExit: game => actionResult;
@@ -138,12 +139,12 @@ module type Game = {
 
 module Operators = {
   let isOk = r => switch(r) {
-    | Ok(gam) => true
+    | Ok(_) => true
     | _ => false
     };
   
   /* flatMap on ActionResult */
-  let (|>>) = (r, f) => switch(r) {
+  let (>>=) = (r, f) => switch(r) {
     | Ok(gam) => f(gam)
     | Error(err) => Error(err)
     | EndGame(score, name) => EndGame(score, name)

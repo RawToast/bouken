@@ -5,7 +5,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
   open Level;
   open Types;
 
-  let initPlayer = name => {name: name, stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (6, 6)};
+  let initPlayer = name => {name: name, stats: { health: 10, speed: 1.0, position: 0. }, gold: 0, location: (6, 6)};
 
   let initgame = pname => initPlayer(pname) |> p => {
       player: p,
@@ -18,22 +18,98 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
   let calculateScore = game => {
     let baseScore = 1000;
     let turnPenalty = int_of_float((game.turn /. 5.));
-    let goldBonus = game.player.gold;
+    let goldBonus = game.player.gold * 10;
     let healthBonus = game.player.stats.health * 2;
 
     baseScore + healthBonus + goldBonus - turnPenalty;
   };
 
+  let gameToRes = game => {
+    if (game.player.stats.health > 0) Ok(game)
+    else EndGame(calculateScore(game), game.player.name);
+  };
+
+  let attack = (x, y, game) => {
+    open Rationale.Option;
+
+    let level = W.currentLevel(game.world);
+    let player = game.player;
+    let (xl, yl) = player.location;
+    let tx = x + xl;
+    let ty = y + yl;
+
+    let findPlaceToAttack = l => Area.getPlace(tx, ty, l.map);
+
+    let attackPlace = p => switch(p.state) {
+      | Enemy(e) => {
+        let newEnemy = { ... e, stats: { ... e.stats, health: e.stats.health - 5 } };
+        if (newEnemy.stats.health > 0) Some( {...p, state: Enemy(newEnemy) })
+        else Some( { ... p, state: Empty })
+      }
+      | _ => None 
+    };
+    
+    let reducedPlayer = { ... player, stats: { ... player.stats, position: player.stats.position -. 1. } };
+      
+    let updateLevelWithPlayer = level => {
+      level.map 
+        |> Area.setPlayerAt(xl, yl, reducedPlayer, 0.)
+        |> Option.ofResult
+        |> Option.fmap(area => { ... level, map: area });
+    };
+
+    let goldBonus (x, y, game) = { 
+
+      let player = game.player;
+
+      let updateCurrentLevel = area 
+        => W.currentLevel(game.world) 
+        |> Option.fmap(l => { ... l, map: area })
+        |> Option.fmap(l => W.updateLevel(l, game.world));
+
+      let applyBonus = gam => W.currentLevel(gam.world)
+        >>= level => {
+          let bonus = Area.getPlace(x, y, level.map)
+            |> Option.fmap(p => switch(p.state) {
+                | Empty => 5
+                | _ => 0
+                })
+            |> Option.default(0);
+
+          let updatedPlayer = { ... player, gold: player.gold + bonus };
+
+          Area.setPlayerAt(xl, yl, updatedPlayer, 0., level.map) 
+            |> Option.ofResult
+            >>= updateCurrentLevel
+            |> Option.fmap(w => { ... gam, world: w, player: updatedPlayer});
+        };
+
+      game |> applyBonus;
+    };
+
+    level 
+      >>= findPlaceToAttack 
+      >>= attackPlace
+      >>= (p => level |> Option.fmap(Level.modifyTile(tx, ty, p)) )
+      >>= updateLevelWithPlayer
+      |> Option.fmap(l => World.World.updateLevel(l, game.world))
+      |> Option.fmap(w => { ... game, world: w})
+      >>= goldBonus(tx, ty)
+      |> Option.fmap(gameToRes)
+      |> Option.default(Error("Unable to attack"))
+  };
 
   let movePlayer = (x, y, game) => {
     let level = W.currentLevel(game.world);
+    let (xl, yl) = game.player.location;
+    let canMove = level 
+      |> Option.fmap(l => Area.canMoveTo(~overwrite=false, x + xl, y + yl, l.map) |> Result.isOk) 
+      |> Option.default(false);
+    let canAttack = level 
+      |> Option.fmap(l => Area.canMoveTo(~overwrite=true, x + xl, y + yl, l.map) |> Result.isOk) 
+      |> Option.default(false);
 
-    let gameToRes = game => {
-      if (game.player.stats.health > 0) Ok(game)
-      else EndGame(calculateScore(game), game.player.name);
-    };
-
-    level |> 
+    let attemptMove(level, x, y) = level |> 
       Option.bind(_, l =>
           l.map |> Area.movePlayer(x, y, 1.) |>
               Option.ofResult |> o => switch o {
@@ -50,7 +126,15 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
       |> optRes => switch optRes {
         | Some(game) => gameToRes(game)
         | None => Error("Unable to move player")
-        }
+        };
+
+    if (canMove) {
+      attemptMove(level,x , y)
+    } else if (canAttack) {
+      attack(x, y, game)
+    } else {
+      Error("Unable to move player")
+    };
   };
 
   let useStairs = game => {
