@@ -58,20 +58,49 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
         |> Option.fmap(area => { ... level, map: area });
     };
 
+    let goldBonus (x, y, game) = { 
+
+      let player = game.player;
+
+      let updateCurrentLevel = area 
+        => W.currentLevel(game.world) 
+        |> Option.fmap(l => { ... l, map: area })
+        |> Option.fmap(l => W.updateLevel(l, game.world));
+
+      let applyBonus = gam => W.currentLevel(gam.world)
+        >>= level => {
+          let bonus = Area.getPlace(x, y, level.map)
+            |> Option.fmap(p => switch(p.state) {
+                | Empty => 5
+                | _ => 0
+                })
+            |> Option.default(0);
+
+          let updatedPlayer = { ... player, gold: player.gold + bonus };
+
+          Area.setPlayerAt(xl, yl, updatedPlayer, 0., level.map) 
+            |> Option.ofResult
+            >>= updateCurrentLevel
+            |> Option.fmap(w => { ... gam, world: w, player: updatedPlayer});
+        };
+
+      game |> applyBonus;
+    };
+
     level 
       >>= findPlaceToAttack 
       >>= attackPlace
-      |> Option.bind(_, p => level |> Option.fmap(l => Level.modifyTile(tx, ty, p, l)) )
+      >>= (p => level |> Option.fmap(Level.modifyTile(tx, ty, p)) )
       >>= updateLevelWithPlayer
       |> Option.fmap(l => World.World.updateLevel(l, game.world))
       |> Option.fmap(w => { ... game, world: w})
+      >>= goldBonus(tx, ty)
       |> Option.fmap(gameToRes)
       |> Option.default(Error("Unable to attack"))
   };
 
   let movePlayer = (x, y, game) => {
     let level = W.currentLevel(game.world);
-    open Rationale.Option;
     let (xl, yl) = game.player.location;
     let canMove = level 
       |> Option.fmap(l => Area.canMoveTo(~overwrite=false, x + xl, y + yl, l.map) |> Result.isOk) 
