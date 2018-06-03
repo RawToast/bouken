@@ -131,6 +131,7 @@ module type EnemyLoop = {
 
 module type Game = {
   let create: string => game;
+  let attack: (int, int, game) => actionResult;
   let movePlayer: (int, int, game) => actionResult;
   let useStairs: game => actionResult;
   let useExit: game => actionResult;
