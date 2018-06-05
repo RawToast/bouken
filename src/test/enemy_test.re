@@ -104,4 +104,27 @@ describe("EnemyLoop", () => {
       expect(canAttack) |> toBe(false);
     });
   });
+
+  describe("move", () => {
+
+    let loc = (~range=2, area, enemyInfo) => {
+
+      (1, 1)
+    };
+
+
+    test("moves towards the player when the player is in range", (_) => {
+      let (_, level) = gameWithAttackablePlayer(game);
+      let canAttack = loc(level.map, { enemy: activeEnemy, location: (6, 7)} );
+
+      expect(canAttack) |> toEqual((1, 1));
+    });
+
+    test("does not move when the player is out of range", (_) => {
+      let (_, level) = gameWithAttackablePlayer(game);
+      let canAttack = loc(level.map, { enemy: activeEnemy, location: (3, 3)} );
+
+      expect(canAttack) |> toEqual((1, 1));
+    });
+  });
 });
