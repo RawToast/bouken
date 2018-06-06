@@ -17,18 +17,20 @@ describe("EnemyLoop", () => {
 
   let blankLevel = Level.LevelBuilder.makeBlankLevel("Dungeon 1");
 
-  let gameWithAttackablePlayer = (game) => {
-    let (x, y) = game.player.location;
+  let gameWithEnemyDelta = (x, y, game) => {
+    let (px, py) = game.player.location;
     let newLevel = blankLevel
       |> Level.Level.modifyTile(
-        x, y + 1, 
+        px + x, py + y, 
         { tile: GROUND, state: Enemy(activeEnemy) })
       |> Level.Level.modifyTile(
-        x, y, 
+        px, py, 
         { tile: GROUND, state: Player(game.player) });
     let newWorld = World.World.updateLevel(newLevel, game.world);
     ({ ... game, world: newWorld}, newLevel);
   };
+
+  let gameWithAttackablePlayer = gameWithEnemyDelta(0, 1);
 
   describe("findActiveEnemies", () => {
     let level = blankLevel
@@ -105,26 +107,57 @@ describe("EnemyLoop", () => {
     });
   });
 
-  describe("move", () => {
+  describe("chase", () => {
 
-    let loc = (~range=2, area, enemyInfo) => {
+    let chase = (~range=4, area, enemyInfo) => {
 
-      (1, 1)
+      let visiblePlaces = EnemyLoop.findTargets(~range=range, enemyInfo);
+      let playerLocations = EnemyLoop.attackablePlaces(visiblePlaces, area);
+      Js.Console.log(List.length(visiblePlaces) |> string_of_int);
+      if (List.length(playerLocations) == 0) (9, 9)
+      else {
+        let loc = List.hd(playerLocations);
+        let (px, py) = loc;
+        
+        let (ex, ey) = enemyInfo.location;
+
+        let dx = ex - px;
+        let dy = ey - py;
+
+        let x = if(dx > 0) 1 else { if(dx == 0) 0 else -1 };
+        let y = if(dy > 0) 1 else { if(dy == 0) 0 else -1 };
+
+        (x, y)
+      }
     };
 
+    test("move north towards the player when the player is in range", (_) => {
+      let (_, level) = gameWithEnemyDelta(0, 1, game);
+      let result = chase(level.map, { enemy: activeEnemy, location: (6, 9) });
 
-    test("moves towards the player when the player is in range", (_) => {
-      let (_, level) = gameWithAttackablePlayer(game);
-      let canAttack = loc(level.map, { enemy: activeEnemy, location: (6, 7)} );
-
-      expect(canAttack) |> toEqual((1, 1));
+      expect(result) |> toEqual((0, 1));
     });
 
-    test("does not move when the player is out of range", (_) => {
-      let (_, level) = gameWithAttackablePlayer(game);
-      let canAttack = loc(level.map, { enemy: activeEnemy, location: (3, 3)} );
+    test("move west towards the player when the player is in range", (_) => {
+      let (_, level) = gameWithEnemyDelta(-4, 0, game);
+      let result = chase(level.map, { enemy: activeEnemy, location: (2, 6) });
 
-      expect(canAttack) |> toEqual((1, 1));
+      expect(result) |> toEqual((-1, 0));
+    });
+
+    test("move south east towards the player when the player is in range", (_) => {
+      let (g, level) = gameWithEnemyDelta(1, -1, game);
+      let result = chase(level.map, { enemy: activeEnemy, location: (7, 5) });
+
+      expect(result) |> toEqual((1, -1));
+    });
+
+
+    test("does not move when the player is out of range", (_) => {
+      let (_, level) = gameWithEnemyDelta(6, 6, game);
+      let result = chase(level.map, { enemy: activeEnemy, location: (12, 12)} );
+
+      expect(result) |> toEqual((9, 9));
     });
   });
 });

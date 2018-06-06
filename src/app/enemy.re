@@ -20,6 +20,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     targets 
       |> List.filter(pos => {
         let (x, y) = pos;
+        Js.Console.log(string_of_int(x) ++ " " ++ string_of_int(y));
         Places.getPlace(x, y, area)
           |> Option.fmap(p => isPlayer(p))
           |> Option.default(false)
@@ -28,6 +29,10 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
 
   let findTargets = (~range=1, enemyInfo) => {
     let (x, y) = enemyInfo.location;
+    
+    let minX = x - range;
+    let maxX = x + range;
+
     let targetX = [(x-range), x, (x+range)] |> List.filter(x => x >= 0);
     let targetY = [(y-range), y, (y+range)] |> List.filter(y => y >= 0);
     targetY |> List.map(y => (targetX |> List.map(x => (x, y)))) |> List.flatten;
