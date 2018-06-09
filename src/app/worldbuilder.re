@@ -15,6 +15,7 @@ let buildArea = (str) => str
     |> List.map(xs =>
       xs |> Js.String.split(",") 
         |> Array.to_list
+        |> List.map(Js.String.trim)
         |> List.map(buildPlace))
     |> List.filter(x => List.length(x) != 0)
     |> List.rev;

@@ -31,11 +31,11 @@ describe("buildPlace", () => {
 describe("buildLevel", () => {
   describe("When given a valid string for a 5x5 level", () => {
     let levelStr = 
-      ".,.,.,.,.\n" ++ 
-      ".,.,.,.,.\n" ++
-      ".,w,.,.,.\n" ++
-      ".,.,#,.,.\n" ++
-      ".,.,.,.,.";
+      "., ., ., ., .\n" ++ 
+      "., ., ., ., .\n" ++
+      "., w, ., ., .\n" ++
+      "., ., #, ., .\n" ++
+      "., ., ., ., .";
 
     let result = buildArea(levelStr);
     let getPlace = (x, y, area) => area |> List.nth(_, y) |> List.nth(_, x);
