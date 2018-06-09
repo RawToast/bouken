@@ -28,12 +28,17 @@ module Tiles = {
   let waterTile = {tile: WATER, state: Empty};
 
   let isGround = t => switch t {
-  | GROUND => true
-  | _ => false
-  };
+    | GROUND => true
+    | _ => false
+    };
 
   let isEnemy = t => switch t.state {
     | Enemy(_) => true
+    | _ => false
+    };
+
+  let isStairs = t => switch t.tile {
+    | STAIRS(_) => true
     | _ => false
     };
   

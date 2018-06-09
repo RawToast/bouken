@@ -36,12 +36,20 @@ describe("buildPlace", () => {
     test("The place is empty", (_) => expect(result.state) |> toBe(Empty));
   });
 
+  describe("When given '/0Swamp'", () => {
+    let result = buildPlace("/0Swamp");
+
+    test("Builds a Stair tile", (_) => expect(result |> Level.Tiles.isStairs) |> toBe(true));
+    test("Linking to the Swap", (_) => expect(result.tile) |> toEqual(STAIRS({ id: 0, level: "Swamp"})));
+
+    test("The place is empty", (_) => expect(result.state) |> toBe(Empty));
+  });
+
   describe("When given '.|Z'", () => {
     let result = buildPlace(".|Z");
 
     test("Builds a ground tile", (_) => expect(result.tile) |> toEqual(GROUND));
     test("Occupied by an enemy", (_) => expect(result |> Level.Tiles.isEnemy) |> toBe(true));
-
   });
 });
 
@@ -51,7 +59,7 @@ describe("buildLevel", () => {
     let levelStr = 
       "., ., ., ., e20\n" ++ 
       "., ., ., .|Z, .\n" ++
-      "., w, ., ., .\n" ++
+      "., w, ., /0Maze, .\n" ++
       "., ., #, ., .\n" ++
       "., ., ., ., .";
 
@@ -59,19 +67,16 @@ describe("buildLevel", () => {
     let getPlace = (x, y, area) => area |> List.nth(_, y) |> List.nth(_, x);
 
     test("Creates an area with 5 rows", (_) => expect(List.length(result)) |> toBe(5));
-
     test("Creates an area with 5 columns", (_) => expect(result |> List.hd |> List.length) |> toBe(5));
 
     test("Creates a water tile", (_) => expect(result |> List.flatten |> RList.any(p => p.tile == WATER)) |> toBe(true));
-
     test("Creates a wall tile", (_) => expect(result |> List.flatten |> RList.any(p => p.tile == WALL)) |> toBe(true));
-
     test("Creates an exit tile", (_) => expect(result |> List.flatten |> RList.any(p => p.tile == EXIT(20))) |> toBe(true));
 
     test("Creates a place with an enemy", (_) => expect(result |> List.flatten |> RList.any(Level.Tiles.isEnemy)) |> toBe(true));
+    test("Creates a place with srairs", (_) => expect(result |> List.flatten |> RList.any(Level.Tiles.isStairs)) |> toBe(true));
 
     test("Places the water in the right location", (_) => expect(result |> getPlace(1, 2) |> p => p.tile) |> toBe(WATER));
-
     test("Places the wall in the right location", (_) => expect(result |> getPlace(2, 1) |> p => p.tile) |> toBe(WALL));
   });
 });
