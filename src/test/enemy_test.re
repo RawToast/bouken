@@ -107,13 +107,32 @@ describe("EnemyLoop", () => {
     });
   });
 
+  describe("find targets", () => {
+    
+    test("finds targets around the user", (_) => {
+      let (_, level) = gameWithEnemyDelta(0, 1, game);
+      let enemyInfo = { enemy: activeEnemy, location: (6, 7) }
+      let visiblePlaces = EnemyLoop.findTargets(~range=1, enemyInfo);
+
+      expect(List.length(visiblePlaces)) |> toBe(8);
+    });
+
+    test("finds more targets when a larger range is used", (_) => {
+      let (_, level) = gameWithEnemyDelta(0, 1, game);
+      let enemyInfo = { enemy: activeEnemy, location: (6, 7) }
+      let visiblePlaces = EnemyLoop.findTargets(~range=2, enemyInfo);
+
+      expect(List.length(visiblePlaces)) |> toBe(24);
+    });
+  });
+
   describe("chase", () => {
 
     let chase = (~range=4, area, enemyInfo) => {
 
       let visiblePlaces = EnemyLoop.findTargets(~range=range, enemyInfo);
       let playerLocations = EnemyLoop.attackablePlaces(visiblePlaces, area);
-      Js.Console.log(List.length(visiblePlaces) |> string_of_int);
+
       if (List.length(playerLocations) == 0) (9, 9)
       else {
         let loc = List.hd(playerLocations);
