@@ -60,17 +60,23 @@ module Builder: WorldBuilder = {
     let level2 = LevelBuilder.makeBlankLevel("Dungeon 2")
       |> Level.modifyTile(0, 9, { tile: STAIRS({ id: 1, level: "Dungeon 1" }), state: Empty})
       |> Level.modifyTile(13, 1, { tile: STAIRS({ id: 0, level: "Dungeon 3" }), state: Empty})
+      |> Level.modifyTile(3, 3, {tile: GROUND, state: Enemy(newEnemy("z1"))})
+      |> Level.modifyTile(11, 9, {tile: GROUND, state: Enemy(newEnemy("z2"))})
       |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (5, 8), (6, 8)], Tiles.groundTile);
 
     let level3 = LevelBuilder.makeLevel("Dungeon 3", 18, 20, GROUND)
       |> Level.modifyTile(5, 18, { tile: STAIRS({ id: 1, level: "Dungeon 4" }), state: Empty})
       |> Level.modifyTile(13, 1, { tile: STAIRS({ id: 0, level: "Dungeon 2" }), state: Empty})
       |> Level.modifyTile(5, 8, { tile: EXIT(500), state: Empty})
-      |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (4, 8), (6, 8)], Tiles.wallTile);
+      |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (4, 8), (6, 8)], Tiles.wallTile)
+      |> Level.modifyTile(3, 4, {tile: GROUND, state: Enemy(newEnemy("z1"))})
+      |> Level.modifyTile(4, 7, {tile: GROUND, state: Enemy(newEnemy("z2"))})
+      |> Level.modifyTile(8, 10, {tile: GROUND, state: Enemy(newEnemy("z3"))})
+      |> Level.modifyTile(15, 9, {tile: GROUND, state: Enemy(newEnemy("z4"))})
 
     let level4 = LevelBuilder.makeBlankLevel("Dungeon 4")
       |> Level.modifyTile(2, 3, { tile: STAIRS({ id: 1, level: "Dungeon 3" }), state: Empty})
-      |> Level.modifyTile(13, 12, { tile: STAIRS({ id: 0, level: "Dungeon 5" }), state: Empty})
+      |> Level.modifyTile(13, 12, { tile: STAIRS({ id: 0, level: "Dungeon 5" }), state: Enemy(newEnemy("z4"))})
       |> Level.modifyTile(7, 14, { tile: STAIRS({ id: 2, level: "Cave" }), state: Empty})
       |> Level.modifyTile(13, 11, {tile: GROUND, state: Enemy(newEnemy("z1"))})
       |> Level.modifyTile(0, 1, {tile: GROUND, state: Enemy(newEnemy("z2"))})
@@ -79,7 +85,12 @@ module Builder: WorldBuilder = {
     let level5 = LevelBuilder.makeLevel("Dungeon 5", 18, 20, GROUND)
       |> Level.modifyTile(5, 18, { tile: STAIRS({ id: 0, level: "Dungeon 4" }), state: Empty})
       |> Level.modifyTile(15, 1, { tile: EXIT(1000), state: Empty})
-      |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (5, 8), (6, 8)], Tiles.waterTile);
+      |> Level.modifyTiles([(4, 6), (5, 6), (6, 6), (7, 6), (5, 7), (6, 7), (5, 8), (6, 8)], Tiles.waterTile)
+      |> Level.modifyTile(15, 2, {tile: GROUND, state: Enemy(newEnemy("z1"))})
+      |> Level.modifyTile(14, 0, {tile: GROUND, state: Enemy(newEnemy("z2"))})
+      |> Level.modifyTile(10, 10, {tile: GROUND, state: Enemy(newEnemy("z3"))})
+      |> Level.modifyTile(6, 15, {tile: GROUND, state: Enemy(newEnemy("z4"))})
+      |> Level.modifyTile(18, 11, {tile: GROUND, state: Enemy(newEnemy("z5"))});
 
     { levels: [ initLevel(player), swamp, cave, level2, level3, level4, level5], current: "Dungeon 1"  }
   };

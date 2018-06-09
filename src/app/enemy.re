@@ -16,6 +16,25 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     Places.setEnemyAt(x, y, enemyInfo.enemy, 1., area) |> Rationale.Option.ofResult
   };
 
+  let updateEnemy = (area, enemyInfo, newLocation) => {
+    let (x, y) = newLocation;
+    let (ox, oy) = enemyInfo.location;
+
+    let moveIsPossible = Places.getPlace(x, y, area) 
+      |> Option.fmap(p => switch p.state {
+        | Empty => true
+        | _ => false })
+      |> Option.default(false);
+
+    if (moveIsPossible) {
+      Places.setEnemyAt(x, y, enemyInfo.enemy, 1., area)
+        |> Rationale.Option.ofResult
+        |> Option.fmap(Places.removeOccupant(ox, oy))
+    } else {
+      Places.setEnemyAt(ox, oy, enemyInfo.enemy, 1., area) |> Rationale.Option.ofResult
+    }
+  };
+
   let attackablePlaces = (targets, area) => 
     targets 
       |> List.filter(pos => {
@@ -28,9 +47,14 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
 
   let findTargets = (~range=1, enemyInfo) => {
     let (x, y) = enemyInfo.location;
-    let targetX = [(x-range), x, (x+range)] |> List.filter(x => x >= 0);
-    let targetY = [(y-range), y, (y+range)] |> List.filter(y => y >= 0);
-    targetY |> List.map(y => (targetX |> List.map(x => (x, y)))) |> List.flatten;
+    
+    let minX = x - range;
+    let maxX = x + range;
+    let incRange = Rationale.RList.rangeInt(1);
+
+    let targetX = incRange(minX, maxX) |> List.filter(x => x >= 0);
+    let targetY = incRange((y-range), (y+range)) |> List.filter(y => y >= 0);
+    targetY |> List.map(y => (targetX |> List.map(x => (x, y)))) |> List.flatten |> List.filter(xy => xy != (x, y));
   };
 
   let canAttack = (~range=1, area, enemyInfo) => {
@@ -65,7 +89,29 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     };
   };
 
+  let chase = (~range=4, area, enemyInfo) => {
+    let visiblePlaces = findTargets(~range=range, enemyInfo);
+    let playerLocations = attackablePlaces(visiblePlaces, area);
+
+    if (List.length(playerLocations) == 0) (0, 0)
+    else {
+      let loc = List.hd(playerLocations);
+      let (px, py) = loc;
+      let (ex, ey) = enemyInfo.location;
+
+      let dx = px - ex;
+      let dy = py - ey;
+
+      let x = if(dx > 0) 1 else { if(dx == 0) 0 else -1 };
+      let y = if(dy > 0) 1 else { if(dy == 0) 0 else -1 };
+
+      (x, y)
+    }
+  };
+
   let takeTurn = (activeEnemy, level, game) => {
+    let canSee = canAttack(~range=4);
+
     if (canAttack(level.map, activeEnemy)) {
       setEnemy(level.map, activeEnemy) 
         |> Option.bind(_, map => attack(activeEnemy, map))
@@ -76,6 +122,15 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
           |> lvl => World.updateLevel(lvl, game.world)
           |> w => {...game, world: w, player: player}
       })
+    } else if (canSee(level.map, activeEnemy)) {
+
+      let (dx, dy) = chase(level.map, activeEnemy);
+      let (ox, oy) = activeEnemy.location;
+      
+      updateEnemy(level.map, activeEnemy, (ox + dx, oy + dy))
+      |> Option.fmap(map => {...level, map: map })
+      |> Option.fmap(l => World.updateLevel(l, game.world))
+      |> Option.fmap(w => {...game, world: w})
     } else {
       /* Wait / sleep */
       setEnemy(level.map, activeEnemy) 

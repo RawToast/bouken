@@ -1,6 +1,6 @@
 FROM node:8.9.4
 
-RUN npm install -g serve react-scripts
+RUN npm install -g serve@6.5.8 react-scripts
 
 COPY package.json yarn.lock bsconfig.json  ./
 
