@@ -27,3 +27,29 @@ describe("buildPlace", () => {
     test("The place is empty", (_) => expect(result.state) |> toBe(Empty));
   });
 });
+
+describe("buildLevel", () => {
+  describe("When given a valid string for a 5x5 level", () => {
+    let levelStr = 
+      ".,.,.,.,.\n" ++ 
+      ".,.,.,.,.\n" ++
+      ".,w,.,.,.\n" ++
+      ".,.,#,.,.\n" ++
+      ".,.,.,.,.";
+
+    let result = buildArea(levelStr);
+    let getPlace = (x, y, area) => area |> List.nth(_, y) |> List.nth(_, x);
+
+    test("Creates an area with 5 rows", (_) => expect(List.length(result)) |> toBe(5));
+
+    test("Creates an area with 5 columns", (_) => expect(result |> List.hd |> List.length) |> toBe(5));
+
+    test("Creates a water tile", (_) => expect(result |> List.flatten |> Rationale.RList.any(p => p.tile == WATER)) |> toBe(true));
+
+    test("Creates a wall tile", (_) => expect(result |> List.flatten |> Rationale.RList.any(p => p.tile == WALL)) |> toBe(true));
+
+    test("Places the water in the right location", (_) => expect(result |> getPlace(1, 2) |> p => p.tile) |> toBe(WATER));
+
+    test("Places the wall in the right location", (_) => expect(result |> getPlace(2, 1) |> p => p.tile) |> toBe(WALL));
+  });
+});
