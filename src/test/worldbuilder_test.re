@@ -1,17 +1,9 @@
 open Types;
-open Rationale;
 open Jest;
 open Expect;
+open Worldbuilder;
 
 let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
-let buildPlace = (str) => {
-  switch str {
-  | "." => { tile: GROUND, state: Empty}
-  | "w" => { tile: WATER, state: Empty}
-  | "#" => { tile: WALL, state: Empty}
-  | _ => { tile: WALL, state: Empty}
-  };
-};
 
 describe("buildPlace", () => {
   describe("When given '.'", () => {
