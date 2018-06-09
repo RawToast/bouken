@@ -26,6 +26,21 @@ module Tiles = {
   let groundTile = {tile: GROUND, state: Empty};
   let wallTile = {tile: WALL, state: Empty};
   let waterTile = {tile: WATER, state: Empty};
+
+  let isGround = t => switch t {
+  | GROUND => true
+  | _ => false
+  };
+
+  let isEnemy = t => switch t.state {
+    | Enemy(_) => true
+    | _ => false
+    };
+  
+  let isExit = t => switch t {
+    | EXIT(_) => true
+    | _ => false
+    };
 };
 
 module Area: Places = {

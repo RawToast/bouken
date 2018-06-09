@@ -30,16 +30,27 @@ describe("buildPlace", () => {
   describe("When given 'e50'", () => {
     let result = buildPlace("e50");
 
-    test("Builds an exit tile", (_) => expect(result.tile) |> toEqual(EXIT(50)));
+    test("Builds an exit tile", (_) => expect(result.tile |> Level.Tiles.isExit) |> toBe(true));
+    test("Sets the score", (_) => expect(result.tile) |> toEqual(EXIT(50)));
+
     test("The place is empty", (_) => expect(result.state) |> toBe(Empty));
+  });
+
+  describe("When given '.|Z'", () => {
+    let result = buildPlace(".|Z");
+
+    test("Builds a ground tile", (_) => expect(result.tile) |> toEqual(GROUND));
+    test("Occupied by an enemy", (_) => expect(result |> Level.Tiles.isEnemy) |> toBe(true));
+
   });
 });
 
 describe("buildLevel", () => {
   describe("When given a valid string for a 5x5 level", () => {
+    open Rationale;
     let levelStr = 
       "., ., ., ., e20\n" ++ 
-      "., ., ., ., .\n" ++
+      "., ., ., .|Z, .\n" ++
       "., w, ., ., .\n" ++
       "., ., #, ., .\n" ++
       "., ., ., ., .";
@@ -51,11 +62,13 @@ describe("buildLevel", () => {
 
     test("Creates an area with 5 columns", (_) => expect(result |> List.hd |> List.length) |> toBe(5));
 
-    test("Creates a water tile", (_) => expect(result |> List.flatten |> Rationale.RList.any(p => p.tile == WATER)) |> toBe(true));
+    test("Creates a water tile", (_) => expect(result |> List.flatten |> RList.any(p => p.tile == WATER)) |> toBe(true));
 
-    test("Creates a wall tile", (_) => expect(result |> List.flatten |> Rationale.RList.any(p => p.tile == WALL)) |> toBe(true));
+    test("Creates a wall tile", (_) => expect(result |> List.flatten |> RList.any(p => p.tile == WALL)) |> toBe(true));
 
-    test("Creates an exit tile", (_) => expect(result |> List.flatten |> Rationale.RList.any(p => p.tile == EXIT(20))) |> toBe(true));
+    test("Creates an exit tile", (_) => expect(result |> List.flatten |> RList.any(p => p.tile == EXIT(20))) |> toBe(true));
+
+    test("Creates a place with an enemy", (_) => expect(result |> List.flatten |> RList.any(Level.Tiles.isEnemy)) |> toBe(true));
 
     test("Places the water in the right location", (_) => expect(result |> getPlace(1, 2) |> p => p.tile) |> toBe(WATER));
 
