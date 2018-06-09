@@ -1,6 +1,6 @@
 {
   "name": "bouken",
-  "version": "0.1.0b",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "bs-webapi": "^0.9.1",
