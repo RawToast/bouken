@@ -42,7 +42,7 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 `w` Shallow water
 
-`X` Enemy
+`Z` Enemy / Zombie (Slow moving and dumb)
 
 `/` Stairs
 

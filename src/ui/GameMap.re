@@ -8,7 +8,7 @@ module GameElements = {
   switch place.state {
   | Empty => default
   | Player(_) => "O"
-  | Enemy(_) => "X"
+  | Enemy(_) => "Z"
   };
 
   let tilesToElements = List.map(t =>
