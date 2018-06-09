@@ -53,7 +53,7 @@ describe("buildPlace", () => {
   });
 });
 
-describe("buildLevel", () => {
+describe("buildArea", () => {
   describe("When given a valid string for a 5x5 level", () => {
     open Rationale;
     let levelStr = 
@@ -78,5 +78,38 @@ describe("buildLevel", () => {
 
     test("Places the water in the right location", (_) => expect(result |> getPlace(1, 2) |> p => p.tile) |> toBe(WATER));
     test("Places the wall in the right location", (_) => expect(result |> getPlace(2, 1) |> p => p.tile) |> toBe(WALL));
+  });
+});
+
+describe("buildLevel", () => {
+  describe("When given a valid area and name", () => {
+    let levelStr = 
+      "., ., ., ., e20\n" ++ 
+      "., ., ., .|Z, .\n" ++
+      "., w, ., /0Maze, .\n" ++
+      "., ., #, ., .\n" ++
+      "., ., ., ., .";
+
+    let result = buildLevel("Test", levelStr);
+
+    test("Creates a named level", (_) => expect(result.name) |> toBe("Test"));
+    test("Creates an area with the correct number of rows", (_) => expect(List.length(result.map)) |> toBe(5));
+    test("Creates an area with the correct number of columns", (_) => expect(result.map |> List.hd |> List.length) |> toBe(5));
+  });
+});
+
+describe("buildWorld", () => {
+  describe("When given a valid parameters", () => {
+    let levelStr = 
+      "., ., ., ., e20\n" ++ 
+      "., ., ., .|Z, .\n" ++
+      "., w, ., /0Maze, .\n" ++
+      "., ., #, ., .\n" ++
+      "., ., ., ., .";
+
+    let result = buildWorld("Test", [("Test", levelStr)]);
+
+    test("Creates a world with a current level", (_) => expect(result.current) |> toBe("Test"));
+    test("With levels", (_) => expect(List.length(result.levels)) |> toBeGreaterThan(0));
   });
 });
