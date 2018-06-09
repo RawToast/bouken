@@ -38,7 +38,7 @@ describe("Game.MovePlayer", () => {
 });
 
 describe("Game.UseStairs", () => {
-  let initGame = Game.create("dasve");
+  let initGame = Game.create("dave");
   let newGame = initGame 
     |> Game.movePlayer(7, 8)
     >>= Game.useStairs

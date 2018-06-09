@@ -70,7 +70,29 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     };
   };
 
+  let chase = (~range=4, area, enemyInfo) => {
+    let visiblePlaces = findTargets(~range=range, enemyInfo);
+    let playerLocations = attackablePlaces(visiblePlaces, area);
+
+    if (List.length(playerLocations) == 0) (0, 0)
+    else {
+      let loc = List.hd(playerLocations);
+      let (px, py) = loc;
+      let (ex, ey) = enemyInfo.location;
+
+      let dx = px - ex;
+      let dy = py - ey;
+
+      let x = if(dx > 0) 1 else { if(dx == 0) 0 else -1 };
+      let y = if(dy > 0) 1 else { if(dy == 0) 0 else -1 };
+
+      (x, y)
+    }
+  };
+
   let takeTurn = (activeEnemy, level, game) => {
+    let canSee = canAttack(~range=4);
+
     if (canAttack(level.map, activeEnemy)) {
       setEnemy(level.map, activeEnemy) 
         |> Option.bind(_, map => attack(activeEnemy, map))
@@ -81,6 +103,20 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
           |> lvl => World.updateLevel(lvl, game.world)
           |> w => {...game, world: w, player: player}
       })
+    } else if (canSee(level.map, activeEnemy)) {
+      Js.Console.log("Chasing");
+
+      let (dx, dy) = chase(level.map, activeEnemy);
+      let (ox, oy) = activeEnemy.location;
+
+      
+      let nEnemy = { ... activeEnemy, location: (ox + dx, oy + dy) };
+      
+      setEnemy(level.map, nEnemy) 
+      |> Option.fmap(Places.removeOccupant(ox, oy))
+      |> Option.fmap(map => {...level, map: map })
+      |> Option.fmap(l => World.updateLevel(l, game.world))
+      |> Option.fmap(w => {...game, world: w})
     } else {
       /* Wait / sleep */
       setEnemy(level.map, activeEnemy) 
