@@ -26,12 +26,19 @@ describe("buildPlace", () => {
     test("Builds a water tile", (_) => expect(result.tile) |> toBe(WATER));
     test("The place is empty", (_) => expect(result.state) |> toBe(Empty));
   });
+
+  describe("When given 'e50'", () => {
+    let result = buildPlace("e50");
+
+    test("Builds an exit tile", (_) => expect(result.tile) |> toEqual(EXIT(50)));
+    test("The place is empty", (_) => expect(result.state) |> toBe(Empty));
+  });
 });
 
 describe("buildLevel", () => {
   describe("When given a valid string for a 5x5 level", () => {
     let levelStr = 
-      "., ., ., ., .\n" ++ 
+      "., ., ., ., e20\n" ++ 
       "., ., ., ., .\n" ++
       "., w, ., ., .\n" ++
       "., ., #, ., .\n" ++
@@ -47,6 +54,8 @@ describe("buildLevel", () => {
     test("Creates a water tile", (_) => expect(result |> List.flatten |> Rationale.RList.any(p => p.tile == WATER)) |> toBe(true));
 
     test("Creates a wall tile", (_) => expect(result |> List.flatten |> Rationale.RList.any(p => p.tile == WALL)) |> toBe(true));
+
+    test("Creates an exit tile", (_) => expect(result |> List.flatten |> Rationale.RList.any(p => p.tile == EXIT(20))) |> toBe(true));
 
     test("Places the water in the right location", (_) => expect(result |> getPlace(1, 2) |> p => p.tile) |> toBe(WATER));
 

@@ -1,9 +1,11 @@
 open Types;
+let makeExit = score => { tile: EXIT(int_of_string((score))), state: Empty };
 let buildPlace = (str) => {
-    switch str {
+    switch (Js.String.charAt(0, str)) {
     | "." => { tile: GROUND, state: Empty}
     | "w" => { tile: WATER, state: Empty}
     | "#" => { tile: WALL, state: Empty}
+    | "e" => makeExit(Js.String.sliceToEnd(1, str))
     | _ => { tile: WALL, state: Empty}
     };
   };
