@@ -76,7 +76,7 @@ module Builder: WorldBuilder = {
 
     let level4 = LevelBuilder.makeBlankLevel("Dungeon 4")
       |> Level.modifyTile(2, 3, { tile: STAIRS({ id: 1, level: "Dungeon 3" }), state: Empty})
-      |> Level.modifyTile(13, 12, { tile: STAIRS({ id: 0, level: "Dungeon 5" }), state: Empty})
+      |> Level.modifyTile(13, 12, { tile: STAIRS({ id: 0, level: "Dungeon 5" }), state: Enemy(newEnemy("z4"))})
       |> Level.modifyTile(7, 14, { tile: STAIRS({ id: 2, level: "Cave" }), state: Empty})
       |> Level.modifyTile(13, 11, {tile: GROUND, state: Enemy(newEnemy("z1"))})
       |> Level.modifyTile(0, 1, {tile: GROUND, state: Enemy(newEnemy("z2"))})

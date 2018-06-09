@@ -123,7 +123,6 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
           |> w => {...game, world: w, player: player}
       })
     } else if (canSee(level.map, activeEnemy)) {
-      Js.Console.log("Chasing");
 
       let (dx, dy) = chase(level.map, activeEnemy);
       let (ox, oy) = activeEnemy.location;
