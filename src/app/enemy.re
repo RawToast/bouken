@@ -16,6 +16,25 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     Places.setEnemyAt(x, y, enemyInfo.enemy, 1., area) |> Rationale.Option.ofResult
   };
 
+  let updateEnemy = (area, enemyInfo, newLocation) => {
+    let (x, y) = newLocation;
+    let (ox, oy) = enemyInfo.location;
+
+    let moveIsPossible = Places.getPlace(x, y, area) 
+      |> Option.fmap(p => switch p.state {
+        | Empty => true
+        | _ => false })
+      |> Option.default(false);
+
+    if (moveIsPossible) {
+      Places.setEnemyAt(x, y, enemyInfo.enemy, 1., area)
+        |> Rationale.Option.ofResult
+        |> Option.fmap(Places.removeOccupant(ox, oy))
+    } else {
+      Places.setEnemyAt(ox, oy, enemyInfo.enemy, 1., area) |> Rationale.Option.ofResult
+    }
+  };
+
   let attackablePlaces = (targets, area) => 
     targets 
       |> List.filter(pos => {
@@ -108,12 +127,8 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
 
       let (dx, dy) = chase(level.map, activeEnemy);
       let (ox, oy) = activeEnemy.location;
-
       
-      let nEnemy = { ... activeEnemy, location: (ox + dx, oy + dy) };
-      
-      setEnemy(level.map, nEnemy) 
-      |> Option.fmap(Places.removeOccupant(ox, oy))
+      updateEnemy(level.map, activeEnemy, (ox + dx, oy + dy))
       |> Option.fmap(map => {...level, map: map })
       |> Option.fmap(l => World.updateLevel(l, game.world))
       |> Option.fmap(w => {...game, world: w})

@@ -110,7 +110,6 @@ describe("EnemyLoop", () => {
   describe("find targets", () => {
     
     test("finds targets around the user", (_) => {
-      let (_, level) = gameWithEnemyDelta(0, 1, game);
       let enemyInfo = { enemy: activeEnemy, location: (6, 7) }
       let visiblePlaces = EnemyLoop.findTargets(~range=1, enemyInfo);
 
@@ -118,7 +117,6 @@ describe("EnemyLoop", () => {
     });
 
     test("finds more targets when a larger range is used", (_) => {
-      let (_, level) = gameWithEnemyDelta(0, 1, game);
       let enemyInfo = { enemy: activeEnemy, location: (6, 7) }
       let visiblePlaces = EnemyLoop.findTargets(~range=2, enemyInfo);
 
@@ -147,6 +145,13 @@ describe("EnemyLoop", () => {
       let result = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (5, 7) });
 
       expect(result) |> toEqual((1, -1));
+    });
+
+    test("does not move if the tile is occupied by another enemy", (_) => {
+      let (_, level) = gameWithEnemyDelta(0, -1, game);
+      let result = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (6, 5) });
+
+      expect(result) |> toEqual((0, 1));
     });
 
     test("does not move when the player is out of range", (_) => {
