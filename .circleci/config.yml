@@ -19,6 +19,7 @@ jobs:
           key: dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
+            - /usr/local/lib/node_modules/bs-platform
   test:
     docker:
       - image: node/node:8.9.4
