@@ -113,3 +113,13 @@ describe("buildWorld", () => {
     test("With levels", (_) => expect(List.length(result.levels)) |> toBeGreaterThan(0));
   });
 });
+
+describe("loadWorld", () => {
+  describe("When given a valid parameters", () => {
+    let result = loadWorld("Cave", "./world");
+
+    test("Creates a world with a current level", (_) => expect(result.current) |> toBe("Cave"));
+    test("With levels", (_) => expect(List.length(result.levels)) |> toBeGreaterThan(0));
+    test("With the current level", (_) => expect(Rationale.RList.any(l => l.name === "Cave", result.levels)) |> toBe(true));    
+  });
+});

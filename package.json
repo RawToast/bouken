@@ -3,6 +3,7 @@
   "version": "0.1.1b",
   "private": true,
   "dependencies": {
+    "bs-node": "reasonml-community/bs-node",
     "bs-webapi": "^0.9.1",
     "rationale": "^0.1.4",
     "react": "^16.4.0",

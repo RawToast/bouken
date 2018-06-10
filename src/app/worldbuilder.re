@@ -47,11 +47,11 @@ let buildPlace = str => {
 let buildArea = (str) => str 
     |> Js.String.split("\n") 
     |> Array.to_list
-    |> List.map(xs =>
-      xs |> Js.String.split(",") 
-        |> Array.to_list
-        |> List.map(Js.String.trim)
-        |> List.map(buildPlace))
+    |> List.map(col =>
+      col |> Js.String.split(",") 
+          |> Array.to_list
+          |> List.map(Js.String.trim)
+          |> List.map(buildPlace))
     |> List.filter(x => List.length(x) != 0)
     |> List.rev;
 
@@ -60,3 +60,15 @@ let buildLevel = (name, areaStr) => { name: name, map: buildArea(areaStr) };
 let buildWorld = (current, levels) => levels 
   |> List.map(lv => { let (n, a) = lv; buildLevel(n, a)})
   |> lvls => { current: current, levels: lvls };
+
+let loadLevel = (directory, file) =>
+  Node.Fs.readFileAsUtf8Sync(directory ++ "/" ++ file) |> buildLevel(Js.String.slice(0, (Js.String.indexOf(".", file)), file));
+
+let loadWorld = (initial, directory) => {   
+  let levels = directory 
+    |> Node.Fs.readdirSync 
+    |> Array.to_list 
+    |> List.map(file => loadLevel(directory, file));
+
+  { current: initial, levels: levels };
+};

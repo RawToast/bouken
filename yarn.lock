@@ -1300,6 +1300,10 @@ bs-loader@^1.8.0:
     loader-utils "^1.1.0"
     read-bsconfig "^1.0.1"
 
+bs-node@reasonml-community/bs-node:
+  version "0.0.1"
+  resolved "https://codeload.github.com/reasonml-community/bs-node/tar.gz/20ef6d2d7c00e923aba33b0629ca5623a4460712"
+
 bs-webapi@^0.9.1:
   version "0.9.1"
   resolved "https://registry.yarnpkg.com/bs-webapi/-/bs-webapi-0.9.1.tgz#c71cc4ae619632d53c60f2f4433fb1080803cdd6"
