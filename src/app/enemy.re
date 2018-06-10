@@ -20,13 +20,19 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     let (x, y) = newLocation;
     let (ox, oy) = enemyInfo.location;
 
-    let moveIsPossible = Places.getPlace(x, y, area) 
+    let placeIsEmpty = Places.getPlace(x, y, area) 
       |> Option.fmap(p => switch p.state {
         | Empty => true
         | _ => false })
       |> Option.default(false);
 
-    if (moveIsPossible) {
+    let moveIsPossible = Places.getPlace(x, y, area) 
+    |> Option.fmap(p => switch p.tile {
+      | WALL => false
+      | _ => true })
+    |> Option.default(false);
+
+    if (placeIsEmpty && moveIsPossible) {
       Places.setEnemyAt(x, y, enemyInfo.enemy, 1., area)
         |> Rationale.Option.ofResult
         |> Option.fmap(Places.removeOccupant(ox, oy))

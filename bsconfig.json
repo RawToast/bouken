@@ -14,7 +14,9 @@
     "reason-react",
     "@glennsl/bs-jest",
     "rationale",
-    "bs-webapi"
+    "bs-webapi",
+    "bs-node",
+    "bs-fetch"
   ],
   "reason": {
     "react-jsx": 2

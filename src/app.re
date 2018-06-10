@@ -15,7 +15,8 @@ type gameAction =
   | UseExit;
 
 type appAction = 
-  | StartGame(string);
+  | StartGame(string)
+  | Begin(game);
 
 type action = 
   | GameAction(gameAction)
@@ -44,6 +45,13 @@ let handleGameAction = (act, view) => switch act {
   | UseExit => view |> mapGameOrError(Game.useExit) |> update
 };
 
+let initPlayer = name => {name: name, stats: { health: 10, speed: 1.0, position: 0. }, gold: 0, location: (1, 1)};
+
+let initgame = (pname, self) => initPlayer(pname) 
+  |> p => World.FetchCsvBuilder.create(p)
+  |> Js.Promise.then_(w => { player: p, world: w, turn: 0. } |> Js.Promise.resolve)
+  |> Js.Promise.then_(g => {self.send(AppAction(Begin(g))); Js.Promise.resolve(g)})
+  |> ignore;
 
 let make = (_children) => {
   ...component,
@@ -51,8 +59,9 @@ let make = (_children) => {
   reducer: (act: action , view) => switch act {
     | GameAction(gameAction) => handleGameAction(gameAction, view)
     | AppAction(appAction) => switch appAction {
-      | StartGame(name) => ReasonReact.Update(InGame(Game.create(name)))
-    };
+      | StartGame(name) => ReasonReact.SideEffects(initgame(name))
+      | Begin(game) => ReasonReact.Update(InGame(game))
+      };
   },
   render: (self) => {
     <div className="App">

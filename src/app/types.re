@@ -98,6 +98,13 @@ module type WorldBuilder = {
   let create: player => world;
 };
 
+module type WorldCreator = {
+  let buildPlace: string => place;
+  let buildArea: string => area;
+  let buildLevel: (string, string) => level;
+  let loadWorld: (string, string) => world;
+};
+
 module type Places = {
   let findPlayer: (area) => option(player); 
   let findEnemy: (string, area) => option(enemy);
@@ -132,6 +139,14 @@ module type EnemyLoop = {
 
 module type Game = {
   let create: string => game;
+  let attack: (int, int, game) => actionResult;
+  let movePlayer: (int, int, game) => actionResult;
+  let useStairs: game => actionResult;
+  let useExit: game => actionResult;
+};
+
+module type AsyncGame = {
+  let create: string => Js.Promise.t(game);
   let attack: (int, int, game) => actionResult;
   let movePlayer: (int, int, game) => actionResult;
   let useStairs: game => actionResult;

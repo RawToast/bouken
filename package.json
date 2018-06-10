@@ -1,8 +1,10 @@
 {
   "name": "bouken",
-  "version": "0.1.0",
+  "version": "0.1.1b",
   "private": true,
   "dependencies": {
+    "bs-fetch": "^0.3.0",
+    "bs-node": "reasonml-community/bs-node",
     "bs-webapi": "^0.9.1",
     "rationale": "^0.1.4",
     "react": "^16.4.0",
@@ -13,7 +15,7 @@
     "start": "react-scripts start",
     "clean": "bsb -clean-world && rm -rf lib",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "jest --env=jsdom --testMatch='**/test/*test.{js, re}' --watch",
     "eject": "react-scripts eject",
     "prepare": "npm link bs-platform",
     "coverage": "react-scripts test --env=jsdom --coverage",

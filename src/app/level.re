@@ -1,6 +1,5 @@
 open Types;
 open Rationale;
-open Rationale.Option;
 
 module LevelBuilder = {
   let blankPlace = {tile: GROUND, state: Empty};
@@ -27,6 +26,26 @@ module Tiles = {
   let groundTile = {tile: GROUND, state: Empty};
   let wallTile = {tile: WALL, state: Empty};
   let waterTile = {tile: WATER, state: Empty};
+
+  let isGround = t => switch t {
+    | GROUND => true
+    | _ => false
+    };
+
+  let isEnemy = t => switch t.state {
+    | Enemy(_) => true
+    | _ => false
+    };
+
+  let isStairs = t => switch t.tile {
+    | STAIRS(_) => true
+    | _ => false
+    };
+  
+  let isExit = t => switch t {
+    | EXIT(_) => true
+    | _ => false
+    };
 };
 
 module Area: Places = {
@@ -63,9 +82,11 @@ module Area: Places = {
     });
   };
 
-  let getPlace = (x, y, area) => area |> RList.nth(y) >>= RList.nth(x);
+  let getPlace = (x, y, area) => area |> RList.nth(y) |> Option.bind(_, RList.nth(x));
 
   let findPlayer = (area) => {
+    open Rationale.Option;
+
     let findPlayerRow = RList.find(y => isPlayer(y));
     let hasPlayer = (p:option(place)) => Option.isSome(p);
 
@@ -105,7 +126,10 @@ module Area: Places = {
     | _ => false
   };
 
-  let canMoveTo = (~overwrite=true, x, y, map: area) => {map 
+  let canMoveTo = (~overwrite=true, x, y, map: area) => {
+    open Rationale.Option;
+    
+    map 
     |> RList.nth(y) >>= RList.nth(x)
     |> Result.ofOption(ImpossibleMove)
     |> Result.bind(_, l => switch l.tile {
@@ -236,7 +260,7 @@ module Level = {
 
   let findEnemy = (id, level) => Area.findEnemy(id, level.map);
 
-  let getPlace = (x, y, map) => map |> RList.nth(y) >>= RList.nth(x);
+  let getPlace = (x, y, map) => map |> RList.nth(y) |> Option.bind(_, RList.nth(x));
 
   let removeOccupant = (x, y, level) => { ...level, map: Area.removeOccupant(x, y, level.map) };
 

@@ -13,6 +13,38 @@ module World: World = {
   let currentLevel = (world) => selectLevel(world.current, world);
 };
 
+module FSCsvBuilder: WorldBuilder = {
+  open Level;
+  open Rationale;
+
+  let create = (player: player) => {
+    let world = Worldcreator.CsvWorldBuilder.loadWorld("Dungeon 1", "./world");
+    let (x, y) = player.location;
+    world 
+      |> World.currentLevel
+      |> Option.fmap(Level.modifyTile(x, y, {tile: GROUND, state: Player(player)}))
+      |> Option.fmap(World.updateLevel(_, world))
+      |> Option.default(world);
+  };
+};
+
+module FetchCsvBuilder = {
+  open Level;
+  open Rationale;
+  
+  let create = (player: player) => {
+    let (x, y) = player.location;
+    
+    Worldcreator.FetchCsvWorldBuilder.loadWorld("Dungeon 1", "Dungeon 1,Dungeon 2,Dungeon 3,Dungeon 4,Dungeon 5,Swamp,Cave")
+      |> Js.Promise.then_(world => 
+        world 
+          |> World.currentLevel
+          |> Option.fmap(Level.modifyTile(x, y, {tile: GROUND, state: Player(player)}))
+          |> Option.fmap(World.updateLevel(_, world))
+          |> Option.default(world) 
+          |> Js.Promise.resolve);
+  };
+};
 
 module Builder: WorldBuilder = {
   open Level;
@@ -21,7 +53,7 @@ module Builder: WorldBuilder = {
   let listHorizontal = (x, y, tx) => RList.rangeInt(1, x, tx) |> List.map(i => (i, y));
   let listVertical = (x, y, ty) => RList.rangeInt(1, y, ty) |> List.map(i => (x, i));
   let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 6, speed: 0.5, position: 0. }};
-  let newEnemy = id => {id: id, name: id, stats: { health: 3, speed: 0.8, position: 0. }};
+  let newEnemy = id => {id: id, name: id, stats: { health: 6, speed: 0.8, position: 0. }};
   let create = player => {
     let initLevel = player =>
         LevelBuilder.makeBlankLevel("Dungeon 1")
