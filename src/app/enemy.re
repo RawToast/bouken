@@ -28,11 +28,8 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
 
     let moveIsPossible = Places.getPlace(x, y, area) 
     |> Option.fmap(p => switch p.tile {
-      | GROUND => true
-      | WATER => true
-      | STAIRS(_) => true
-      | EXIT(_) => true
-      | _ => false })
+      | WALL => false
+      | _ => true })
     |> Option.default(false);
 
     if (placeIsEmpty && moveIsPossible) {
