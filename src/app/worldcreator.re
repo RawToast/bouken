@@ -58,7 +58,6 @@ module CsvWorldBuilder: WorldCreator = {
 
   let buildLevel = (name, areaStr) => { name: name, map: buildArea(areaStr) };
 
-  /* open Node; */
   let loadLevel = (directory, file) =>
     Node.Fs.readFileAsUtf8Sync(directory ++ "/" ++ file) |> buildLevel(Js.String.slice(0, (Js.String.indexOf(".", file)), file));
 
@@ -78,19 +77,7 @@ module FetchCsvWorldBuilder = {
   let buildArea = CsvWorldBuilder.buildArea;
 
   let buildLevel = CsvWorldBuilder.buildLevel;
-
-  /* let loadLevel = (directory, file) =>  */
-/* 
-  Js.Promise.(
-    Fetch.fetch("/world/Dungeon 1.csv")
-    |> then_(Fetch.Response.text)
-    |> then_(text => print_endline(text) |> resolve)
-  );
-    Node.Fs.readFileAsUtf8Sync(directory ++ "/" ++ file) |> buildLevel(Js.String.slice(0, (Js.String.indexOf(".", file)), file)); */
-
   let loadWorld = (initial, names) => {
-
-    /* |> List.map(n => n ++ ".csv"); */
 
     let levelNames = Js.String.split(",", names) |> Array.to_list;
 
