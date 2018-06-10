@@ -16,13 +16,13 @@ jobs:
           name: Install dependencies
           command: yarn
       - save_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
+          key: dep-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-            - /usr/local/lib/node_modules/bs-platform
+            - /usr/local/lib/node_modules/
   test:
     docker:
-      - image: node/node:8.9.4
+      - image: node:8.9.4
     steps:
       - checkout
       - run:
