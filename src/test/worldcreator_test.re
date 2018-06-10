@@ -1,7 +1,7 @@
 open Types;
 open Jest;
 open Expect;
-open Worldbuilder;
+open Worldcreator.CsvWorldBuilder;
 
 let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
 
@@ -98,28 +98,12 @@ describe("buildLevel", () => {
   });
 });
 
-describe("buildWorld", () => {
-  describe("When given a valid parameters", () => {
-    let levelStr = 
-      "., ., ., ., e20\n" ++ 
-      "., ., ., .|Z, .\n" ++
-      "., w, ., /0Maze, .\n" ++
-      "., ., #, ., .\n" ++
-      "., ., ., ., .";
-
-    let result = buildWorld("Test", [("Test", levelStr)]);
-
-    test("Creates a world with a current level", (_) => expect(result.current) |> toBe("Test"));
-    test("With levels", (_) => expect(List.length(result.levels)) |> toBeGreaterThan(0));
-  });
-});
-
 describe("loadWorld", () => {
   describe("When given a valid parameters", () => {
-    let result = loadWorld("Cave", "./world");
+    let result = loadWorld("Cave", "./testworld");
 
     test("Creates a world with a current level", (_) => expect(result.current) |> toBe("Cave"));
-    test("With levels", (_) => expect(List.length(result.levels)) |> toBeGreaterThan(0));
+    test("With multiple levels", (_) => expect(List.length(result.levels)) |> toBeGreaterThan(1));
     test("With the current level", (_) => expect(Rationale.RList.any(l => l.name === "Cave", result.levels)) |> toBe(true));    
   });
 });

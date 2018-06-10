@@ -3,6 +3,7 @@
   "version": "0.1.1b",
   "private": true,
   "dependencies": {
+    "bs-fetch": "^0.3.0",
     "bs-node": "reasonml-community/bs-node",
     "bs-webapi": "^0.9.1",
     "rationale": "^0.1.4",

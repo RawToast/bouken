@@ -13,6 +13,38 @@ module World: World = {
   let currentLevel = (world) => selectLevel(world.current, world);
 };
 
+module FSCsvBuilder: WorldBuilder = {
+  open Level;
+  open Rationale;
+
+  let create = (player: player) => {
+    let world = Worldcreator.CsvWorldBuilder.loadWorld("Dungeon 1", "./world");
+    let (x, y) = player.location;
+    world 
+      |> World.currentLevel
+      |> Option.fmap(Level.modifyTile(x, y, {tile: GROUND, state: Player(player)}))
+      |> Option.fmap(World.updateLevel(_, world))
+      |> Option.default(world);
+  };
+};
+
+module FetchCsvBuilder = {
+  open Level;
+  open Rationale;
+  
+  let create = (player: player) => {
+    let (x, y) = player.location;
+    
+    Worldcreator.FetchCsvWorldBuilder.loadWorld("Dungeon 1", "Dungeon 1,Dungeon 2,Dungeon 3,Dungeon 4,Dungeon 5,Swamp,Cave")
+      |> Js.Promise.then_(world => 
+        world 
+          |> World.currentLevel
+          |> Option.fmap(Level.modifyTile(x, y, {tile: GROUND, state: Player(player)}))
+          |> Option.fmap(World.updateLevel(_, world))
+          |> Option.default(world) 
+          |> Js.Promise.resolve);
+  };
+};
 
 module Builder: WorldBuilder = {
   open Level;
