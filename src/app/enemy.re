@@ -87,7 +87,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
             | _ => None;
           })
         |> Option.fmap((player:player) => { ...player, stats: {...player.stats, health: player.stats.health - 1} } )
-        >>= (player => Places.setPlayerAt(x, y, player, 1., area) 
+        >>= (player => Places.setPlayerAt(x, y, player, 0., area) 
           |> Option.ofResult 
           |> Option.fmap(area => (area, player)));
       } else {
