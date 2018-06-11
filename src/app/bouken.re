@@ -48,12 +48,10 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
       }
       | _ => None 
     };
-    
-    let reducedPlayer = { ... player, stats: { ... player.stats, position: player.stats.position -. 1. } };
-      
+          
     let updateLevelWithPlayer = level => {
       level.map 
-        |> Area.setPlayerAt(xl, yl, reducedPlayer, 0.)
+        |> Area.setPlayerAt(xl, yl, player, 1.)
         |> Option.ofResult
         |> Option.fmap(area => { ... level, map: area });
     };
@@ -111,17 +109,14 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
 
     let attemptMove(level, x, y) = level |> 
       Option.bind(_, l =>
-          l.map |> Area.movePlayer(x, y, 1.) |>
-              Option.ofResult |> o => switch o {
-                  | Some(area) => Some(area)
-                  | None => None
-                  }
-              |> Option.fmap((pa:playerArea) => {
-                  let nl = { ... l, map: pa.area};
-                  let world = W.updateLevel(nl, game.world);
+          l.map |> Area.movePlayer(x, y, 1.) 
+                |> Option.ofResult
+                |> Option.fmap((pa:playerArea) => {
+                    let nl = { ... l, map: pa.area};
+                    let world = W.updateLevel(nl, game.world);
 
-                  {... game, player: pa.player, world: world };
-              }))
+                    {... game, player: pa.player, world: world };
+                }))
       |> Option.fmap(GL.continue)
       |> optRes => switch optRes {
         | Some(game) => gameToRes(game)

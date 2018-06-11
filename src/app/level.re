@@ -159,13 +159,13 @@ module Area: Places = {
   };
 
   let setPlayerLocation = (x: int, y: int, cost: float, area: area) => {
-    let update = (player, map) => {
+    let update = (playerFunc, map) => {
       map |>
       List.mapi((xi: int, xs: list(place)) =>
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
             if (yi == x) { 
-              let np = player(place.tile);
+              let np:player = playerFunc(place.tile);
               { ...place, state: Player({ ...np, location: (x, y) }) }
             } else place);
         } else xs
@@ -250,7 +250,7 @@ module Area: Places = {
         area |> canMoveTo(~overwrite=false, nx, ny)
           >>= _ => setPlayerLocation(nx, ny, cost, area)
           |> Result.fmap(removeOccupant(xl, yl))
-          |> Result.fmap(a => {player: newPlayer, area: a})
+          |> Result.fmap(a => { player: newPlayer, area: a})
       }
       | None => error(InvalidState);
     };

@@ -69,22 +69,14 @@ module CsvWorldBuilder: WorldCreator = {
 
     { current: initial, levels: levels };
   };
-};
 
-module FetchCsvWorldBuilder = {
-
-  let buildPlace = CsvWorldBuilder.buildPlace;
-  let buildArea = CsvWorldBuilder.buildArea;
-
-  let buildLevel = CsvWorldBuilder.buildLevel;
-  let loadWorld = (initial, names) => {
+  let loadWorldAsync = (initial, names) => {
 
     let levelNames = Js.String.split(",", names) |> Array.to_list;
 
     let prom = (name) => Js.Promise.(
       Fetch.fetch("http://localhost:3000/world/" ++ name ++ ".csv")
         |> then_(Fetch.Response.text)
-        |> then_(t => {Js.Console.log("Got: " ++ t); t |> resolve})
         |> then_(text => buildLevel(name, text) |> resolve)
     );
 
@@ -95,3 +87,4 @@ module FetchCsvWorldBuilder = {
       |> Js.Promise.then_(lvl => lvl |> Array.to_list |> lvs => {current: initial, levels: lvs} |> Js.Promise.resolve);
   };
 };
+
