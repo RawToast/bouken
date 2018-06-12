@@ -64,6 +64,9 @@ describe("Game.MovePlayer", () => {
     test("Initial turn is 0", (_) => {
       expect(initGame.turn) |> toBe(0.);
     });
+    Skip.test("Movement penalties are increased", (_) => {
+      expect(res.turn) |> toBeGreaterThan(1.1);
+    });
   });
 });
 

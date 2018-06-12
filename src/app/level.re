@@ -134,16 +134,15 @@ module Area: Places = {
   let canMoveTo = (~overwrite=true, x, y, map: area) => {
     open Rationale.Option;
     
-    map 
-    |> RList.nth(y) >>= RList.nth(x)
-    |> Result.ofOption(ImpossibleMove)
-    |> Result.bind(_, l => switch l.tile {
-        | GROUND => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
-        | WATER => success(l)
-        | WALL => error(ImpossibleMove)
-        | STAIRS(_) => success(l)
-        | EXIT(_) => success(l)
-    });
+    map |> RList.nth(y) >>= RList.nth(x)
+        |> Result.ofOption(ImpossibleMove)
+        |> Result.bind(_, l => switch l.tile {
+            | GROUND => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
+            | WATER => success(l)
+            | WALL => error(ImpossibleMove)
+            | STAIRS(_) => success(l)
+            | EXIT(_) => success(l)
+        });
   };
     
   let removeOccupant = (x, y, area) => {
@@ -303,20 +302,20 @@ module Level = {
           | Some(result) => success(result)
           })
   };
-
+  
   let movePlayer(x: int, y: int, level: level) = {
     let playerOpt = findPlayer(level);
     switch(playerOpt) {
-    | Some(player) => {
-      let (xl, yl) = player.location;
-      let nx = x + xl;
-      let ny = y + yl;
+      | Some(player) => {
+        let (xl, yl) = player.location;
+        let nx = x + xl;
+        let ny = y + yl;
 
-      level 
-        |> setPlayerLocation(nx, ny)
-        |> Result.fmap(removeOccupant(xl, yl))
-    }
-    | None => error(InvalidState);
+        level 
+          |> setPlayerLocation(nx, ny)
+          |> Result.fmap(removeOccupant(xl, yl))
+      }
+      | None => error(InvalidState);
     };
   };
 };

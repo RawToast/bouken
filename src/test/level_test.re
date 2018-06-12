@@ -7,10 +7,10 @@ open Expect;
 
 let blankWorld = LevelBuilder.makeBlankLevel("test");
 let waterTile = { tile: WATER, state: Empty };
-
+let initialPosition = 1.;
 let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
-let playerAt = (x, y) => Player({name:"test", stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (x, y)});
-let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0, position: 0. }, gold: 5, location: (9, 9) };
+let playerAt = (x, y) => Player({name:"test", stats: { health: 10, speed: 1.0, position: initialPosition }, gold: 5, location: (x, y)});
+let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0, position: initialPosition }, gold: 5, location: (9, 9) };
 
 describe("Level.modify", () => {
   test("Can modify a tile", (_) => {
@@ -126,22 +126,22 @@ describe("Level.movePlayer", () => {
 
 describe("Area", () => {
   describe("findPlayer", () => {
-  test("Can find the player", (_) => {
-    let player =
-      blankWorld
-      |> Level.modifyTile(0, 0, {tile: GROUND, state: playerAt(0, 0)}) 
-      |> w => w.map |> Area.findPlayer;
-    
-      expect(Rationale.Option.isSome(player)) |> toEqual(true);
-  });
-  test("Returns none when there is no player", (_) => {
-    let player =
-      blankWorld
-      |> w => w.map |> Area.findPlayer;
-    
+    test("Can find the player", (_) => {
+      let player =
+        blankWorld
+        |> Level.modifyTile(0, 0, {tile: GROUND, state: playerAt(0, 0)}) 
+        |> w => w.map |> Area.findPlayer;
+      
+        expect(Rationale.Option.isSome(player)) |> toEqual(true);
+    });
+    test("Returns none when there is no player", (_) => {
+      let player =
+        blankWorld
+        |> w => w.map |> Area.findPlayer;
+      
       expect(Rationale.Option.isSome(player)) |> toEqual(false);
+    });
   });
-});
 
   describe("findEnemy", () => {
     test("Can find an enemy", (_) => {
@@ -161,4 +161,27 @@ describe("Area", () => {
         expect(Rationale.Option.isSome(enemy)) |> toEqual(false);
     });
   });
+
+
+  describe("movePlayer", () => {
+    describe("When the Player is on a ground tile", () => {
+      let areaResult =
+          blankWorld
+            |> Level.modifyTile(2, 2, {tile: GROUND, state: playerAt(2, 2)})
+            |> level => level.map
+            |> Area.movePlayer(1, 0, 1.)
+            |> Rationale.Option.ofResult;
+
+      let playerArea = areaResult |> Rationale.Option.default({ player: nfPlayer, area: [[]]});
+
+      test("The move is successful", (_) => {  
+        expect(Rationale.Option.isSome(areaResult)) |> toEqual(true);
+      });
+
+      Skip.test("The player's position is reduced", (_) => {  
+        expect(playerArea.player.stats.position) |> toBeLessThan(1.);
+      });
+    });
+  });
 });
+
