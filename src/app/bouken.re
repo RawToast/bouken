@@ -84,15 +84,15 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
 
       game |> applyBonus;
     };
-
+    let module G = Gameutil.GameUtil(Area, W);
     level 
       >>= findPlaceToAttack 
       >>= attackPlace
       >>= (p => level |> Option.fmap(Level.modifyTile(tx, ty, p)) )
       >>= updateLevelWithPlayer
-      |> Option.fmap(l => World.World.updateLevel(l, game.world))
-      |> Option.fmap(w => { ... game, world: w})
+      |> Option.fmap(l => G.update(l.map, game))
       >>= goldBonus(tx, ty)
+      |> Option.fmap(GL.continue)
       |> Option.fmap(gameToRes)
       |> Option.default(Error("Unable to attack"))
   };
@@ -114,8 +114,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
                 |> Option.fmap((pa:playerArea) => {
                     let nl = { ... l, map: pa.area};
                     let world = W.updateLevel(nl, game.world);
-
-                    {... game, player: pa.player, world: world };
+                    { ... game, player: pa.player, world: world };
                 }))
       |> Option.fmap(GL.continue)
       |> optRes => switch optRes {

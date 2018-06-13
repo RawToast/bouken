@@ -39,35 +39,6 @@ describe("Game.MovePlayer", () => {
       expect(newGame.turn) |> toBeGreaterThan(1.);
     });
   });
-
-  describe("When the player is in water", () => {
-    let game = Game.create("dave");
-    let ply = {name: "test", stats: { health: 10, speed: 1.0, position: 1. }, gold: 5, location: (6, 6)};
-    let newLevel = Level.LevelBuilder.makeWaterLevel("Dungeon 1")
-      |> Level.Level.modifyTile(6, 6, 
-        {tile: WATER, 
-          state: Player(ply), 
-        });
-
-    let newWorld = World.World.updateLevel(newLevel, game.world);
-    let initGame = { ... game, world: newWorld, player: ply };
-
-    let optGame = initGame |> Game.movePlayer(-1, -1);
-    let res = optGame |> g => switch(g) {
-      | Ok(game) => game
-      | _ => initGame
-      };
-
-    test("The player moves", (_) => {
-      expect(res.player.location) |> toEqual((5, 5));
-    });
-    test("Initial turn is 0", (_) => {
-      expect(initGame.turn) |> toBe(0.);
-    });
-    Skip.test("Movement penalties are increased", (_) => {
-      expect(res.turn) |> toBeGreaterThan(1.1);
-    });
-  });
 });
 
 describe("Game.UseStairs", () => {

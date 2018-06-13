@@ -240,16 +240,16 @@ module Area: Places = {
     let playerOpt = findPlayer(area);
     switch(playerOpt) {
       | Some(player) => {
-        let (xl, yl) = player.location;
-        let nx = x + xl;
-        let ny = y + yl;
+          let (xl, yl) = player.location;
+          let nx = x + xl;
+          let ny = y + yl;
 
-        let newPlayer = { ... player, location: (nx, ny)};
+          let newPlayer = { ... player, location: (nx, ny)};
 
-        area |> canMoveTo(~overwrite=false, nx, ny)
-          >>= _ => setPlayerLocation(nx, ny, cost, area)
-          |> Result.fmap(removeOccupant(xl, yl))
-          |> Result.fmap(a => { player: newPlayer, area: a})
+          area |> canMoveTo(~overwrite=false, nx, ny)
+            >>= _ => setPlayerLocation(nx, ny, cost, area)
+            |> Result.fmap(removeOccupant(xl, yl))
+            |> Result.fmap(a => { player: newPlayer, area: a})
       }
       | None => error(InvalidState);
     };

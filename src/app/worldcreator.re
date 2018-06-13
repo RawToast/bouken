@@ -27,7 +27,7 @@ module CsvWorldBuilder: WorldCreator = {
 
   let addEnemy = (str, place) => {
     let randId = () => Js.Math.random() |> string_of_float;
-    let makeZombie = () => {id: randId(), name: "Zombie", stats: { health: 6, speed: 0.8, position: 0. }};
+    let makeZombie = () => {id: randId(), name: "Zombie", stats: { health: 6, speed: 1., position: 0. }};
 
     switch str {
     | "Z" => { ... place, state: Enemy(makeZombie()) }

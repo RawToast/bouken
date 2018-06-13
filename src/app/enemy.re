@@ -81,12 +81,13 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
       let (x,y) = List.hd(targets);
       let place = Places.getPlace(x, y, area);
 
+
       place >>= (place =>
           switch place.state {
             | Player(p) => Some(p)
             | _ => None;
           })
-        |> Option.fmap((player:player) => { ...player, stats: {...player.stats, health: player.stats.health - 1} } )
+        |> Option.fmap((player:player) => { ...player, stats: {...player.stats, health: player.stats.health - 1} })
         >>= (player => Places.setPlayerAt(x, y, player, 0., area) 
           |> Option.ofResult 
           |> Option.fmap(area => (area, player)));
