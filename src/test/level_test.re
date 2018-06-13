@@ -178,7 +178,42 @@ describe("Area", () => {
         expect(Rationale.Option.isSome(areaResult)) |> toEqual(true);
       });
 
+      test("The player still exists", (_) => {  
+        expect(playerArea.area |> Area.findPlayer |> Option.isSome) |> toBe(true);
+      });
+
+      test("The player is updated ", (_) => {  
+        expect(playerArea.area |> Area.findPlayer |> Option.default(nfPlayer) |> p => p.stats.position) |> toBeCloseTo(0.);
+      });
+
       Skip.test("The player's position is reduced", (_) => {  
+        expect(playerArea.player.stats.position) |> toBeLessThan(1.);
+      });
+    });
+
+    describe("When the Player is on a water tile", () => {
+      let areaResult =
+          LevelBuilder.makeWaterLevel("waterLevel")
+            |> Level.modifyTile(2, 2, {tile: WATER, state: playerAt(2, 2)})
+            |> level => level.map
+            |> Area.movePlayer(1, 0, 1.)
+            |> Rationale.Option.ofResult;
+
+      let playerArea = areaResult |> Rationale.Option.default({ player: nfPlayer, area: [[]]});
+
+      test("The move is successful", (_) => {  
+        expect(Rationale.Option.isSome(areaResult)) |> toEqual(true);
+      });
+
+      test("The player still exists", (_) => {  
+        expect(playerArea.area |> Area.findPlayer |> Option.isSome) |> toBe(true);
+      });
+
+      test("The player in the area updated ", (_) => {  
+        expect(playerArea.area |> Area.findPlayer |> Option.default(nfPlayer) |> p => p.stats.position) |> toBeCloseTo(-0.5);
+      });
+
+      Skip.test("The player returned's position is reduced", (_) => {  
         expect(playerArea.player.stats.position) |> toBeLessThan(1.);
       });
     });
