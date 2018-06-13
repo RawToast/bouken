@@ -63,7 +63,7 @@ let make = (_children) => {
       | Begin(game) => ReasonReact.Update(InGame(game))
       };
   },
-  render: (self) => {
+  render: (self) =>
     <div className="App">
       (switch self.state {
       | Home => 
@@ -83,6 +83,5 @@ let make = (_children) => {
             movePlayer=((x, y) => self.send(GameAction(MovePlayer(x, y))))
           />
       })
-    </div>
-    },
+    </div>,
 };

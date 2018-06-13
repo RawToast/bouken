@@ -46,6 +46,11 @@ module Tiles = {
     | EXIT(_) => true
     | _ => false
     };
+
+  let tilePenalty = t => switch t {
+    | WATER => 1.5
+    | _ => 1.
+    }
 };
 
 module Area: Places = {
@@ -129,16 +134,15 @@ module Area: Places = {
   let canMoveTo = (~overwrite=true, x, y, map: area) => {
     open Rationale.Option;
     
-    map 
-    |> RList.nth(y) >>= RList.nth(x)
-    |> Result.ofOption(ImpossibleMove)
-    |> Result.bind(_, l => switch l.tile {
-        | GROUND => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
-        | WATER => success(l)
-        | WALL => error(ImpossibleMove)
-        | STAIRS(_) => success(l)
-        | EXIT(_) => success(l)
-    });
+    map |> RList.nth(y) >>= RList.nth(x)
+        |> Result.ofOption(ImpossibleMove)
+        |> Result.bind(_, l => switch l.tile {
+            | GROUND => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
+            | WATER => success(l)
+            | WALL => error(ImpossibleMove)
+            | STAIRS(_) => success(l)
+            | EXIT(_) => success(l)
+        });
   };
     
   let removeOccupant = (x, y, area) => {
@@ -154,13 +158,14 @@ module Area: Places = {
   };
 
   let setPlayerLocation = (x: int, y: int, cost: float, area: area) => {
-    let update = (player, map) => {
+    let update = (playerFunc, map) => {
       map |>
       List.mapi((xi: int, xs: list(place)) =>
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
             if (yi == x) { 
-              { ...place, state: Player({ ...player, location: (x, y) }) }
+              let np:player = playerFunc(place.tile);
+              { ...place, state: Player({ ...np, location: (x, y) }) }
             } else place);
         } else xs
       );
@@ -169,7 +174,8 @@ module Area: Places = {
     canMoveTo(x, y, area) 
       |> Result.bind(_, _r =>
         findPlayer(area) 
-        |> Option.fmap((p: player) => {... p, stats: { ... p.stats, position: p.stats.position -. cost}})
+        |> Option.fmap((p: player) => (tile => 
+          {... p, stats: { ... p.stats, position: p.stats.position -. (Tiles.tilePenalty(tile) *. cost)}}))
         |> Option.fmap(p => update(p, area) ) 
         |> o => switch (o) {
           | None => error(InvalidState)
@@ -178,13 +184,14 @@ module Area: Places = {
   };
 
   let setPlayerAt = (x: int, y: int, player: player, cost: float, area: area) => {
-    let update = (player, map) => {
+    let update = (tileToPlayer, map) => {
       map |>
       List.mapi((xi: int, xs: list(place)) =>
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
-            if (yi == x) { 
-              { ...place, state: Player({ ...player, location: (x, y) }) }
+            if (yi == x) {
+              let updatedPlayer = tileToPlayer(place.tile);
+              { ...place, state: Player({ ...updatedPlayer, location: (x, y) }) }
             } else place);
         } else xs
       );
@@ -192,7 +199,13 @@ module Area: Places = {
 
     canMoveTo(x, y, area) 
       |> Result.fmap(_ => {
-        let updatedPlayer = {... player, stats: { ... player.stats, position: player.stats.position -. cost}};
+        let updatedPlayer = tile => { 
+          ... player, 
+          stats: { 
+            ... player.stats, 
+            position: player.stats.position  -. (cost *. Tiles.tilePenalty(tile))
+          }
+        };
         let updatedArea = update(updatedPlayer, area);
         updatedArea;
       });
@@ -205,7 +218,7 @@ module Area: Places = {
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
             if (yi == x) { 
-              { ...place, state: Enemy(e) }
+              { ...place, state: Enemy(e(place.tile)) }
             } else place);
         } else xs
       );
@@ -213,7 +226,10 @@ module Area: Places = {
 
     canMoveTo(x, y, area) 
       |> Result.fmap(_ => {
-        let updatedEnemy = {... enemy, stats: { ... enemy.stats, position: (enemy.stats.position -. cost)}};
+        let updatedEnemy = tile => 
+          { ... enemy, 
+            stats: { ... enemy.stats, position: (enemy.stats.position -. (cost *. Tiles.tilePenalty(tile)))}
+          };
         let updatedArea = update(updatedEnemy, area);
         updatedArea;
       });
@@ -224,16 +240,16 @@ module Area: Places = {
     let playerOpt = findPlayer(area);
     switch(playerOpt) {
       | Some(player) => {
-        let (xl, yl) = player.location;
-        let nx = x + xl;
-        let ny = y + yl;
+          let (xl, yl) = player.location;
+          let nx = x + xl;
+          let ny = y + yl;
 
-        let newPlayer = { ... player, location: (nx, ny)};
+          let newPlayer = { ... player, location: (nx, ny)};
 
-        area |> canMoveTo(~overwrite=false, nx, ny)
-          >>= _ => setPlayerLocation(nx, ny, cost, area)
-          |> Result.fmap(removeOccupant(xl, yl))
-          |> Result.fmap(a => {player: newPlayer, area: a})
+          area |> canMoveTo(~overwrite=false, nx, ny)
+            >>= _ => setPlayerLocation(nx, ny, cost, area)
+            |> Result.fmap(removeOccupant(xl, yl))
+            |> Result.fmap(a => { player: newPlayer, area: a})
       }
       | None => error(InvalidState);
     };
@@ -286,20 +302,20 @@ module Level = {
           | Some(result) => success(result)
           })
   };
-
+  
   let movePlayer(x: int, y: int, level: level) = {
     let playerOpt = findPlayer(level);
     switch(playerOpt) {
-    | Some(player) => {
-      let (xl, yl) = player.location;
-      let nx = x + xl;
-      let ny = y + yl;
+      | Some(player) => {
+        let (xl, yl) = player.location;
+        let nx = x + xl;
+        let ny = y + yl;
 
-      level 
-        |> setPlayerLocation(nx, ny)
-        |> Result.fmap(removeOccupant(xl, yl))
-    }
-    | None => error(InvalidState);
+        level 
+          |> setPlayerLocation(nx, ny)
+          |> Result.fmap(removeOccupant(xl, yl))
+      }
+      | None => error(InvalidState);
     };
   };
 };

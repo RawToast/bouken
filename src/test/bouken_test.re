@@ -34,6 +34,10 @@ describe("Game.MovePlayer", () => {
     test("The Player's location is updated to (5,5)", (_) => {
       expect(newGame.player.location) |> toEqual((5, 5));
     });
+
+    test("Moving increases the turn counter", () => {
+      expect(newGame.turn) |> toBeGreaterThan(1.);
+    });
   });
 });
 
