@@ -1,15 +1,14 @@
 {
   "name": "bouken",
-  "version": "0.1.1",
+  "version": "0.1.2b",
   "private": true,
   "dependencies": {
     "bs-fetch": "^0.3.0",
     "bs-node": "reasonml-community/bs-node",
     "bs-webapi": "^0.9.1",
     "rationale": "^0.1.4",
-    "react": "^16.4.0",
-    "react-dom": "^16.4.0",
-    "reason-scripts": "0.8.0"
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -23,7 +22,8 @@
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.2",
-    "reason-react": "^0.4.2"
+    "reason-react": "^0.4.2",
+    "reason-scripts": "0.8.0"
   },
   "jest": {
     "collectCoverageFrom": [

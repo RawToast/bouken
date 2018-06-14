@@ -4,11 +4,15 @@ open Types;
 let component = ReasonReact.statelessComponent("GameMap");
 
 module GameElements = {
+  let makeEnemy = (e:enemy) => switch(e.name) {
+  | "Zombie" => "Z"
+  | _ => "X"
+  };
   let stateToElement = (place: place, default:string) => 
   switch place.state {
   | Empty => default
   | Player(_) => "O"
-  | Enemy(_) => "Z"
+  | Enemy(e) => makeEnemy(e)
   };
 
   let tilesToElements = List.map(t =>

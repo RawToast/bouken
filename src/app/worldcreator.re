@@ -28,9 +28,11 @@ module CsvWorldBuilder: WorldCreator = {
   let addEnemy = (str, place) => {
     let randId = () => Js.Math.random() |> string_of_float;
     let makeZombie = () => {id: randId(), name: "Zombie", stats: { health: 6, speed: 0.8, position: 0. }};
+    let makeEnemy = () => {id: randId(), name: "Enemy", stats: { health: 5, speed: 1., position: 0. }};
 
     switch str {
     | "Z" => { ... place, state: Enemy(makeZombie()) }
+    | "X" => { ... place, state: Enemy(makeEnemy()) }
     | _ => place
     };
   };
@@ -75,7 +77,7 @@ module CsvWorldBuilder: WorldCreator = {
     let levelNames = Js.String.split(",", names) |> Array.to_list;
 
     let prom = (name) => Js.Promise.(
-      Fetch.fetch("http://localhost:3000/world/" ++ name ++ ".csv")
+      Fetch.fetch("/world/" ++ name ++ ".csv")
         |> then_(Fetch.Response.text)
         |> then_(text => buildLevel(name, text) |> resolve)
     );
