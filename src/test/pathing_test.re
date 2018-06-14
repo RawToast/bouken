@@ -12,7 +12,15 @@ let blankGrid = "., ., ., ., ., .
 ., ., ., ., ., .
 ., ., ., ., ., .";
 
+let walledWorld = "., ., ., ., ., .
+., ., ., #, ., .
+., #, ., #, ., .
+., #, ., #, ., .
+., #, ., ., ., .
+., #, ., #, ., .";
+
 let level = CsvWorldBuilder.buildArea(blankGrid);
+let walledLevel = CsvWorldBuilder.buildArea(walledWorld);
 
 describe("Pathing", () => {
 
@@ -61,6 +69,14 @@ describe("Pathing", () => {
 
     test("Cannot move to a position that is out of bounds 2", (_) =>
       expect(canNavigateTo(~limit=4, level, (5, 5), (9, 9))) |> toBe(false)
+    );
+
+    test("Cannot move through a wall", (_) =>
+      expect(canNavigateTo(~limit=2, walledLevel, (0, 0), (2, 0))) |> toBe(false)
+    );
+
+    test("Can move around a wall", (_) =>
+      expect(canNavigateTo(~limit=8, walledLevel, (0, 0), (2, 0))) |> toBe(true)
     );
   })
   }
