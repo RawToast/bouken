@@ -33,7 +33,7 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 `Z` Enemy / Zombie (Slow moving, durable, and dumb)
 
-`X` Enemy / ??? - (Same speed as player, fragile, and still dumb)
+`X` Enemy / ??? - (Same speed as player, fragile)
 
 `/` Stairs
 

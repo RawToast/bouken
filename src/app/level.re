@@ -32,6 +32,11 @@ module Tiles = {
     | _ => false
     };
 
+  let isWall = t => switch t {
+    | WALL => true
+    | _ => false
+    };
+
   let isEnemy = t => switch t.state {
     | Enemy(_) => true
     | _ => false
@@ -39,6 +44,11 @@ module Tiles = {
 
   let isStairs = t => switch t.tile {
     | STAIRS(_) => true
+    | _ => false
+    };
+
+  let isEmpty = t => switch t.state {
+    | Empty => true
     | _ => false
     };
   
@@ -50,7 +60,12 @@ module Tiles = {
   let tilePenalty = t => switch t {
     | WATER => 1.5
     | _ => 1.
-    }
+    };
+  
+  let canOccupy = p => 
+    if (isEnemy(p)) false
+    else if(isWall(p.tile)) false
+    else isEmpty(p);
 };
 
 module Area: Places = {
