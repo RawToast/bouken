@@ -95,12 +95,12 @@ describe("Pathing", () => {
   });
 
   describe("findRoutes", () => {
-    let routes1 = findRoutes(~limit=4, level, (0, 0), (4, 4));
+    let routes1 = findRoutes(~limit=4, level, (1, 1), (5, 5));
 
     let routes2 = findRoutes(~limit=4, walledLevel, (0, 0), (0, 4));
 
     test("Is successful when a path exists 1", (_) =>
-      expect(routes1 |> List.length) |> toBeGreaterThanOrEqual(1)
+      expect(routes1 |> List.length) |> toBeGreaterThanOrEqual(2)
     );
 
     test("Can find a route with walls", (_) =>
