@@ -80,8 +80,21 @@ describe("Pathing", () => {
     );
   });
 
-
   describe("findRoute", () => {
+    let routes1 = findRoute(~limit=4, level, (0, 0), (4, 4));
+
+    let routes2 = findRoute(~limit=4, walledLevel, (0, 0), (0, 4));
+
+    test("Is successful when a path exists 1", (_) =>
+      expect(routes1 |> List.length) |> toBeGreaterThanOrEqual(1)
+    );
+
+    test("Can find a route with walls", (_) =>
+      expect(routes2 |> List.length) |> toBeGreaterThanOrEqual(1)
+    );
+  });
+
+  describe("findRoutes", () => {
     let routes1 = findRoutes(~limit=4, level, (0, 0), (4, 4));
 
     let routes2 = findRoutes(~limit=4, walledLevel, (0, 0), (0, 4));
@@ -91,7 +104,7 @@ describe("Pathing", () => {
     );
 
     test("Can find a route with walls", (_) =>
-      expect(routes2 |> List.length) |> toBeGreaterThanOrEqual(1)
+      expect(routes2 |> List.length) |> toBe(1)
     );
   });
   }

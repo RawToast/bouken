@@ -17,7 +17,7 @@ let canNavigateTo = (~limit=4, area, (x, y), (tx, ty)) => {
   navigate((x, y), 0);
 };
 
-let findRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
+let findRoute = (~limit=4, area, (x, y), (tx, ty)) => {
   let maxX = List.length(List.hd(area)) - 1;
   let maxY = List.length(area) - 1;
 
@@ -36,4 +36,25 @@ let findRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
   };
 
   recRoutes((x, y), 0, []);
+};
+
+let findRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
+  let maxX = List.length(List.hd(area)) - 1;
+  let maxY = List.length(area) - 1;
+
+  let rec recRoutes = ((x, y), turn, current, routes) => {
+    if (turn > limit) []
+    else if(x < 0 || y < 0) []
+    else if(x > maxX || y > maxY) []
+    else if(area |> List.nth(_, y) |> List.nth(_, x) |> Level.Tiles.canOccupy == false) []
+    else if(x == tx && y == ty) [ current, ... routes ]
+    else {
+      let nxt: list((int, int)) = [ (x, y), ... current ];
+      recRoutes((x - 1, y + 1), turn + 1, nxt, routes) @ recRoutes((x, y + 1), turn + 1, nxt, routes) @ recRoutes((x + 1, y + 1), turn + 1, nxt, routes)
+      @ recRoutes((x - 1 , y), turn + 1, nxt, routes) @ recRoutes((x + 1, y), turn + 1, nxt, routes)
+      @ recRoutes((x - 1, y - 1), turn + 1, nxt, routes) @ recRoutes((x, y - 1), turn + 1, nxt, routes) @ recRoutes((x + 1, y - 1), turn + 1, nxt, routes)
+    }
+  };
+
+  recRoutes((x, y), 0, [], []);
 };
