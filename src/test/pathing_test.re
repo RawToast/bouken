@@ -78,6 +78,21 @@ describe("Pathing", () => {
     test("Can move around a wall", (_) =>
       expect(canNavigateTo(~limit=8, walledLevel, (0, 0), (2, 0))) |> toBe(true)
     );
-  })
+  });
+
+
+  describe("findRoute", () => {
+    let routes1 = findRoutes(~limit=4, level, (0, 0), (4, 4));
+
+    let routes2 = findRoutes(~limit=4, walledLevel, (0, 0), (0, 4));
+
+    test("Is successful when a path exists 1", (_) =>
+      expect(routes1 |> List.length) |> toBeGreaterThanOrEqual(1)
+    );
+
+    test("Can find a route with walls", (_) =>
+      expect(routes2 |> List.length) |> toBeGreaterThanOrEqual(1)
+    );
+  });
   }
 );
