@@ -44,14 +44,14 @@ let findRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
   let maxY = List.length(area) - 1;
 
   let rec recRoutes = ((x, y), turn, current, routes) => {
-    /* if (turn == 3) Js.Console.log("Currently at: " ++ string_of_int(x) ++ " " ++ string_of_int(y)); */
     if (turn > limit) routes
     else if (x < 0 || y < 0) routes
     else if (x > maxX || y > maxY) routes
     else if (area |> List.nth(_, y) |> List.nth(_, x) |> Level.Tiles.canOccupy == false) routes
-    else if (x == tx && y == ty) [ current, ... routes ]
+    else if (x == tx && y == ty) [ [(x, y), ...current], ... routes ]
     else {
-      let nxt = [ (x, y), ... current ];
+      let nxt = if (turn == 0) { current }  else { [ (x, y), ... current ] };
+    
       recRoutes((x - 1, y + 1), turn + 1, nxt, routes) @ recRoutes((x, y + 1), turn + 1, nxt, routes) @ recRoutes((x + 1, y + 1), turn + 1, nxt, routes)
       @ recRoutes((x - 1 , y), turn + 1, nxt, routes) @ recRoutes((x + 1, y), turn + 1, nxt, routes)
       @ recRoutes((x - 1, y - 1), turn + 1, nxt, routes) @ recRoutes((x, y - 1), turn + 1, nxt, routes) @ recRoutes((x + 1, y - 1), turn + 1, nxt, routes)
