@@ -1,4 +1,5 @@
 open Types;
+
 let canNavigateTo = (~limit=4, area, (x, y), (tx, ty)) => {
   let maxX = List.length(List.hd(area)) - 1;
   let maxY = List.length(area) - 1;
@@ -43,6 +44,7 @@ let findRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
   let maxY = List.length(area) - 1;
 
   let rec recRoutes = ((x, y), turn, current, routes) => {
+    /* if (turn == 3) Js.Console.log("Currently at: " ++ string_of_int(x) ++ " " ++ string_of_int(y)); */
     if (turn > limit) routes
     else if (x < 0 || y < 0) routes
     else if (x > maxX || y > maxY) routes
