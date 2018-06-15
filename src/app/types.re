@@ -119,6 +119,11 @@ module type Places = {
   let locationOfStairs: (int, area) => option((int, int));
 };
 
+module type Pathfinding = {
+  let canNavigateTo: (~limit: int=?, area, (int, int), (int, int)) => bool;
+  let suggestMove: (~limit: int=?, area, (int, int), (int, int)) => (int, int);
+};
+
 module type Positions = {
   let divisor: float;
   let isActive: stats => bool;
