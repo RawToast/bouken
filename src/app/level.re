@@ -61,7 +61,9 @@ module Tiles = {
     | WATER => 1.5
     | _ => 1.
     };
-  
+
+  let placePenalty = t => tilePenalty(t.tile);
+
   let canOccupy = p => 
     if (isEnemy(p)) false
     else if(isWall(p.tile)) false

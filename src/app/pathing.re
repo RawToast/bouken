@@ -60,3 +60,36 @@ let findRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
 
   recRoutes((x, y), 0, [], []);
 };
+type coord = { x: int, y: int};
+
+let findFastestRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
+  let maxX = List.length(List.hd(area)) - 1;
+  let maxY = List.length(area) - 1;
+  let zl = (0,0);
+  let countPenalties = locations => locations
+    |> List.map(loc => { let (x, y) = loc; area |> List.nth(_, y) |> List.nth(_, x) |>  Level.Tiles.placePenalty});
+  
+  let rec recRoutes = ((x, y), turn, current, routes) => {
+    if (turn > limit) routes
+    else if (x < 0 || y < 0) routes
+    else if (x > maxX || y > maxY) routes
+    else if (area |> List.nth(_, y) |> List.nth(_, x) |> Level.Tiles.canOccupy == false) routes
+    else if (x == tx && y == ty) {
+      let allPaths = [[(x, y), ...current], ... routes ];
+      let nxts = List.fold_left(
+          (r1, r2) => if (countPenalties(r2) > countPenalties(r1)) r1 else r2, 
+          [zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl], 
+          allPaths);
+      [nxts];
+    }
+    else {
+      let nxt = if (turn == 0) current else [ (x, y), ... current ];
+
+      recRoutes((x - 1, y + 1), turn + 1, nxt, routes) @ recRoutes((x, y + 1), turn + 1, nxt, routes) @ recRoutes((x + 1, y + 1), turn + 1, nxt, routes)
+        @ recRoutes((x - 1 , y), turn + 1, nxt, routes) @ recRoutes((x + 1, y), turn + 1, nxt, routes)
+        @ recRoutes((x - 1, y - 1), turn + 1, nxt, routes) @ recRoutes((x, y - 1), turn + 1, nxt, routes) @ recRoutes((x + 1, y - 1), turn + 1, nxt, routes)
+    }
+  };
+
+  recRoutes((x, y), 0, [], []);
+};
