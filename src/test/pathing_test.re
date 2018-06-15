@@ -4,8 +4,8 @@ open Worldcreator;
 open Pathing;
 
 module Game = Modules.Game;
-
-let blankGrid = "., ., ., ., ., .
+let blankGrid = 
+"., ., ., ., ., .
 ., ., ., ., ., .
 ., ., ., ., ., .
 ., ., ., ., ., .

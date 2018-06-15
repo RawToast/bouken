@@ -129,8 +129,7 @@ module PathUtil = {
   }
 };
 
-
-module Navigation: Pathfinding = {
+module Navigation: Movement = {
 
   let canNavigateTo = (~limit=4, area, (x, y), (tx, ty)) =>
     PathUtil.canNavigateTo(~limit=limit, area, (x, y), (tx, ty));
