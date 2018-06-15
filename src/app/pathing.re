@@ -1,6 +1,7 @@
 open Types;
 
 module PathUtil = {
+
   let invalidPosition = (x, y) => (x < 0 || y < 0);
   let isOutOfBounds = (x, y, maxX, maxY) => (x > maxX || y > maxY);
   let isInvalidMove = (x, y, area) => (area |> List.nth(_, y) |> List.nth(_, x) |> Level.Tiles.canOccupy == false);
@@ -128,11 +129,19 @@ module PathUtil = {
   }
 };
 
+
 module Navigation: Pathfinding = {
+
   let canNavigateTo = (~limit=4, area, (x, y), (tx, ty)) =>
     PathUtil.canNavigateTo(~limit=limit, area, (x, y), (tx, ty));
 
   let suggestMove = (~limit=4, area, (x, y), (tx, ty)) => {
-    (0, 0);
+    if (canNavigateTo(~limit=4, area, (x, y), (tx, ty))) {
+      let bestMoves = PathUtil.findFastestRoutes(~limit=4, area, (x, y), (tx, ty));
+      let (bx, by) = bestMoves |> List.hd |> List.rev |> List.hd;
+      (bx-y, by - y);
+    } else {
+      (0, 0);
+    }
   };
 };

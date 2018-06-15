@@ -142,5 +142,20 @@ describe("Pathing", () => {
     test("Finds only the fastest routes when there are routes of different length", 
       (_) => expect(manyRoutes |> List.length) |> toBe(8));
   });
+
+  describe("suggestMove", () => {
+    let impossibleMove = Navigation.suggestMove(~limit=4, level, (1, 1), (6, 6));
+    let possibleMove =  Navigation.suggestMove(~limit=4, level, (2, 0), (2, 4));
+    let expectedMove = Navigation.suggestMove(~limit=4, walledLevel, (0, 0), (0, 4));
+
+    test("Suggests to stay when no move is available", 
+      (_) => expect(impossibleMove) |> toEqual((0, 0)));
+    
+    test("Suggests to move when possible", 
+      (_) => expect(possibleMove) |> not_ |> toEqual((0, 0)));
+
+    test("Suggests the only possible move", 
+      (_) => expect(expectedMove) |> toEqual((0, 1)));
+  });
   }
 );
