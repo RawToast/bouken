@@ -13,15 +13,16 @@ type player = {
   location: (int, int)
 };
 
-type sds = {
+type ai = {
   moveRange: int,
-  
+  terrainCost: bool
 };
 
 type enemy = {
   id: string,
   name: string,
-  stats: stats
+  stats: stats,
+  ai: ai
 };
 
 type enemyInfo = {
