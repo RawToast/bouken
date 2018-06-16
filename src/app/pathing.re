@@ -65,6 +65,7 @@ module PathUtil = {
       else if (invalidPosition(x, y)) routes
       else if (isOutOfBounds(x, y, maxX, maxY)) routes
       else if (turn != 0 && isInvalidMove(x, y, area)) routes
+      else if (routes |> Rationale.RList.any(p => List.length(current) > List.length(p))) routes
       else if (isGoal(x, y, tx, ty)) [ [(x, y), ...current], ... routes ]
       else {
         let history = if (turn == 0) { current }  else { [ (x, y), ... current ] };
@@ -83,6 +84,7 @@ module PathUtil = {
 
     recRoutes((x, y), 0, [], []);
   };
+  
   type coord = { x: int, y: int};
 
   let findFastestRoutes = (~limit=4, area, (x, y), (tx, ty)) => {

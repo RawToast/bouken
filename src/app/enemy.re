@@ -11,11 +11,11 @@ module Enemies = {
   let makeEnemy = () => { 
     id: randId(), name: "Enemy", 
     stats: { health: 3, speed: 1., position: 0., damage: 2 },
-    ai: { moveRange: 6, terrainCost: true }};
+    ai: { moveRange: 5, terrainCost: true }};
   let makeMinotaur = () => {
     id: randId(), name: "Minotaur", 
     stats: { health: 10, speed: 1., position: 0., damage: 3 },
-    ai: { moveRange: 12, terrainCost: true }};
+    ai: { moveRange: 6, terrainCost: true }};
 
   let addEnemy = (str, place) => {
     switch str {
@@ -79,7 +79,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
 
   let findTargets = (~range=1, enemyInfo) => {
     let (x, y) = enemyInfo.location;
-    
+    /* let range = enemyInfo.enemy.ai.moveRange; */
     let minX = x - range;
     let maxX = x + range;
     let incRange = Rationale.RList.rangeInt(1);
@@ -120,8 +120,9 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     };
   };
 
-  let chase = (~range=4, area, enemyInfo) => {
-    let visiblePlaces = findTargets(~range=range, enemyInfo);
+  let chase = (area, enemyInfo) => {
+    let range = enemyInfo.enemy.ai.moveRange;
+    let visiblePlaces = findTargets(~range=enemyInfo.enemy.ai.moveRange, enemyInfo);
     let playerLocations = attackablePlaces(visiblePlaces, area);
 
     if (List.length(playerLocations) == 0) (0, 0)
@@ -135,7 +136,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
   };
 
   let takeTurn = (activeEnemy, level, game) => {
-    let canSee = canAttack(~range=4);
+    let canSee = canAttack(~range=activeEnemy.enemy.ai.moveRange);
 
     if (canAttack(level.map, activeEnemy)) {
       setEnemy(level.map, activeEnemy) 
