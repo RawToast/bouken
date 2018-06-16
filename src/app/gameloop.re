@@ -3,7 +3,6 @@ open Rationale;
 
 module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
   open World;
-
   let loopCost = (1. /. Pos.divisor);
   let rec continue: game => game =
     game => {
@@ -18,7 +17,6 @@ module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
         /* relocate */
         let levelOpt = World.currentLevel(game.world);
         let activeEnemy = List.hd(activeEnemies);
-
         let updatedGame = Option.bind(levelOpt, level =>
           EL.takeTurn(activeEnemy, level, game)
         );

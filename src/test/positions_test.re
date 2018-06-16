@@ -7,7 +7,7 @@ open Expect;
 
 let blankWorld = LevelBuilder.makeBlankLevel("test");
 
-let basicStats = {health: 10, speed: 1.0, position: 0.0};
+let basicStats = {health: 10, speed: 1.0, position: 0.0, damage: 1};
 
 let defaultEnemy = {
   id: "default",
@@ -16,7 +16,9 @@ let defaultEnemy = {
     health: 1,
     speed: 1.0,
     position: (-1.),
+    damage: 1
   },
+  ai: { moveRange: 4, terrainCost: false }
 };
 
 let defaultPlayer = {
@@ -25,6 +27,7 @@ let defaultPlayer = {
     health: 1,
     speed: 1.0,
     position: (-1.),
+    damage: 1
   },
   gold: 5,
   location: ((-9), (-9)),
@@ -32,7 +35,7 @@ let defaultPlayer = {
 
 let playerAt = (x, y) => Player({name: "test", stats: basicStats, gold: 5, location: (x, y)});
 
-let enemy = Enemy({id: "enemy", name: "enemy", stats: basicStats});
+let enemy = Enemy({id: "enemy", name: "enemy", stats: basicStats, ai: { moveRange: 4, terrainCost: false }});
 
 let modifiedLevel =
   blankWorld

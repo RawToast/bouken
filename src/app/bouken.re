@@ -5,7 +5,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
   open Level;
   open Types;
 
-  let initPlayer = name => {name: name, stats: { health: 10, speed: 1.0, position: 0. }, gold: 0, location: (6, 6)};
+  let initPlayer = name => {name: name, stats: { health: 10, speed: 1.0, position: 0., damage: 3 }, gold: 0, location: (6, 6)};
 
   let initgame = pname => initPlayer(pname) |> p => {
       player: p,
@@ -42,7 +42,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
 
     let attackPlace = p => switch(p.state) {
       | Enemy(e) => {
-        let newEnemy = { ... e, stats: { ... e.stats, health: e.stats.health - 5 } };
+        let newEnemy = { ... e, stats: { ... e.stats, health: e.stats.health - player.stats.damage } };
         if (newEnemy.stats.health > 0) Some( {...p, state: Enemy(newEnemy) })
         else Some( { ... p, state: Empty })
       }

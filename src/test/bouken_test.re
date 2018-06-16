@@ -1,9 +1,7 @@
 open Types;
 open Rationale;
-
 open Jest;
 open Expect;
-open Types.Operators;
 
 module Game = Modules.Game;
 
@@ -28,7 +26,7 @@ describe("Game.MovePlayer", () => {
 
   describe("When the move is possible", () => {
     test("Returns some", (_) => {
-      expect(isOk(optGame)) |> toBe(true);
+      expect(Types.Operators.isOk(optGame)) |> toBe(true);
     });
   
     test("The Player's location is updated to (5,5)", (_) => {
@@ -41,7 +39,10 @@ describe("Game.MovePlayer", () => {
   });
 });
 
+
 describe("Game.UseStairs", () => {
+  open Types.Operators;
+
   let initGame = Game.create("dave");
   let newGame = initGame 
     |> Game.movePlayer(7, 8)
@@ -85,7 +86,7 @@ describe("Game.ExitGame", () => {
     let newLevel = Level.LevelBuilder.makeBlankLevel("Dungeon 1") 
     |> Level.Level.modifyTile(6, 6, 
       {tile: EXIT(100), 
-        state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 
+        state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0., damage: 1 }, 
         gold: 5, 
         location: (6, 6)})});
 
@@ -107,7 +108,7 @@ describe("Game.ExitGame", () => {
     let newLevel = Level.LevelBuilder.makeBlankLevel("Floor 1")
       |> Level.Level.modifyTile(6, 6, 
         {tile: GROUND, 
-          state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 
+          state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0., damage: 1 }, 
           gold: 5, 
           location: (6, 6)})});
 

@@ -1,6 +1,32 @@
 open Types;
 open Rationale;
 
+module Enemies = {
+  let randId = () => Js.Math.random() |> string_of_float;
+
+  let makeZombie = () => { 
+    id: randId(), name: "Zombie", 
+    stats: { health: 6, speed: 0.8, position: 0., damage: 1 }, 
+    ai: { moveRange: 4, terrainCost: false }};
+  let makeEnemy = () => { 
+    id: randId(), name: "Enemy", 
+    stats: { health: 3, speed: 1., position: 0., damage: 2 },
+    ai: { moveRange: 6, terrainCost: true }};
+  let makeMinotaur = () => {
+    id: randId(), name: "Minotaur", 
+    stats: { health: 9, speed: 1., position: 0., damage: 3 },
+    ai: { moveRange: 8, terrainCost: true }};
+
+  let addEnemy = (str, place) => {
+    switch str {
+    | "Z" => { ... place, state: Enemy(makeZombie()) }
+    | "X" => { ... place, state: Enemy(makeEnemy()) }
+    | "M" => { ... place, state: Enemy(makeMinotaur()) }
+    | _ => place
+    };
+  };
+}
+
 module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: World) => {
 
   let findActiveEnemies = area => 
@@ -53,7 +79,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
 
   let findTargets = (~range=1, enemyInfo) => {
     let (x, y) = enemyInfo.location;
-    
+    /* let range = enemyInfo.enemy.ai.moveRange; */
     let minX = x - range;
     let maxX = x + range;
     let incRange = Rationale.RList.rangeInt(1);
@@ -85,7 +111,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
             | Player(p) => Some(p)
             | _ => None;
           })
-        |> Option.fmap((player:player) => { ...player, stats: {...player.stats, health: player.stats.health - 1} } )
+        |> Option.fmap((player:player) => { ...player, stats: {...player.stats, health: player.stats.health - enemyInfo.enemy.stats.damage } } )
         >>= (player => Places.setPlayerAt(x, y, player, 0., area) 
           |> Option.ofResult 
           |> Option.fmap(area => (area, player)));
@@ -94,7 +120,9 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     };
   };
 
-  let chase = (~range=4, area, enemyInfo) => {
+  let chase = (area, enemyInfo) => {
+    let enemyAi = enemyInfo.enemy.ai;
+    let range = enemyAi.moveRange;
     let visiblePlaces = findTargets(~range=range, enemyInfo);
     let playerLocations = attackablePlaces(visiblePlaces, area);
 
@@ -103,13 +131,14 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
       let loc = List.hd(playerLocations);
 
       if(Pathing.Navigation.canNavigateTo(~limit=range, area, enemyInfo.location, loc))
-        Pathing.Navigation.suggestMove(~limit=range, area, enemyInfo.location, loc)
+        Pathing.Navigation.suggestMove(~limit=range, ~incTerrain=enemyAi.terrainCost, area, enemyInfo.location, loc)
       else (0, 0)
     }
   };
 
   let takeTurn = (activeEnemy, level, game) => {
-    let canSee = canAttack(~range=4);
+    
+    let canSee = canAttack(~range=activeEnemy.enemy.ai.moveRange);
 
     if (canAttack(level.map, activeEnemy)) {
       setEnemy(level.map, activeEnemy) 
@@ -126,7 +155,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
       let (dx, dy) = chase(level.map, activeEnemy);
       let (ox, oy) = activeEnemy.location;
       
-      updateEnemy(level.map, activeEnemy, (ox + dx, oy + dy))
+    updateEnemy(level.map, activeEnemy, (ox + dx, oy + dy))
       |> Option.fmap(map => {...level, map: map })
       |> Option.fmap(l => World.updateLevel(l, game.world))
       |> Option.fmap(w => {...game, world: w})

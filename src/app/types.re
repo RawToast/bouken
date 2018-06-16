@@ -2,7 +2,8 @@
 type stats = {
   health: int,
   speed: float,
-  position: float
+  position: float,
+  damage: int
 };
 
 type player = {
@@ -12,10 +13,16 @@ type player = {
   location: (int, int)
 };
 
+type ai = {
+  moveRange: int,
+  terrainCost: bool
+};
+
 type enemy = {
   id: string,
   name: string,
-  stats: stats
+  stats: stats,
+  ai: ai
 };
 
 type enemyInfo = {
@@ -121,7 +128,7 @@ module type Places = {
 
 module type Movement = {
   let canNavigateTo: (~limit: int=?, area, (int, int), (int, int)) => bool;
-  let suggestMove: (~limit: int=?, area, (int, int), (int, int)) => (int, int);
+  let suggestMove: (~limit: int=?, ~incTerrain: bool=?, area, (int, int), (int, int)) => (int, int);
 };
 
 module type Positions = {
@@ -140,7 +147,7 @@ module type EnemyLoop = {
   let canAttack: (~range: int=?, area, enemyInfo) => bool;
   let attack: (enemyInfo, area) => option((area, player));
   let takeTurn: (enemyInfo, level, game) => option(game);
-  let chase: (~range: int=?, area, enemyInfo) => (int, int);
+  let chase: (area, enemyInfo) => (int, int);
 };
 
 module type Game = {

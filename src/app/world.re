@@ -52,8 +52,8 @@ module Builder: WorldBuilder = {
 
   let listHorizontal = (x, y, tx) => RList.rangeInt(1, x, tx) |> List.map(i => (i, y));
   let listVertical = (x, y, ty) => RList.rangeInt(1, y, ty) |> List.map(i => (x, i));
-  let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 6, speed: 0.5, position: 0. }};
-  let newEnemy = id => {id: id, name: id, stats: { health: 6, speed: 0.8, position: 0. }};
+  let initEnemy = Enemy.Enemies.makeEnemy();
+  let newEnemy = id => { ... initEnemy,id: id, name: id };
   let create = player => {
     let initLevel = player =>
         LevelBuilder.makeBlankLevel("Dungeon 1")

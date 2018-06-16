@@ -45,7 +45,7 @@ let handleGameAction = (act, view) => switch act {
   | UseExit => view |> mapGameOrError(Game.useExit) |> update
 };
 
-let initPlayer = name => {name: name, stats: { health: 10, speed: 1.0, position: 0. }, gold: 0, location: (1, 1)};
+let initPlayer = name => {name: name, stats: { health: 10, speed: 1.0, position: 0., damage: 3 }, gold: 0, location: (1, 1)};
 
 let initgame = (pname, self) => initPlayer(pname) 
   |> p => World.FetchCsvBuilder.create(p)

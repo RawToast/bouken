@@ -2,7 +2,6 @@ open Types;
 open Rationale.Option;
 
 module GameUtil = (P:Places, W:World) => {
-
   let updateCurrentLevel = (area, game) => 
     W.currentLevel(game.world) 
       |> fmap(lvl => { ... lvl, map: area })
