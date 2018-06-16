@@ -88,7 +88,7 @@ module PathUtil = {
   let findFastestRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
-    let zl = (0,0);
+
     let countPenalties: list((int, int)) => float = locations => locations
       |> List.map(loc => { let (x, y) = loc; area |> List.nth(_, y) |> List.nth(_, x) |>  Level.Tiles.placePenalty})
       |> List.fold_left((p1, p2) => p1 +. p2, 0.);
@@ -97,10 +97,11 @@ module PathUtil = {
     
     if (List.length(routes) <= 1) routes
     else {
-      let shortest = List.fold_left((len, route) => if (List.length(route) > len) len else List.length(route), 99, routes);
-      /* Js.Console.log("Shortest " ++ string_of_int(shortest)); */
+      let shortest = List.fold_left(
+        (len, route) => if (countPenalties(route) > len) len else countPenalties(route),
+        99., routes);
 
-      List.filter(route => List.length(route) == shortest, routes);
+      List.filter(route => countPenalties(route) == shortest, routes);
     }
   };
 };
