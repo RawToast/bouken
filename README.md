@@ -33,9 +33,11 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 `w` Shallow water (Slows all actions)
 
-`Z` Enemy / Zombie (Slow moving, durable, and dumb)
+`Z` Enemy / Zombie
 
-`X` Enemy / ??? - (Same speed as player, fragile)
+`X` Enemy / Generic Enemy
+
+`M` Enemy / Minotaur
 
 `/` Stairs
 

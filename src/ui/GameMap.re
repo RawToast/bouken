@@ -6,6 +6,7 @@ let component = ReasonReact.statelessComponent("GameMap");
 module GameElements = {
   let makeEnemy = (e:enemy) => switch(e.name) {
   | "Zombie" => "Z"
+  | "Minotaur" => "M"
   | _ => "X"
   };
   let stateToElement = (place: place, default:string) => 
