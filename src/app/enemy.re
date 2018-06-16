@@ -15,7 +15,7 @@ module Enemies = {
   let makeMinotaur = () => {
     id: randId(), name: "Minotaur", 
     stats: { health: 10, speed: 1., position: 0., damage: 3 },
-    ai: { moveRange: 6, terrainCost: true }};
+    ai: { moveRange: 7, terrainCost: true }};
 
   let addEnemy = (str, place) => {
     switch str {

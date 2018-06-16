@@ -66,7 +66,9 @@ module PathUtil = {
       else if (isOutOfBounds(x, y, maxX, maxY)) routes
       else if (turn != 0 && isInvalidMove(x, y, area)) routes
       else if (routes |> Rationale.RList.any(p => List.length(current) > List.length(p))) routes
+      else if (turn != 0 && isInvalidMove(x, y, area)) routes
       else if (isGoal(x, y, tx, ty)) [ [(x, y), ...current], ... routes ]
+      else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && ox == y}, current)) routes
       else {
         let history = if (turn == 0) { current }  else { [ (x, y), ... current ] };
       
