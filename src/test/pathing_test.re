@@ -125,7 +125,7 @@ describe("Pathing", () => {
       (_) => expect(routes1 |> List.length) |> toBe(1));
 
     test("Finds many routes when possible possible routes", 
-      (_) => expect(routes2 |> List.length) |> toBe(12));
+      (_) => expect(routes2 |> List.length) |> toBe(19));
 
     test("Can find a route with walls", 
       (_) => expect(walledRoutes |> List.length) |> toBe(1));
@@ -151,7 +151,7 @@ describe("Pathing", () => {
       (_) => expect(routes1 |> List.length) |> toBe(1));
 
     test("Finds many routes when possible possible routes", 
-      (_) => expect(routes2 |> List.length) |> toBe(12));
+      (_) => expect(routes2 |> List.length) |> toBe(19));
 
     test("Can find a route with walls", 
       (_) => expect(walledRoutes |> List.length) |> toBe(1));

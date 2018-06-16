@@ -11,37 +11,43 @@ module PathUtil = {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
 
-    let rec navigate = ((x, y), turn) => {
+    let rec navigate = ((x, y), turn, route) => {
       if (turn > limit) false
       else if(invalidPosition(x, y)) false
       else if(isOutOfBounds(x, y, maxX, maxY)) false
       else if(turn != 0 && isInvalidMove(x, y, area)) false
       else if(isGoal(x, y, tx, ty)) true
-      else navigate((x - 1, y + 1), turn + 1)
-        || navigate((x, y + 1), turn + 1)
-        || navigate((x + 1, y + 1), turn + 1)
-        || navigate((x - 1 , y), turn + 1) 
-        || navigate((x + 1, y), turn + 1)
-        || navigate((x - 1, y - 1), turn + 1)
-        || navigate((x, y - 1), turn + 1)
-        || navigate((x + 1, y - 1), turn + 1)
+      else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && oy == y}, route)) false
+      else {
+        let route = if (turn == 0) { route }  else { [ (x, y), ... route] };
+
+        navigate((x - 1, y + 1), turn + 1, route)
+        || navigate((x, y + 1), turn + 1, route)
+        || navigate((x + 1, y + 1), turn + 1, route)
+        || navigate((x - 1 , y), turn + 1, route)
+        || navigate((x + 1, y), turn + 1, route)
+        || navigate((x - 1, y - 1), turn + 1, route)
+        || navigate((x, y - 1), turn + 1, route)
+        || navigate((x + 1, y - 1), turn + 1, route)
+      }
     };
 
-    navigate((x, y), 0);
+    navigate((x, y), 0, []);
   };
 
   let findRoute = (~limit=4, area, (x, y), (tx, ty)) => {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
 
-    let rec recRoutes = ((x, y), turn, routes) => {
+    let rec recRoutes = ((x, y), turn, route) => {
       if (turn > limit) []
       else if (invalidPosition(x, y)) []
       else if (isOutOfBounds(x, y, maxX, maxY)) []
       else if (turn != 0 && isInvalidMove(x, y, area)) []
-      else if (isGoal(x, y, tx, ty)) routes
+      else if (isGoal(x, y, tx, ty)) route
       else {
-        let nxt: list((int, int)) = [ (x, y), ... routes ];
+        let nxt = if (turn == 0) { route }  else { [ (x, y), ... route] };
+        /* let nxt: list((int, int)) = [ (x, y), ... routes ]; */
         recRoutes((x - 1, y + 1), turn + 1, nxt)
           @ recRoutes((x, y + 1), turn + 1, nxt) 
           @ recRoutes((x + 1, y + 1), turn + 1, nxt)
@@ -68,7 +74,7 @@ module PathUtil = {
       else if (routes |> Rationale.RList.any(p => List.length(current) > List.length(p))) routes
       else if (turn != 0 && isInvalidMove(x, y, area)) routes
       else if (isGoal(x, y, tx, ty)) [ [(x, y), ...current], ... routes ]
-      else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && ox == y}, current)) routes
+      else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && oy == y}, current)) routes
       else {
         let history = if (turn == 0) { current }  else { [ (x, y), ... current ] };
       
