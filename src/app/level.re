@@ -268,10 +268,14 @@ module Area: Places = {
 
           let newPlayer = { ... player, location: (nx, ny)};
 
-          area |> canMoveTo(~overwrite=false, nx, ny)
-            >>= _ => setPlayerLocation(nx, ny, cost, area)
-            |> Result.fmap(removeOccupant(xl, yl))
-            |> Result.fmap(a => { player: newPlayer, area: a})
+          if (x == 0 && y == 0) { /* Wait logic */
+            area |> setPlayerLocation(nx, ny, cost) |> Result.fmap(a => { player: newPlayer, area: a})
+          } else {
+            area |> canMoveTo(~overwrite=false, nx, ny)
+              >>= _ => setPlayerLocation(nx, ny, cost, area)
+              |> Result.fmap(removeOccupant(xl, yl))
+              |> Result.fmap(a => { player: newPlayer, area: a})
+          };
       }
       | None => error(InvalidState);
     };

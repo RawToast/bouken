@@ -102,13 +102,9 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     else {
       let loc = List.hd(playerLocations);
 
-      if(Pathing.Navigation.canNavigateTo(~limit=range, area, enemyInfo.location, loc)) {
-        Js.Console.log("Can navigate");
-        Pathing.Navigation.suggestMove(~limit=range, area, enemyInfo.location, loc);
-      } else{
-        Js.Console.log("Cant navigate");
-        (0, 0);
-      };
+      if(Pathing.Navigation.canNavigateTo(~limit=range, area, enemyInfo.location, loc))
+        Pathing.Navigation.suggestMove(~limit=range, area, enemyInfo.location, loc)
+      else (0, 0)
     }
   };
 

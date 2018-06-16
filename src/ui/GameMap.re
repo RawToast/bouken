@@ -44,7 +44,7 @@ let handleKeyPress = (movement, stairs, useExit, evt: Dom.keyboardEvent) => {
     | "KeyZ" => movement(-1, -1)
     | "KeyX" => movement(0, -1)
     | "KeyC" => movement(1, -1)
-    | "KeyS" => useExit(); stairs()
+    | "KeyS" => movement(0, 0); useExit(); stairs() /* Alt key for wait? */
     | _ => Js.Console.log("No");
     };
   ();

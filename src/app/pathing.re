@@ -69,13 +69,14 @@ module PathUtil = {
       else {
         let history = if (turn == 0) { current }  else { [ (x, y), ... current ] };
       
-        recRoutes((x - 1, y + 1), turn + 1, history, routes)
-          @ recRoutes((x, y + 1), turn + 1, history, routes)
-          @ recRoutes((x + 1, y + 1), turn + 1, history, routes)
+        recRoutes((x, y + 1), turn + 1, history, routes)
+          @ recRoutes((x, y - 1), turn + 1, history, routes)
           @ recRoutes((x - 1 , y), turn + 1, history, routes)
           @ recRoutes((x + 1, y), turn + 1, history, routes)
+
+          @ recRoutes((x - 1, y + 1), turn + 1, history, routes)
+          @ recRoutes((x + 1, y + 1), turn + 1, history, routes)
           @ recRoutes((x - 1, y - 1), turn + 1, history, routes)
-          @ recRoutes((x, y - 1), turn + 1, history, routes)
           @ recRoutes((x + 1, y - 1), turn + 1, history, routes)
       }
     };
@@ -88,39 +89,19 @@ module PathUtil = {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
     let zl = (0,0);
-    let countPenalties = locations => locations
-      |> List.map(loc => { let (x, y) = loc; area |> List.nth(_, y) |> List.nth(_, x) |>  Level.Tiles.placePenalty});
-    
-    let rec recRoutes = ((x, y), turn, best, current, routes) => {
-      if (turn > limit) routes
-      else if (invalidPosition(x, y)) routes
-      else if (isOutOfBounds(x, y, maxX, maxY)) routes
-      else if (List.length(current) > best) routes
-      else if (turn != 0 && isInvalidMove(x, y, area)) routes
-      else if (isGoal(x, y, tx, ty)) {
-        let allPaths = [[(x, y), ...current], ... routes ];
-        let historys = List.fold_left(
-            (r1, r2) => if (countPenalties(r2) > countPenalties(r1)) r1 else r2, 
-            [zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl,zl], 
-            allPaths);
-        [historys];
-      }
-      else {
-        let history = if (turn == 0) current else [ (x, y), ... current ];
-        let lowest = if (List.length(routes) == 0) best else routes |> List.hd |> List.length;
-        
-        recRoutes((x - 1, y + 1), turn + 1, lowest, history, routes) 
-          @ recRoutes((x, y + 1), turn + 1, lowest, history, routes)
-          @ recRoutes((x + 1, y + 1), turn + 1, lowest, history, routes)
-          @ recRoutes((x - 1 , y), turn + 1, lowest, history, routes) 
-          @ recRoutes((x + 1, y), turn + 1, lowest, history, routes)
-          @ recRoutes((x - 1, y - 1), turn + 1, lowest, history, routes) 
-          @ recRoutes((x, y - 1), turn + 1, lowest, history, routes) 
-          @ recRoutes((x + 1, y - 1), turn + 1, lowest, history, routes)
-      }
-    };
+    let countPenalties: list((int, int)) => float = locations => locations
+      |> List.map(loc => { let (x, y) = loc; area |> List.nth(_, y) |> List.nth(_, x) |>  Level.Tiles.placePenalty})
+      |> List.fold_left((p1, p2) => p1 +. p2, 0.);
 
-    recRoutes((x, y), 0, 20, [], []);
+    let routes = findRoutes(~limit=limit, area, (x, y), (tx, ty));
+    
+    if (List.length(routes) <= 1) routes
+    else {
+      let shortest = List.fold_left((len, route) => if (List.length(route) > len) len else List.length(route), 99, routes);
+      /* Js.Console.log("Shortest " ++ string_of_int(shortest)); */
+
+      List.filter(route => List.length(route) == shortest, routes);
+    }
   };
 };
 
