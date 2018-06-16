@@ -136,6 +136,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
   };
 
   let takeTurn = (activeEnemy, level, game) => {
+    
     let canSee = canAttack(~range=activeEnemy.enemy.ai.moveRange);
 
     if (canAttack(level.map, activeEnemy)) {
@@ -153,7 +154,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
       let (dx, dy) = chase(level.map, activeEnemy);
       let (ox, oy) = activeEnemy.location;
       
-      updateEnemy(level.map, activeEnemy, (ox + dx, oy + dy))
+    updateEnemy(level.map, activeEnemy, (ox + dx, oy + dy))
       |> Option.fmap(map => {...level, map: map })
       |> Option.fmap(l => World.updateLevel(l, game.world))
       |> Option.fmap(w => {...game, world: w})

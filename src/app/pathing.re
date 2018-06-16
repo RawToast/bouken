@@ -11,29 +11,30 @@ module PathUtil = {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
 
-    let rec navigate = ((x, y), turn, route) => {
+    let rec navigate = ((x, y), turn, route, canNavi: bool) => {
       if (turn > limit) false
+      else if (canNavi) true
       else if (limit - turn < Js.Math.abs_int(tx - x) || limit - turn < Js.Math.abs_int(ty - y)) false
-      else if(invalidPosition(x, y)) false
-      else if(isOutOfBounds(x, y, maxX, maxY)) false
-      else if(turn != 0 && isInvalidMove(x, y, area)) false
-      else if(isGoal(x, y, tx, ty)) true
+      else if (invalidPosition(x, y)) false
+      else if (isOutOfBounds(x, y, maxX, maxY)) false
+      else if (turn != 0 && isInvalidMove(x, y, area)) false
+      else if (isGoal(x, y, tx, ty)) true
       else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && oy == y}, route)) false
       else {
         let route = if (turn == 0) { route }  else { [ (x, y), ... route] };
 
-        navigate((x - 1, y + 1), turn + 1, route)
-        || navigate((x, y + 1), turn + 1, route)
-        || navigate((x + 1, y + 1), turn + 1, route)
-        || navigate((x - 1 , y), turn + 1, route)
-        || navigate((x + 1, y), turn + 1, route)
-        || navigate((x - 1, y - 1), turn + 1, route)
-        || navigate((x, y - 1), turn + 1, route)
-        || navigate((x + 1, y - 1), turn + 1, route)
+        navigate((x - 1, y + 1), turn + 1, route,
+          navigate((x, y + 1), turn + 1, route,
+          navigate((x + 1, y + 1), turn + 1, route,
+          navigate((x - 1 , y), turn + 1, route,
+          navigate((x + 1, y), turn + 1, route,
+          navigate((x - 1, y - 1), turn + 1, route,
+          navigate((x, y - 1), turn + 1, route,
+          navigate((x + 1, y - 1), turn + 1, route, canNavi))))))))
       }
     };
 
-    navigate((x, y), 0, []);
+    navigate((x, y), 0, [], false);
   };
 
   let findRoute = (~limit=4, area, (x, y), (tx, ty)) => {
@@ -67,7 +68,7 @@ module PathUtil = {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
     
-    let rec recRoutes = ((x, y), turn, current, routes) => {
+    let rec recRoutes = ((x, y), turn, current, routes: list(list((int, int)))) => {
       if (turn > limit) routes
       else if (limit - turn < Js.Math.abs_int(tx - x) || limit - turn < Js.Math.abs_int(ty - y)) routes
       else if (invalidPosition(x, y)) routes
@@ -78,16 +79,17 @@ module PathUtil = {
       else if (isGoal(x, y, tx, ty)) [ [(x, y), ...current], ... routes ]
       else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && oy == y}, current)) routes
       else {
-        let history = if (turn == 0) { current }  else { [ (x, y), ... current ] };
+        let history: list((int, int)) = if (turn == 0) { current }  else { [ (x, y), ... current ] };
       
-        recRoutes((x, y + 1), turn + 1, history, routes)
-          @ recRoutes((x, y - 1), turn + 1, history, routes)
-          @ recRoutes((x - 1 , y), turn + 1, history, routes)
-          @ recRoutes((x + 1, y), turn + 1, history, routes)
-          @ recRoutes((x - 1, y + 1), turn + 1, history, routes)
-          @ recRoutes((x + 1, y + 1), turn + 1, history, routes)
-          @ recRoutes((x - 1, y - 1), turn + 1, history, routes)
-          @ recRoutes((x + 1, y - 1), turn + 1, history, routes)
+        recRoutes((x, y + 1), turn + 1, history, 
+          recRoutes((x, y - 1), turn + 1, history, 
+          recRoutes((x - 1 , y), turn + 1, history, 
+          recRoutes((x + 1, y), turn + 1, history, 
+          recRoutes((x - 1, y + 1), turn + 1, history, 
+          recRoutes((x + 1, y + 1), turn + 1, history,
+          recRoutes((x - 1, y - 1), turn + 1, history,
+          recRoutes((x + 1, y - 1), turn + 1, history, routes)))))))
+        );
       }
     };
 

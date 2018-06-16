@@ -1,9 +1,7 @@
 open Types;
 open Rationale;
-
 open Jest;
 open Expect;
-open Types.Operators;
 
 module Game = Modules.Game;
 
@@ -28,7 +26,7 @@ describe("Game.MovePlayer", () => {
 
   describe("When the move is possible", () => {
     test("Returns some", (_) => {
-      expect(isOk(optGame)) |> toBe(true);
+      expect(Types.Operators.isOk(optGame)) |> toBe(true);
     });
   
     test("The Player's location is updated to (5,5)", (_) => {
@@ -41,7 +39,10 @@ describe("Game.MovePlayer", () => {
   });
 });
 
+
 describe("Game.UseStairs", () => {
+  open Types.Operators;
+
   let initGame = Game.create("dave");
   let newGame = initGame 
     |> Game.movePlayer(7, 8)
