@@ -147,8 +147,8 @@ describe("Area", () => {
     test("Can find an enemy", (_) => {
       let enemy =
         blankWorld
-        |> Level.modifyTile(0, 0, { tile: GROUND, state: Enemy(initEnemy) })
-        |> w => w.map |> Area.findEnemy("testenemy");
+        |> Level.modifyTile(0, 0, { tile: GROUND, state: Enemy({ ... initEnemy, id: "Enemy" }) })
+        |> w => w.map |> Area.findEnemy("Enemy");
       
         expect(Rationale.Option.isSome(enemy)) |> toEqual(true);
     });
