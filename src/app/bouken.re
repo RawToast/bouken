@@ -101,7 +101,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
     let level = W.currentLevel(game.world);
     let (xl, yl) = game.player.location;
     let canMove = level 
-      |> Option.fmap(l => Area.canMoveTo(~overwrite=false, x + xl, y + yl, l.map) |> Result.isOk) 
+      |> Option.fmap(l => Area.canMoveTo(~overwrite=if(x == 0 && y == 0) true else false, x + xl, y + yl, l.map) |> Result.isOk) 
       |> Option.default(false);
     let canAttack = level 
       |> Option.fmap(l => Area.canMoveTo(~overwrite=true, x + xl, y + yl, l.map) |> Result.isOk) 
