@@ -8,9 +8,9 @@ open Expect;
 let blankWorld = LevelBuilder.makeBlankLevel("test");
 let waterTile = { tile: WATER, state: Empty };
 let initialPosition = 1.;
-let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
-let playerAt = (x, y) => Player({name:"test", stats: { health: 10, speed: 1.0, position: initialPosition }, gold: 5, location: (x, y)});
-let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0, position: initialPosition }, gold: 5, location: (9, 9) };
+let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0., damage: 1 }};
+let playerAt = (x, y) => Player({name:"test", stats: { health: 10, speed: 1.0, position: initialPosition, damage: 3 }, gold: 5, location: (x, y)});
+let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0, position: initialPosition, damage: 3 }, gold: 5, location: (9, 9) };
 
 describe("Level.modify", () => {
   test("Can modify a tile", (_) => {

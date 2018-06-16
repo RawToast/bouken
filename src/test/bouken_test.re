@@ -85,7 +85,7 @@ describe("Game.ExitGame", () => {
     let newLevel = Level.LevelBuilder.makeBlankLevel("Dungeon 1") 
     |> Level.Level.modifyTile(6, 6, 
       {tile: EXIT(100), 
-        state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 
+        state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0., damage: 1 }, 
         gold: 5, 
         location: (6, 6)})});
 
@@ -107,7 +107,7 @@ describe("Game.ExitGame", () => {
     let newLevel = Level.LevelBuilder.makeBlankLevel("Floor 1")
       |> Level.Level.modifyTile(6, 6, 
         {tile: GROUND, 
-          state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0. }, 
+          state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0., damage: 1 }, 
           gold: 5, 
           location: (6, 6)})});
 

@@ -86,9 +86,6 @@ module PathUtil = {
   type coord = { x: int, y: int};
 
   let findFastestRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
-    let maxX = List.length(List.hd(area)) - 1;
-    let maxY = List.length(area) - 1;
-
     let countPenalties: list((int, int)) => float = locations => locations
       |> List.map(loc => { let (x, y) = loc; area |> List.nth(_, y) |> List.nth(_, x) |>  Level.Tiles.placePenalty})
       |> List.fold_left((p1, p2) => p1 +. p2, 0.);

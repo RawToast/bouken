@@ -2,7 +2,8 @@
 type stats = {
   health: int,
   speed: float,
-  position: float
+  position: float,
+  damage: int
 };
 
 type player = {
@@ -10,6 +11,11 @@ type player = {
   stats: stats,
   gold: int,
   location: (int, int)
+};
+
+type sds = {
+  moveRange: int,
+  
 };
 
 type enemy = {

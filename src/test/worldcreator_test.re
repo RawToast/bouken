@@ -3,7 +3,7 @@ open Jest;
 open Expect;
 open Worldcreator.CsvWorldBuilder;
 
-let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0. }};
+let initEnemy = {id: "testenemy", name: "spooky thing", stats: { health: 3, speed: 1.0, position: 0., damage: 1 }};
 
 describe("buildPlace", () => {
   describe("When given '.'", () => {
