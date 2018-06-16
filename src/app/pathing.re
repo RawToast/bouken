@@ -13,6 +13,7 @@ module PathUtil = {
 
     let rec navigate = ((x, y), turn, route) => {
       if (turn > limit) false
+      else if (limit - turn < Js.Math.abs_int(tx - x) || limit - turn < Js.Math.abs_int(ty - y)) false
       else if(invalidPosition(x, y)) false
       else if(isOutOfBounds(x, y, maxX, maxY)) false
       else if(turn != 0 && isInvalidMove(x, y, area)) false
@@ -65,9 +66,10 @@ module PathUtil = {
   let findRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
-
+    
     let rec recRoutes = ((x, y), turn, current, routes) => {
       if (turn > limit) routes
+      else if (limit - turn < Js.Math.abs_int(tx - x) || limit - turn < Js.Math.abs_int(ty - y)) routes
       else if (invalidPosition(x, y)) routes
       else if (isOutOfBounds(x, y, maxX, maxY)) routes
       else if (turn != 0 && isInvalidMove(x, y, area)) routes
@@ -82,7 +84,6 @@ module PathUtil = {
           @ recRoutes((x, y - 1), turn + 1, history, routes)
           @ recRoutes((x - 1 , y), turn + 1, history, routes)
           @ recRoutes((x + 1, y), turn + 1, history, routes)
-
           @ recRoutes((x - 1, y + 1), turn + 1, history, routes)
           @ recRoutes((x + 1, y + 1), turn + 1, history, routes)
           @ recRoutes((x - 1, y - 1), turn + 1, history, routes)
