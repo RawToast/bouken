@@ -165,10 +165,10 @@ module Area: Places = {
         |> Result.ofOption(ImpossibleMove)
         |> Result.bind(_, l => switch l.tile {
             | GROUND => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
-            | WATER => success(l)
+            | WATER => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
             | WALL => error(ImpossibleMove)
-            | STAIRS(_) => success(l)
-            | EXIT(_) => success(l)
+            | STAIRS(_) => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
+            | EXIT(_) => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
         });
   };
     
