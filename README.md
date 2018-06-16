@@ -21,6 +21,8 @@ Stairs `/` can be taken in either direction using `s`.
 
 The player can win the game using an exit `e` using `s`, but remember some exits score more points than others.
 
+`s` will wait a turn if the player is not on stairs or an exit.
+
 ## Key
 
 `O` Player
