@@ -25,26 +25,12 @@ module CsvWorldBuilder: WorldCreator = {
     };
   };
 
-  let addEnemy = (str, place) => {
-    let randId = () => Js.Math.random() |> string_of_float;
-    let makeZombie = () => {id: randId(), name: "Zombie", stats: { health: 6, speed: 0.8, position: 0., damage: 1 }};
-    let makeEnemy = () => {id: randId(), name: "Enemy", stats: { health: 3, speed: 1., position: 0., damage: 2 }};
-    let makeMinotaur = () => {id: randId(), name: "Minotaur", stats: { health: 26, speed: 1., position: 0., damage: 3 }};
-
-    switch str {
-    | "Z" => { ... place, state: Enemy(makeZombie()) }
-    | "X" => { ... place, state: Enemy(makeEnemy()) }
-    | "M" => { ... place, state: Enemy(makeMinotaur()) }
-    | _ => place
-    };
-  };
-
   let buildPlace = str => { 
     let spliced = str  |> Js.String.split("|") |> Array.to_list; 
 
     switch (List.length(spliced)) {
     | 1 => spliced |> List.hd |> makeTile
-    | 2 => spliced |> List.hd |> makeTile |> addEnemy(List.nth(spliced, 1))
+    | 2 => spliced |> List.hd |> makeTile |> Enemy.Enemies.addEnemy(List.nth(spliced, 1))
     | _ => makeTile(".")
     };
   };

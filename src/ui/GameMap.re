@@ -17,7 +17,7 @@ module GameElements = {
   };
 
   let tilesToElements = List.map(t =>
-      switch (t.tile) {
+    switch (t.tile) {
       | GROUND => stateToElement(t, ".")
       | WATER => stateToElement(t, "w")
       | WALL => "#"
@@ -30,7 +30,6 @@ module GameElements = {
   (map) => map
     |> List.map(es => es |> tilesToElements)
     |> List.map(li => [<br/>, ...li]);
-
 };
 
 

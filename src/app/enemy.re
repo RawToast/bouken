@@ -1,6 +1,22 @@
 open Types;
 open Rationale;
 
+module Enemies = {
+  let randId = () => Js.Math.random() |> string_of_float;
+  let makeZombie = () => {id: randId(), name: "Zombie", stats: { health: 6, speed: 0.8, position: 0., damage: 1 }};
+  let makeEnemy = () => {id: randId(), name: "Enemy", stats: { health: 3, speed: 1., position: 0., damage: 2 }};
+  let makeMinotaur = () => {id: randId(), name: "Minotaur", stats: { health: 10, speed: 1., position: 0., damage: 3 }};
+
+  let addEnemy = (str, place) => {
+    switch str {
+    | "Z" => { ... place, state: Enemy(makeZombie()) }
+    | "X" => { ... place, state: Enemy(makeEnemy()) }
+    | "M" => { ... place, state: Enemy(makeMinotaur()) }
+    | _ => place
+    };
+  };
+}
+
 module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: World) => {
 
   let findActiveEnemies = area => 
