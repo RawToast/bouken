@@ -127,6 +127,8 @@ describe("Pathing", () => {
     let twoRoutes: list(list((int, int))) = PathUtil.findFastestRoutes(~limit=3, simpleLevel, (0, 0), (2, 2));
     let manyRoutes: list(list((int, int))) = PathUtil.findFastestRoutes(~limit=4, simpleLevel, (0, 0), (2, 2));
     
+    let oneMove =  PathUtil.findFastestRoutes(~limit=4, level, (2, 0), (2, 1));
+
     test("Finds a single route when only one exists", 
       (_) => expect(routes1 |> List.length) |> toBe(1));
 
@@ -141,12 +143,23 @@ describe("Pathing", () => {
 
     test("Finds only the fastest routes when there are routes of different length", 
       (_) => expect(manyRoutes |> List.length) |> toBe(8));
+
+    test("Suggests the only possible move", 
+      (_) => expect(List.length(oneMove)) |> toBe(1));
+
+    test("Suggests the only possible move", 
+      (_) => expect(oneMove |> List.hd |> List.length) |> toBe(1));
+
+    test("Suggests the correct possible move", 
+      (_) => expect(List.hd(List.hd(oneMove))) |> toBe((0, 1)));
   });
 
   describe("suggestMove", () => {
     let impossibleMove = Navigation.suggestMove(~limit=4, level, (1, 1), (6, 6));
     let possibleMove =  Navigation.suggestMove(~limit=4, level, (2, 0), (2, 4));
     let expectedMove = Navigation.suggestMove(~limit=4, walledLevel, (0, 0), (0, 4));
+    let oneMove =  Navigation.suggestMove(~limit=4, level, (2, 0), (2, 1));
+
 
     test("Suggests to stay when no move is available", 
       (_) => expect(impossibleMove) |> toEqual((0, 0)));
@@ -156,6 +169,9 @@ describe("Pathing", () => {
 
     test("Suggests the only possible move", 
       (_) => expect(expectedMove) |> toEqual((0, 1)));
+    
+    test("Suggests the only possible move", 
+      (_) => expect(oneMove) |> toEqual((0, 1)));
   });
   }
 );

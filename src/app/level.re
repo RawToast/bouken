@@ -68,6 +68,11 @@ module Tiles = {
     if (isEnemy(p)) false
     else if(isWall(p.tile)) false
     else isEmpty(p);
+
+  let canOccupyOrAttack = p => 
+    if (isEnemy(p)) false
+    else if(isWall(p.tile)) false
+    else true;
 };
 
 module Area: Places = {

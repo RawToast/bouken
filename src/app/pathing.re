@@ -4,7 +4,7 @@ module PathUtil = {
 
   let invalidPosition = (x, y) => (x < 0 || y < 0);
   let isOutOfBounds = (x, y, maxX, maxY) => (x > maxX || y > maxY);
-  let isInvalidMove = (x, y, area) => (area |> List.nth(_, y) |> List.nth(_, x) |> Level.Tiles.canOccupy == false);
+  let isInvalidMove = (x, y, area) => (area |> List.nth(_, y) |> List.nth(_, x) |> Level.Tiles.canOccupyOrAttack == false);
   let isGoal = (x, y, tx, ty) => (x == tx && y == ty);
 
   let canNavigateTo = (~limit=4, area, (x, y), (tx, ty)) => {
@@ -15,7 +15,7 @@ module PathUtil = {
       if (turn > limit) false
       else if(invalidPosition(x, y)) false
       else if(isOutOfBounds(x, y, maxX, maxY)) false
-      else if(isInvalidMove(x, y, area)) false
+      else if(turn != 0 && isInvalidMove(x, y, area)) false
       else if(isGoal(x, y, tx, ty)) true
       else navigate((x - 1, y + 1), turn + 1)
         || navigate((x, y + 1), turn + 1)
@@ -38,7 +38,7 @@ module PathUtil = {
       if (turn > limit) []
       else if (invalidPosition(x, y)) []
       else if (isOutOfBounds(x, y, maxX, maxY)) []
-      else if (isInvalidMove(x, y, area)) []
+      else if (turn != 0 && isInvalidMove(x, y, area)) []
       else if (isGoal(x, y, tx, ty)) routes
       else {
         let nxt: list((int, int)) = [ (x, y), ... routes ];
@@ -64,7 +64,7 @@ module PathUtil = {
       if (turn > limit) routes
       else if (invalidPosition(x, y)) routes
       else if (isOutOfBounds(x, y, maxX, maxY)) routes
-      else if (isInvalidMove(x, y, area)) routes
+      else if (turn != 0 && isInvalidMove(x, y, area)) routes
       else if (isGoal(x, y, tx, ty)) [ [(x, y), ...current], ... routes ]
       else {
         let history = if (turn == 0) { current }  else { [ (x, y), ... current ] };
@@ -96,7 +96,7 @@ module PathUtil = {
       else if (invalidPosition(x, y)) routes
       else if (isOutOfBounds(x, y, maxX, maxY)) routes
       else if (List.length(current) > best) routes
-      else if (isInvalidMove(x, y, area)) routes
+      else if (turn != 0 && isInvalidMove(x, y, area)) routes
       else if (isGoal(x, y, tx, ty)) {
         let allPaths = [[(x, y), ...current], ... routes ];
         let historys = List.fold_left(
@@ -122,11 +122,6 @@ module PathUtil = {
 
     recRoutes((x, y), 0, 20, [], []);
   };
-
-  let suggestMove = (~limit=4, area, (x, y), (tx, ty)) => {
-
-    (0, 0);
-  }
 };
 
 module Navigation: Movement = {
@@ -135,10 +130,10 @@ module Navigation: Movement = {
     PathUtil.canNavigateTo(~limit=limit, area, (x, y), (tx, ty));
 
   let suggestMove = (~limit=4, area, (x, y), (tx, ty)) => {
-    if (canNavigateTo(~limit=4, area, (x, y), (tx, ty))) {
-      let bestMoves = PathUtil.findFastestRoutes(~limit=4, area, (x, y), (tx, ty));
+    if (canNavigateTo(~limit=limit, area, (x, y), (tx, ty))) {
+      let bestMoves = PathUtil.findFastestRoutes(~limit=limit, area, (x, y), (tx, ty));
       let (bx, by) = bestMoves |> List.hd |> List.rev |> List.hd;
-      (bx-y, by - y);
+      (bx - x, by - y);
     } else {
       (0, 0);
     }

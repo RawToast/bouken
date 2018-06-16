@@ -66,7 +66,6 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
   let canAttack = (~range=1, area, enemyInfo) => {
     let targets = findTargets(~range=range, enemyInfo);
     let attackable = attackablePlaces(targets, area);
-
     if (List.length(attackable) >= 1) {
       true
     } else {
@@ -102,16 +101,14 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     if (List.length(playerLocations) == 0) (0, 0)
     else {
       let loc = List.hd(playerLocations);
-      let (px, py) = loc;
-      let (ex, ey) = enemyInfo.location;
 
-      let dx = px - ex;
-      let dy = py - ey;
-
-      let x = if(dx > 0) 1 else { if(dx == 0) 0 else -1 };
-      let y = if(dy > 0) 1 else { if(dy == 0) 0 else -1 };
-
-      (x, y)
+      if(Pathing.Navigation.canNavigateTo(~limit=range, area, enemyInfo.location, loc)) {
+        Js.Console.log("Can navigate");
+        Pathing.Navigation.suggestMove(~limit=range, area, enemyInfo.location, loc);
+      } else{
+        Js.Console.log("Cant navigate");
+        (0, 0);
+      };
     }
   };
 
