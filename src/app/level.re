@@ -62,7 +62,12 @@ module Tiles = {
     | _ => 1.
     };
 
-  let placePenalty = t => tilePenalty(t.tile);
+  let statePenalty = t => switch t {
+    | Enemy(_) => 3.
+    | _ => 1.
+    };
+
+  let placePenalty = t => tilePenalty(t.tile) +. statePenalty(t.state);
 
   let canOccupy = p => 
     if (isEnemy(p)) false

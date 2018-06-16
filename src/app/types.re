@@ -128,7 +128,7 @@ module type Places = {
 
 module type Movement = {
   let canNavigateTo: (~limit: int=?, area, (int, int), (int, int)) => bool;
-  let suggestMove: (~limit: int=?, area, (int, int), (int, int)) => (int, int);
+  let suggestMove: (~limit: int=?, ~incTerrain: bool=?, area, (int, int), (int, int)) => (int, int);
 };
 
 module type Positions = {

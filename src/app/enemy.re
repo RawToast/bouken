@@ -121,8 +121,9 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
   };
 
   let chase = (area, enemyInfo) => {
-    let range = enemyInfo.enemy.ai.moveRange;
-    let visiblePlaces = findTargets(~range=enemyInfo.enemy.ai.moveRange, enemyInfo);
+    let enemyAi = enemyInfo.enemy.ai;
+    let range = enemyAi.moveRange;
+    let visiblePlaces = findTargets(~range=range, enemyInfo);
     let playerLocations = attackablePlaces(visiblePlaces, area);
 
     if (List.length(playerLocations) == 0) (0, 0)
@@ -130,7 +131,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
       let loc = List.hd(playerLocations);
 
       if(Pathing.Navigation.canNavigateTo(~limit=range, area, enemyInfo.location, loc))
-        Pathing.Navigation.suggestMove(~limit=range, area, enemyInfo.location, loc)
+        Pathing.Navigation.suggestMove(~limit=range, ~incTerrain=enemyAi.terrainCost, area, enemyInfo.location, loc)
       else (0, 0)
     }
   };
