@@ -50,7 +50,7 @@ let handleKeyPress = (movement, stairs, useExit, evt: Dom.keyboardEvent) => {
   ();
 };
 
-let make = (~level: level, ~movePlayer, ~takeStairs, ~useExit, _children) => {
+let make = (~area: area, ~movePlayer, ~takeStairs, ~useExit, _children) => {
   ...component,
   didMount: (_) =>  {
     document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer, takeStairs, useExit));
@@ -58,7 +58,7 @@ let make = (~level: level, ~movePlayer, ~takeStairs, ~useExit, _children) => {
   render: _self =>
     <div className="GameMap">
       (
-        GameElements.asElements(level.map)
+        GameElements.asElements(area)
           |> List.rev
           |> List.map(ts => ts |> Array.of_list |> ReasonReact.array)
           |> Array.of_list |> ReasonReact.array
