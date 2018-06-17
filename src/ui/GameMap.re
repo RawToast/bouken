@@ -1,40 +1,40 @@
-open Webapi.Dom;
 open Types;
-
+open ReasonReact;
 let component = ReasonReact.statelessComponent("GameMap");
 
 module GameElements = {
   let makeEnemy = (e:enemy) => switch(e.name) {
-  | "Zombie" => "Z"
-  | "Minotaur" => "M"
-  | _ => "X"
+  | "Zombie" => ("Z", "enemy")
+  | "Minotaur" => ("M", "enemy")
+  | _ => ("X", "enemy")
   };
-  let stateToElement = (place: place, default:string) => 
+  let stateToElement = (place: place, default) => 
   switch place.state {
   | Empty => default
-  | Player(_) => "O"
+  | Player(_) => ("O", "player")
   | Enemy(e) => makeEnemy(e)
   };
 
-  let tilesToElements = List.map(t =>
+  let tilesToElements = (index, places) => places |> List.mapi((i, t) =>
     switch (t.tile) {
-      | GROUND => stateToElement(t, ".")
-      | WATER => stateToElement(t, "w")
-      | WALL => "#"
-      | STAIRS(_) => stateToElement(t, "/")
-      | EXIT(_) => stateToElement(t, "e")
+      | GROUND => stateToElement(t, (".", "ground"))
+      | WATER => stateToElement(t, ("w", "water"))
+      | WALL => ("#", "wall")
+      | STAIRS(_) => stateToElement(t, ("/", "stairs"))
+      | EXIT(_) => stateToElement(t, ("e", "exit"))
       }
-    |> str => (" " ++ str)
-    |> ReasonReact.string);
+    |> ((str, clazz)) => (" " ++ str, clazz)
+    |> ((str, clazz)) => (<text key=(string_of_int(index)++"x"++string_of_int(i)) className=("map-" ++ clazz)>(string(str))</text>));
+  
   let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
   (map) => map
-    |> List.map(es => es |> tilesToElements)
-    |> List.map(li => [<br/>, ...li]);
+    |> List.mapi((i, es) => es |> tilesToElements(i))
+    |> List.mapi((i,li) => [<br/>, ...li]);
 };
 
 
 let handleKeyPress = (movement, stairs, useExit, evt: Dom.keyboardEvent) => {
-  evt |> KeyboardEvent.code
+  evt |> Webapi.Dom.KeyboardEvent.code
     |> code => switch code {
     | "KeyQ" => movement(-1, 1)
     | "KeyW" => movement(0, 1)
@@ -49,6 +49,8 @@ let handleKeyPress = (movement, stairs, useExit, evt: Dom.keyboardEvent) => {
     };
   ();
 };
+
+open Webapi.Dom;
 
 let make = (~area: area, ~movePlayer, ~takeStairs, ~useExit, _children) => {
   ...component,
