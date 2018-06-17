@@ -35,7 +35,8 @@ module FetchCsvBuilder = {
   let create = (player: player) => {
     let (x, y) = player.location;
     
-    Worldcreator.CsvWorldBuilder.loadWorldAsync("Dungeon 1", "Dungeon 1,Dungeon 2,Dungeon 3,Dungeon 4,Dungeon 5,Swamp,Cave")
+    Worldcreator.CsvWorldBuilder
+      .loadWorldAsync("Dungeon 1", "Dungeon 1,Dungeon 2,Dungeon 3,Dungeon 4,Dungeon 5,Swamp,Cave,Labyrinth")
       |> Js.Promise.then_(world => 
         world 
           |> World.currentLevel
