@@ -18,8 +18,8 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
   let calculateScore = game => {
     let baseScore = 1000;
     let turnPenalty = int_of_float((game.turn /. 5.));
-    let goldBonus = game.player.gold * 10;
-    let healthBonus = game.player.stats.health * 2;
+    let goldBonus = (game.player.gold * 10);
+    let healthBonus = game.player.stats.health * 25;
 
     baseScore + healthBonus + goldBonus - turnPenalty;
   };
