@@ -8,11 +8,18 @@ module GameElements = {
   | "Minotaur" => ("M", "enemy")
   | _ => ("X", "enemy")
   };
+
+  let makeObject = (t) => switch(t) {
+    | Trap(_) => (":", "trap")
+    | Heal(_) => ("+", "health")
+    };
+    
   let stateToElement = (place: place, default) => 
   switch place.state {
   | Empty => default
   | Player(_) => ("O", "player")
   | Enemy(e) => makeEnemy(e)
+  | Object(o) => makeObject(o)
   };
 
   let tilesToElements = (index, places) => places |> List.mapi((i, t) =>

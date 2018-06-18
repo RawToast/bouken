@@ -25,12 +25,22 @@ module CsvWorldBuilder: WorldCreator = {
     };
   };
 
+  let createOccupier: (string, place) => place = (str, place) => {
+    if(Rationale.RList.any(k => str == k, ["+", ":"])) {
+        switch str {
+        | "+" => { ... place, state: Object(Trap(1)) }
+        | ":" => { ... place, state: Object(Heal(2)) }
+        | _ => place
+        }
+    } else Enemy.Enemies.addEnemy(str, place);
+  };
+
   let buildPlace = str => { 
     let spliced = str  |> Js.String.split("|") |> Array.to_list; 
 
     switch (List.length(spliced)) {
     | 1 => spliced |> List.hd |> makeTile
-    | 2 => spliced |> List.hd |> makeTile |> Enemy.Enemies.addEnemy(List.nth(spliced, 1))
+    | 2 => spliced |> List.hd |> makeTile |> createOccupier(List.nth(spliced, 1), _)
     | _ => makeTile(".")
     };
   };

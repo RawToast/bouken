@@ -35,6 +35,10 @@ type link = {
   level: string,
 };
 
+type trapEffect = 
+  | Trap(int)
+  | Heal(int);
+
 type tile =
   | GROUND
   | STAIRS(link)
@@ -45,6 +49,7 @@ type tile =
 type occupier = 
   | Player(player)
   | Enemy(enemy)
+  | Object(trapEffect)
   | Empty;
 
 type place = {
