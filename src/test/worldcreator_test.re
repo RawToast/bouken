@@ -53,10 +53,10 @@ describe("buildPlace", () => {
   });
 
   describe("When given '.|:'", () => {
-    let result = buildPlace(".|Z");
+    let result = buildPlace(".|:");
 
     test("Builds a ground tile", (_) => expect(result.tile) |> toEqual(GROUND));
-    test("Containing an object", (_) => expect(result |> Level.Tiles.isObject) |> toBe(true));
+    test("Containing an object", (_) => expect(result |> Level.Tiles.hasEffect) |> toBe(true));
   });
 });
 

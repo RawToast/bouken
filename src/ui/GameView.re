@@ -11,11 +11,11 @@ let viewport = (player: player, area) => {
   let size = 5;
   let fullSize = 1 + (size * 2);
   let (x, y) = player.location;
-  let blocks = RList.repeat({tile: WALL, state: Empty}, size);
+  let blocks = RList.repeat({tile: WALL, state: Empty, tileEffect: NoEff }, size);
   
   let pt1 = area |> List.map(ys => blocks @ ys @ blocks);
 
-  let row = pt1 |> List.hd |> List.length |> RList.repeat({tile: WALL, state: Empty})
+  let row = pt1 |> List.hd |> List.length |> RList.repeat({tile: WALL, state: Empty, tileEffect: NoEff })
     |> RList.repeat(_, size);
 
   (row @ pt1 @ row)

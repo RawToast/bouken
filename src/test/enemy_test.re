@@ -24,10 +24,10 @@ describe("EnemyLoop", () => {
     let newLevel = blankLevel
       |> Level.Level.modifyTile(
         px + x, py + y, 
-        { tile: GROUND, state: Enemy(activeEnemy) })
+        { tile: GROUND, state: Enemy(activeEnemy), tileEffect: NoEff })
       |> Level.Level.modifyTile(
         px, py, 
-        { tile: GROUND, state: Player(game.player) });
+        { tile: GROUND, state: Player(game.player), tileEffect: NoEff });
     let newWorld = World.World.updateLevel(newLevel, game.world);
     ({ ... game, world: newWorld}, newLevel);
   };
@@ -36,8 +36,8 @@ describe("EnemyLoop", () => {
 
   describe("findActiveEnemies", () => {
     let level = blankLevel
-        |> Level.Level.modifyTile(0, 5, { tile: GROUND, state: Enemy(activeEnemy)})
-        |> Level.Level.modifyTile(10, 10, { tile: GROUND, state: Enemy({...activeEnemy, id: "alt"})});
+        |> Level.Level.modifyTile(0, 5, { tile: GROUND, state: Enemy(activeEnemy), tileEffect: NoEff })
+        |> Level.Level.modifyTile(10, 10, { tile: GROUND, state: Enemy({...activeEnemy, id: "alt"}), tileEffect: NoEff });
 
     let activeEnemies = EnemyLoop.findActiveEnemies(level.map);
 
@@ -70,8 +70,8 @@ describe("EnemyLoop", () => {
     open Rationale.Option;
     let active = quickEnemy("1", 1.);
     let newLevel = blankLevel
-      |> Level.Level.modifyTile(1, 0, { tile: GROUND, state: Enemy(active) })
-      |> Level.Level.modifyTile(10, 10, { tile: GROUND, state: Enemy(quickEnemy("2", 0.5)) });
+      |> Level.Level.modifyTile(1, 0, { tile: GROUND, state: Enemy(active), tileEffect: NoEff })
+      |> Level.Level.modifyTile(10, 10, { tile: GROUND, state: Enemy(quickEnemy("2", 0.5)), tileEffect: NoEff });
 
     let newWorld = World.World.updateLevel(newLevel, game.world);
 

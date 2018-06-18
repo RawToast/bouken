@@ -2,7 +2,7 @@ open Types;
 open Rationale;
 
 module LevelBuilder = {
-  let blankPlace = {tile: GROUND, state: Empty};
+  let blankPlace = {tile: GROUND, state: Empty, tileEffect: NoEff };
   let makeBlankLevel = (name: string) => {
     let emptyMap =
       RList.repeat(blankPlace, 15) |> List.map(i => RList.repeat(i, 15));
@@ -11,21 +11,21 @@ module LevelBuilder = {
   
   let makeWaterLevel = (name: string) => {
     let emptyMap =
-      RList.repeat({tile: WATER, state: Empty}, 15) |> List.map(i => RList.repeat(i, 15));
+      RList.repeat({tile: WATER, state: Empty, tileEffect: NoEff }, 15) |> List.map(i => RList.repeat(i, 15));
     {name, map: emptyMap};
   };
 
   let makeLevel = (name, sizeX, sizeY, defaultTile) => {
     let emptyMap =
-      RList.repeat({tile: defaultTile, state: Empty}, sizeY) |> List.map(i => RList.repeat(i, sizeX));
+      RList.repeat({tile: defaultTile, state: Empty, tileEffect: NoEff }, sizeY) |> List.map(i => RList.repeat(i, sizeX));
     {name, map: emptyMap};
   };
 };
 
 module Tiles = {
-  let groundTile = {tile: GROUND, state: Empty};
-  let wallTile = {tile: WALL, state: Empty};
-  let waterTile = {tile: WATER, state: Empty};
+  let groundTile = { tile: GROUND, state: Empty, tileEffect: NoEff };
+  let wallTile = { tile: WALL, state: Empty, tileEffect: NoEff };
+  let waterTile = { tile: WATER, state: Empty, tileEffect: NoEff };
 
   let isGround = t => switch t {
     | GROUND => true
@@ -42,9 +42,9 @@ module Tiles = {
     | _ => false
     };
 
-  let isObject = t => switch t.state {
-    | Object(_) => true
-    | _ => false
+  let hasEffect = t => switch t.tileEffect {
+    | NoEff => false
+    | _ => true
     };
 
   let isStairs = t => switch t.tile {
@@ -155,7 +155,6 @@ module Area: Places = {
         | Empty => None
         | Enemy(e) => Some(e)
         | Player(_) => None
-        | Object(_) => None
       });
   };
 

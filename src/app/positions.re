@@ -12,7 +12,6 @@ module BasicPositions: Positions = {
            | Empty => place
            | Player(p) => {...place, state: Player({...p, stats: increment(p.stats)})}
            | Enemy(e) => {...place, state: Enemy({...e, stats: increment(e.stats)})}
-           | Object(_) => place
            }
          )
     );

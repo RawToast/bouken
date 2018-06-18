@@ -35,9 +35,10 @@ type link = {
   level: string,
 };
 
-type trapEffect = 
+type tileEffect = 
   | Trap(int)
-  | Heal(int);
+  | Heal(int)
+  | NoEff;
 
 type tile =
   | GROUND
@@ -49,12 +50,12 @@ type tile =
 type occupier = 
   | Player(player)
   | Enemy(enemy)
-  | Object(trapEffect)
   | Empty;
 
 type place = {
   tile: tile,
-  state: occupier
+  state: occupier,
+  tileEffect: tileEffect
 };
 
 type area = list(list(place));

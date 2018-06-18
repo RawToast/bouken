@@ -6,8 +6,8 @@ module Enemies = {
 
   let makeZombie = () => { 
     id: randId(), name: "Zombie", 
-    stats: { health: 6, speed: 0.8, position: 0., damage: 1 }, 
-    ai: { moveRange: 4, terrainCost: false }};
+    stats: { health: 6, speed: 0.7, position: 0., damage: 1 }, 
+    ai: { moveRange: 5, terrainCost: false }};
   let makeEnemy = () => { 
     id: randId(), name: "Enemy", 
     stats: { health: 3, speed: 1., position: 0., damage: 2 },

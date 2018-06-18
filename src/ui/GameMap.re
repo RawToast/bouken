@@ -9,26 +9,26 @@ module GameElements = {
   | _ => ("X", "enemy")
   };
 
-  let makeObject = (t) => switch(t) {
-    | Trap(_) => (":", "trap")
-    | Heal(_) => ("+", "health")
-    };
+  let makeObject = (t, default) => switch(t.tileEffect) {
+      | Trap(_) => (":", "trap")
+      | Heal(_) => ("+", "health")
+      | NoEff => default
+      };
     
   let stateToElement = (place: place, default) => 
-  switch place.state {
-  | Empty => default
-  | Player(_) => ("O", "player")
-  | Enemy(e) => makeEnemy(e)
-  | Object(o) => makeObject(o)
-  };
+    switch place.state {
+    | Empty => default
+    | Player(_) => ("O", "player")
+    | Enemy(e) => makeEnemy(e)
+    };
 
   let tilesToElements = (index, places) => places |> List.mapi((i, t) =>
     switch (t.tile) {
-      | GROUND => stateToElement(t, (".", "ground"))
-      | WATER => stateToElement(t, ("w", "water"))
-      | WALL => ("#", "wall")
-      | STAIRS(_) => stateToElement(t, ("/", "stairs"))
-      | EXIT(_) => stateToElement(t, ("e", "exit"))
+      | GROUND => makeObject(t, (".", "ground")) |> stateToElement(t)
+      | WATER => makeObject(t, ("w", "water")) |> stateToElement(t)
+      | WALL => ("#", "wall") |> stateToElement(t)
+      | STAIRS(_) => makeObject(t, ("/", "stairs")) |> stateToElement(t)
+      | EXIT(_) => makeObject(t, ("e", "exit")) |> stateToElement(t)
       }
     |> ((str, clazz)) => (" " ++ str, clazz)
     |> ((str, clazz)) => (<text key=(string_of_int(index)++"x"++string_of_int(i)) className=("map-" ++ clazz)>(string(str))</text>));
@@ -36,7 +36,7 @@ module GameElements = {
   let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
   (map) => map
     |> List.mapi((i, es) => es |> tilesToElements(i))
-    |> List.mapi((i,li) => [<br/>, ...li]);
+    |> List.map(li => [<br/>, ...li]);
 };
 
 

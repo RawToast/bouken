@@ -1,7 +1,7 @@
 open Types;
 
 module CsvWorldBuilder: WorldCreator = {
-  let makeExit = score => { tile: EXIT(int_of_string((score))), state: Empty };
+  let makeExit = score => { tile: EXIT(int_of_string((score))), state: Empty, tileEffect: NoEff };
 
   let tail = Js.String.sliceToEnd(~from=1);
   let head = Js.String.charAt(0);
@@ -11,25 +11,25 @@ module CsvWorldBuilder: WorldCreator = {
     let level = str |> tail;
 
     let link = { id: id, level: level};
-    { tile: STAIRS(link), state: Empty };
+    { tile: STAIRS(link), state: Empty, tileEffect: NoEff };
   };
 
   let makeTile = (str) => {
     switch (Js.String.charAt(0, str)) {
-    | "." => { tile: GROUND, state: Empty}
-    | "w" => { tile: WATER, state: Empty}
-    | "#" => { tile: WALL, state: Empty}
+    | "." => { tile: GROUND, state: Empty, tileEffect: NoEff }
+    | "w" => { tile: WATER, state: Empty, tileEffect: NoEff }
+    | "#" => { tile: WALL, state: Empty, tileEffect: NoEff }
     | "e" => str |> tail |> makeExit
     | "/" => str |> tail |> makeStairs
-    | _ => { tile: WALL, state: Empty}
+    | _ => { tile: WALL, state: Empty, tileEffect: NoEff }
     };
   };
 
   let createOccupier: (string, place) => place = (str, place) => {
     if(Rationale.RList.any(k => str == k, ["+", ":"])) {
         switch str {
-        | "+" => { ... place, state: Object(Trap(1)) }
-        | ":" => { ... place, state: Object(Heal(2)) }
+        | "+" => { ... place, tileEffect: Heal(2) }
+        | ":" => { ... place, tileEffect: Trap(2) }
         | _ => place
         }
     } else Enemy.Enemies.addEnemy(str, place);
