@@ -150,6 +150,7 @@ module Area: Places = {
         | Empty => None
         | Enemy(e) => Some(e)
         | Player(_) => None
+        | Object(_) => None
       });
   };
 

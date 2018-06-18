@@ -94,9 +94,8 @@ let error = (err) => Js.Result.Error(err);
 let success = (ok) => Js.Result.Ok(ok);
 
 let isPlayer = place => switch place.state {
-  | Empty => false
-  | Enemy(_) => false
   | Player(_) => true
+  | _ => false
   };
 
 /* Modules */
