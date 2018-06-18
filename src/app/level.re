@@ -276,7 +276,7 @@ module Area: Places = {
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
             if (yi == x) { 
-              { ...place, state: Enemy(e(place.tile)) }
+              { ...place, state: Enemy(e(place)), tileEffect: NoEff }
             } else place);
         } else xs
       );
@@ -284,10 +284,16 @@ module Area: Places = {
 
     canMoveTo(x, y, area) 
       |> Result.fmap(_ => {
-        let updatedEnemy = tile => 
-          { ... enemy, 
-            stats: { ... enemy.stats, position: (enemy.stats.position -. (cost *. Tiles.tilePenalty(tile)))}
-          };
+        let updatedEnemy = tile => switch(tile.tileEffect) {
+        | Trap(dmg) => { ... enemy, 
+            stats: { ... enemy.stats, 
+              health: enemy.stats.health - 1,
+              position: (enemy.stats.position -. (cost *. Tiles.placePenalty(tile)))}
+          }
+        | NoEff => { ... enemy, 
+            stats: { ... enemy.stats, position: (enemy.stats.position -. (cost *. Tiles.placePenalty(tile)))}
+          }
+        }
         let updatedArea = update(updatedEnemy, area);
         updatedArea;
       });
