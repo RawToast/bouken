@@ -42,6 +42,11 @@ module Tiles = {
     | _ => false
     };
 
+  let isObject = t => switch t.state {
+    | Object(_) => true
+    | _ => false
+    };
+
   let isStairs = t => switch t.tile {
     | STAIRS(_) => true
     | _ => false

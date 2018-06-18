@@ -51,6 +51,13 @@ describe("buildPlace", () => {
     test("Builds a ground tile", (_) => expect(result.tile) |> toEqual(GROUND));
     test("Occupied by an enemy", (_) => expect(result |> Level.Tiles.isEnemy) |> toBe(true));
   });
+
+  describe("When given '.|:'", () => {
+    let result = buildPlace(".|Z");
+
+    test("Builds a ground tile", (_) => expect(result.tile) |> toEqual(GROUND));
+    test("Containing an object", (_) => expect(result |> Level.Tiles.isObject) |> toBe(true));
+  });
 });
 
 describe("buildArea", () => {
@@ -88,7 +95,7 @@ describe("buildLevel", () => {
       "., ., ., .|Z, .\n" ++
       "., w, ., /0Maze, .\n" ++
       "., ., #, ., .\n" ++
-      "., ., ., ., .";
+      "., ., ., .|+, .";
 
     let result = buildLevel("Test", levelStr);
 
