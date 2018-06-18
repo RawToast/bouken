@@ -29,7 +29,7 @@ module CsvWorldBuilder: WorldCreator = {
     if(Rationale.RList.any(k => str == k, ["+", ":"])) {
         switch str {
         | "+" => { ... place, tileEffect: Heal(2) }
-        | ":" => { ... place, tileEffect: Trap(2) }
+        | ":" => { ... place, tileEffect: Trap(1) }
         | _ => place
         }
     } else Enemy.Enemies.addEnemy(str, place);

@@ -27,6 +27,10 @@
   color: darkgray;
 }
 
+.map-trap {
+  color: darkgray;
+}
+
 .map-water {
   color: rgb(0, 0, 130);
 }
