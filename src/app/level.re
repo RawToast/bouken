@@ -276,7 +276,11 @@ module Area: Places = {
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
             if (yi == x) { 
-              { ...place, state: Enemy(e(place)), tileEffect: NoEff }
+              { 
+                let enemy = e(place);
+                if (enemy.stats.health > 0) { ...place, state: Enemy(enemy), tileEffect: NoEff }
+                else  { ...place, state: Empty, tileEffect: NoEff }
+              }
             } else place);
         } else xs
       );
@@ -287,10 +291,10 @@ module Area: Places = {
         let updatedEnemy = tile => switch(tile.tileEffect) {
         | Trap(dmg) => { ... enemy, 
             stats: { ... enemy.stats, 
-              health: enemy.stats.health - 1,
+              health: enemy.stats.health - dmg,
               position: (enemy.stats.position -. (cost *. Tiles.placePenalty(tile)))}
           }
-        | NoEff => { ... enemy, 
+        | _ => { ... enemy, 
             stats: { ... enemy.stats, position: (enemy.stats.position -. (cost *. Tiles.placePenalty(tile)))}
           }
         }
