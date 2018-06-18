@@ -12,6 +12,7 @@ module GameElements = {
   let makeObject = (t, default) => switch(t.tileEffect) {
       | Trap(_) => (":", "trap")
       | Heal(_) => ("+", "health")
+      | Gold(_) => ("g", "gold")
       | NoEff => default
       };
     

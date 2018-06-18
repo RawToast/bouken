@@ -43,6 +43,8 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 `:` Trap
 
+`g` Gold
+
 `/` Stairs
 
 `e` Exit

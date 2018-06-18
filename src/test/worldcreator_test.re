@@ -57,7 +57,15 @@ describe("buildPlace", () => {
 
     test("Builds a ground tile", (_) => expect(result.tile) |> toEqual(GROUND));
     test("Containing an object", (_) => expect(result |> Level.Tiles.hasEffect) |> toBe(true));
-  });
+  }
+  
+  describe("When given '.|g'", () => {
+    let result = buildPlace(".|g");
+
+    test("Builds a ground tile", (_) => expect(result.tile) |> toEqual(GROUND));
+    test("Containing gold", (_) => expect(result |> Level.Tiles.hasEffect) |> toBe(true));
+  }
+  );
 });
 
 describe("buildArea", () => {

@@ -26,10 +26,11 @@ module CsvWorldBuilder: WorldCreator = {
   };
 
   let createOccupier: (string, place) => place = (str, place) => {
-    if(Rationale.RList.any(k => str == k, ["+", ":"])) {
+    if(Rationale.RList.any(k => str == k, ["+", ":", "g"])) {
         switch str {
         | "+" => { ... place, tileEffect: Heal(2) }
         | ":" => { ... place, tileEffect: Trap(1) }
+        | "g" => { ... place, tileEffect: Gold(3) }
         | _ => place
         }
     } else Enemy.Enemies.addEnemy(str, place);

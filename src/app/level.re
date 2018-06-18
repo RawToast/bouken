@@ -204,6 +204,13 @@ module Area: Places = {
             health: player.stats.health + amt,
             position: player.stats.position -. (Tiles.placePenalty(tile) *. cost)}};        
        }
+      | Gold(amt) => {
+        {... player, 
+          stats: { ... player.stats, 
+            position: player.stats.position -. (Tiles.placePenalty(tile) *. cost)},
+          gold: player.gold + amt
+          };        
+       }
       | NoEff => {... player, stats: { ... player.stats, position: player.stats.position -. (Tiles.placePenalty(tile) *. cost)}}
       };
 
