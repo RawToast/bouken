@@ -37,6 +37,7 @@ type link = {
 
 type tileEffect = 
   | Trap(int)
+  | Snare(float)
   | Heal(int)
   | Gold(int)
   | NoEff;

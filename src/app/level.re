@@ -204,6 +204,11 @@ module Area: Places = {
             health: player.stats.health + amt,
             position: player.stats.position -. (Tiles.placePenalty(tile) *. cost)}};        
        }
+      | Snare(turnCount) => {
+        {... player, 
+          stats: { ... player.stats, 
+            position: player.stats.position -. (Tiles.placePenalty(tile) *. cost) -. turnCount }};        
+       }
       | Gold(amt) => {
         {... player, 
           stats: { ... player.stats, 
@@ -294,6 +299,10 @@ module Area: Places = {
               health: enemy.stats.health - dmg,
               position: (enemy.stats.position -. (cost *. Tiles.placePenalty(tile)))}
           }
+        | Snare(turnCount) => { ... enemy, 
+          stats: { ... enemy.stats, 
+            position: (enemy.stats.position -. (cost *. Tiles.placePenalty(tile))) -. turnCount }
+        }
         | _ => { ... enemy, 
             stats: { ... enemy.stats, position: (enemy.stats.position -. (cost *. Tiles.placePenalty(tile)))}
           }
