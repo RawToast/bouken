@@ -52,6 +52,13 @@ describe("buildPlace", () => {
     test("Occupied by an enemy", (_) => expect(result |> Level.Tiles.isEnemy) |> toBe(true));
   });
 
+  describe("When given '.|+'", () => {
+    let result = buildPlace(".|+");
+
+    test("Builds a ground tile", (_) => expect(result.tile) |> toEqual(GROUND));
+    test("Containing health", (_) => expect(result |> Level.Tiles.isHeal) |> toBe(true));
+  });
+
   describe("When given '.|:'", () => {
     let result = buildPlace(".|:");
 
@@ -63,9 +70,15 @@ describe("buildPlace", () => {
     let result = buildPlace(".|g");
 
     test("Builds a ground tile", (_) => expect(result.tile) |> toEqual(GROUND));
-    test("Containing gold", (_) => expect(result |> Level.Tiles.hasEffect) |> toBe(true));
-  }
-  );
+    test("Containing gold", (_) => expect(result |> Level.Tiles.isGold) |> toBe(true));
+  });
+
+  describe("When given '.|;'", () => {
+    let result = buildPlace(".|;");
+
+    test("Builds a ground tile", (_) => expect(result.tile) |> toEqual(GROUND));
+    test("Containing a snare", (_) => expect(result |> Level.Tiles.isSnare) |> toBe(true));
+  })
 });
 
 describe("buildArea", () => {

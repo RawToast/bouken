@@ -47,6 +47,21 @@ module Tiles = {
     | _ => true
     };
 
+  let isSnare = t => switch t.tileEffect {
+    | Snare(_) => true
+    | _ => false
+    };
+
+  let isGold = t => switch t.tileEffect {
+    | Gold(_) => true
+    | _ => false
+    };
+
+  let isHeal = t => switch t.tileEffect {
+    | Heal(_) => true
+    | _ => false
+    };
+
   let isStairs = t => switch t.tile {
     | STAIRS(_) => true
     | _ => false
