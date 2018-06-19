@@ -14,7 +14,6 @@ module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
       if (Pos.isActive(game.player.stats)) {
         game;
       } else if (List.length(activeEnemies) >= 1) {
-        Js.Console.log("Active enemy");
         /* relocate */
         let levelOpt = World.currentLevel(game.world);
         let activeEnemy = List.hd(activeEnemies);

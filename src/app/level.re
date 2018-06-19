@@ -73,6 +73,8 @@ module Tiles = {
     };
 
   let placePenalty = t => tilePenalty(t.tile) +. statePenalty(t.state);
+  let placePenaltyNoEnemy = t => tilePenalty(t.tile);
+
 
   let canOccupy = p => 
     if (isEnemy(p)) false
@@ -297,14 +299,14 @@ module Area: Places = {
         | Trap(dmg) => { ... enemy, 
             stats: { ... enemy.stats, 
               health: enemy.stats.health - dmg,
-              position: (enemy.stats.position -. (cost *. Tiles.placePenalty(tile)))}
+              position: (enemy.stats.position -. (cost *. Tiles.placePenaltyNoEnemy(tile)))}
           }
         | Snare(turnCount) => { ... enemy, 
           stats: { ... enemy.stats, 
-            position: (enemy.stats.position -. (cost *. Tiles.placePenalty(tile))) -. turnCount }
+            position: (enemy.stats.position -. (cost *. Tiles.placePenaltyNoEnemy(tile))) -. turnCount }
         }
         | _ => { ... enemy, 
-            stats: { ... enemy.stats, position: (enemy.stats.position -. (cost *. Tiles.placePenalty(tile)))}
+            stats: { ... enemy.stats, position: (enemy.stats.position -. (cost *. Tiles.placePenaltyNoEnemy(tile)))}
           }
         }
         let updatedArea = update(updatedEnemy, area);

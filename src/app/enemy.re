@@ -152,7 +152,6 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
           |> w => {...game, world: w, player: player}
       })
     } else if (canSee(level.map, activeEnemy)) {
-      Js.Console.log("Moving");
       let (dx, dy) = chase(level.map, activeEnemy);
       let (ox, oy) = activeEnemy.location;
       
@@ -162,7 +161,6 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
       |> Option.fmap(w => {...game, world: w})
     } else {
       /* Wait / sleep */
-      Js.Console.log("Sleeping");
       setEnemy(level.map, activeEnemy) 
       |> Option.fmap(map => {...level, map: map })
       |> Option.fmap(l => World.updateLevel(l, game.world))
