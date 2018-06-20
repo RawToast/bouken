@@ -20,6 +20,14 @@ X Enemy / Generic Enemy
 
 M Enemy / Minotaur
 
+g Gold
+
++ Health
+
+: Trap
+
+; Snare
+
 / Stairs
 
 e Exit")

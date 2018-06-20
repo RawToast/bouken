@@ -41,9 +41,11 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 `+` Health
 
+`g` Gold
+
 `:` Trap
 
-`g` Gold
+`;` Snare
 
 `/` Stairs
 
