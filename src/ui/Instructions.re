@@ -1,6 +1,7 @@
 open ReasonReact;
 
 let component = ReasonReact.reducerComponent("Instructions");
+
 let notes = 
   <div id="notes" className="c-notes">
     <div className="pre-scrollable">
@@ -10,7 +11,7 @@ The player can move in 8 directions with:
 
 `q` `w` `e`
 
-`a` 🐾 `d`
+`a` " ++ {js|🐾|js} ++ " `d`
 
 `z` `x` `c`
 
@@ -32,7 +33,7 @@ let make = ( _children) => {
   reducer: (action: bool, _ext) => ReasonReact.Update(action),
   render: (self) => {
     <div>
-      <h6 onClick=((evt) => (self.send(!self.state)))>(string("Guide"))</h6>
+      <h4 onClick=((evt) => (self.send(!self.state)))>(string("Guide"))</h4>
       (if (self.state) notes else ReasonReact.null)
     </div>
   }
