@@ -1,40 +1,49 @@
-open Webapi.Dom;
 open Types;
-
+open ReasonReact;
 let component = ReasonReact.statelessComponent("GameMap");
 
 module GameElements = {
   let makeEnemy = (e:enemy) => switch(e.name) {
-  | "Zombie" => "Z"
-  | "Minotaur" => "M"
-  | _ => "X"
-  };
-  let stateToElement = (place: place, default:string) => 
-  switch place.state {
-  | Empty => default
-  | Player(_) => "O"
-  | Enemy(e) => makeEnemy(e)
+  | "Zombie" => ("Z", "enemy")
+  | "Minotaur" => ("M", "enemy")
+  | _ => ("X", "enemy")
   };
 
-  let tilesToElements = List.map(t =>
+  let makeObject = (t, default) => switch(t.tileEffect) {
+      | Trap(_) => (":", "trap")
+      | Snare(_) => (";", "trap")
+      | Heal(_) => ("+", "health")
+      | Gold(_) => ("g", "gold")
+      | NoEff => default
+      };
+    
+  let stateToElement = (place: place, default) => 
+    switch place.state {
+    | Empty => default
+    | Player(_) => ("O", "player")
+    | Enemy(e) => makeEnemy(e)
+    };
+
+  let tilesToElements = (index, places) => places |> List.mapi((i, t) =>
     switch (t.tile) {
-      | GROUND => stateToElement(t, ".")
-      | WATER => stateToElement(t, "w")
-      | WALL => "#"
-      | STAIRS(_) => stateToElement(t, "/")
-      | EXIT(_) => stateToElement(t, "e")
+      | GROUND => makeObject(t, (".", "ground")) |> stateToElement(t)
+      | WATER => makeObject(t, ("w", "water")) |> stateToElement(t)
+      | WALL => ("#", "wall") |> stateToElement(t)
+      | STAIRS(_) => makeObject(t, ("/", "stairs")) |> stateToElement(t)
+      | EXIT(_) => makeObject(t, ("e", "exit")) |> stateToElement(t)
       }
-    |> str => (" " ++ str)
-    |> ReasonReact.string);
+    |> ((str, clazz)) => (" " ++ str, clazz)
+    |> ((str, clazz)) => (<text key=(string_of_int(index)++"x"++string_of_int(i)) className=("map-" ++ clazz)>(string(str))</text>));
+  
   let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
   (map) => map
-    |> List.map(es => es |> tilesToElements)
+    |> List.mapi((i, es) => es |> tilesToElements(i))
     |> List.map(li => [<br/>, ...li]);
 };
 
 
 let handleKeyPress = (movement, stairs, useExit, evt: Dom.keyboardEvent) => {
-  evt |> KeyboardEvent.code
+  evt |> Webapi.Dom.KeyboardEvent.code
     |> code => switch code {
     | "KeyQ" => movement(-1, 1)
     | "KeyW" => movement(0, 1)
@@ -50,7 +59,9 @@ let handleKeyPress = (movement, stairs, useExit, evt: Dom.keyboardEvent) => {
   ();
 };
 
-let make = (~level: level, ~movePlayer, ~takeStairs, ~useExit, _children) => {
+open Webapi.Dom;
+
+let make = (~area: area, ~movePlayer, ~takeStairs, ~useExit, _children) => {
   ...component,
   didMount: (_) =>  {
     document |> Document.addKeyDownEventListener(handleKeyPress(movePlayer, takeStairs, useExit));
@@ -58,7 +69,7 @@ let make = (~level: level, ~movePlayer, ~takeStairs, ~useExit, _children) => {
   render: _self =>
     <div className="GameMap">
       (
-        GameElements.asElements(level.map)
+        GameElements.asElements(area)
           |> List.rev
           |> List.map(ts => ts |> Array.of_list |> ReasonReact.array)
           |> Array.of_list |> ReasonReact.array

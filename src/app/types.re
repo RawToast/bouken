@@ -35,6 +35,13 @@ type link = {
   level: string,
 };
 
+type tileEffect = 
+  | Trap(int)
+  | Snare(float)
+  | Heal(int)
+  | Gold(int)
+  | NoEff;
+
 type tile =
   | GROUND
   | STAIRS(link)
@@ -49,7 +56,8 @@ type occupier =
 
 type place = {
   tile: tile,
-  state: occupier
+  state: occupier,
+  tileEffect: tileEffect
 };
 
 type area = list(list(place));
@@ -89,9 +97,8 @@ let error = (err) => Js.Result.Error(err);
 let success = (ok) => Js.Result.Ok(ok);
 
 let isPlayer = place => switch place.state {
-  | Empty => false
-  | Enemy(_) => false
   | Player(_) => true
+  | _ => false
   };
 
 /* Modules */

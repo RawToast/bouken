@@ -1,7 +1,7 @@
 open Types;
 
 module CsvWorldBuilder: WorldCreator = {
-  let makeExit = score => { tile: EXIT(int_of_string((score))), state: Empty };
+  let makeExit = score => { tile: EXIT(int_of_string((score))), state: Empty, tileEffect: NoEff };
 
   let tail = Js.String.sliceToEnd(~from=1);
   let head = Js.String.charAt(0);
@@ -11,18 +11,30 @@ module CsvWorldBuilder: WorldCreator = {
     let level = str |> tail;
 
     let link = { id: id, level: level};
-    { tile: STAIRS(link), state: Empty };
+    { tile: STAIRS(link), state: Empty, tileEffect: NoEff };
   };
 
   let makeTile = (str) => {
     switch (Js.String.charAt(0, str)) {
-    | "." => { tile: GROUND, state: Empty}
-    | "w" => { tile: WATER, state: Empty}
-    | "#" => { tile: WALL, state: Empty}
+    | "." => { tile: GROUND, state: Empty, tileEffect: NoEff }
+    | "w" => { tile: WATER, state: Empty, tileEffect: NoEff }
+    | "#" => { tile: WALL, state: Empty, tileEffect: NoEff }
     | "e" => str |> tail |> makeExit
     | "/" => str |> tail |> makeStairs
-    | _ => { tile: WALL, state: Empty}
+    | _ => { tile: WALL, state: Empty, tileEffect: NoEff }
     };
+  };
+
+  let createOccupier: (string, place) => place = (str, place) => {
+    if(Rationale.RList.any(k => str == k, ["+", ":", "g", ";"])) {
+        switch str {
+        | "+" => { ... place, tileEffect: Heal(2) }
+        | ":" => { ... place, tileEffect: Trap(2) }
+        | ";" => { ... place, tileEffect: Snare(2.) }
+        | "g" => { ... place, tileEffect: Gold(3) }
+        | _ => place
+        }
+    } else Enemy.Enemies.addEnemy(str, place);
   };
 
   let buildPlace = str => { 
@@ -30,7 +42,7 @@ module CsvWorldBuilder: WorldCreator = {
 
     switch (List.length(spliced)) {
     | 1 => spliced |> List.hd |> makeTile
-    | 2 => spliced |> List.hd |> makeTile |> Enemy.Enemies.addEnemy(List.nth(spliced, 1))
+    | 2 => spliced |> List.hd |> makeTile |> createOccupier(List.nth(spliced, 1), _)
     | _ => makeTile(".")
     };
   };
@@ -49,7 +61,7 @@ module CsvWorldBuilder: WorldCreator = {
   let buildLevel = (name, areaStr) => { name: name, map: buildArea(areaStr) };
 
   let loadLevel = (directory, file) =>
-    Node.Fs.readFileAsUtf8Sync(directory ++ "/" ++ file) |> buildLevel(Js.String.slice(0, (Js.String.indexOf(".", file)), file));
+    Node.Fs.readFileAsUtf8Sync(directory ++ "/" ++ file) |> buildLevel(Js.String.slice(~from=0, ~to_=(Js.String.indexOf(".", file)), file));
 
   let loadWorld = (initial, directory) => {   
     let levels = directory 

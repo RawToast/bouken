@@ -24,10 +24,10 @@ describe("EnemyLoop", () => {
     let newLevel = blankLevel
       |> Level.Level.modifyTile(
         px + x, py + y, 
-        { tile: GROUND, state: Enemy(activeEnemy) })
+        { tile: GROUND, state: Enemy(activeEnemy), tileEffect: NoEff })
       |> Level.Level.modifyTile(
         px, py, 
-        { tile: GROUND, state: Player(game.player) });
+        { tile: GROUND, state: Player(game.player), tileEffect: NoEff });
     let newWorld = World.World.updateLevel(newLevel, game.world);
     ({ ... game, world: newWorld}, newLevel);
   };
@@ -36,8 +36,8 @@ describe("EnemyLoop", () => {
 
   describe("findActiveEnemies", () => {
     let level = blankLevel
-        |> Level.Level.modifyTile(0, 5, { tile: GROUND, state: Enemy(activeEnemy)})
-        |> Level.Level.modifyTile(10, 10, { tile: GROUND, state: Enemy({...activeEnemy, id: "alt"})});
+        |> Level.Level.modifyTile(0, 5, { tile: GROUND, state: Enemy(activeEnemy), tileEffect: NoEff })
+        |> Level.Level.modifyTile(10, 10, { tile: GROUND, state: Enemy({...activeEnemy, id: "alt"}), tileEffect: NoEff });
 
     let activeEnemies = EnemyLoop.findActiveEnemies(level.map);
 
@@ -70,8 +70,8 @@ describe("EnemyLoop", () => {
     open Rationale.Option;
     let active = quickEnemy("1", 1.);
     let newLevel = blankLevel
-      |> Level.Level.modifyTile(1, 0, { tile: GROUND, state: Enemy(active) })
-      |> Level.Level.modifyTile(10, 10, { tile: GROUND, state: Enemy(quickEnemy("2", 0.5)) });
+      |> Level.Level.modifyTile(1, 0, { tile: GROUND, state: Enemy(active), tileEffect: NoEff })
+      |> Level.Level.modifyTile(10, 10, { tile: GROUND, state: Enemy(quickEnemy("2", 0.5)), tileEffect: NoEff });
 
     let newWorld = World.World.updateLevel(newLevel, game.world);
 
@@ -106,6 +106,32 @@ describe("EnemyLoop", () => {
       let canAttack = EnemyLoop.canAttack(level.map, { enemy: activeEnemy, location: (3, 3)} );
 
       expect(canAttack) |> toBe(false);
+    });
+  });
+
+  describe("attack", () => {
+    let (_, level) = gameWithAttackablePlayer(game);
+    let initialEnemyInfo = { enemy: activeEnemy, location: (6, 7)};
+    let result: option((area, player)) = EnemyLoop.attack(initialEnemyInfo, level.map );
+    let nfPlayer = { name:"test", stats: { health: 10, speed: 1.0, position: 1., damage: 3 }, gold: 5, location: (9, 9) };
+    let (area, newPlayer) = result |> Rationale.Option.default(([[]], nfPlayer));
+
+    test("returns some when the player is in range", (_) => {
+      expect(result |> Rationale.Option.isSome) |> toBe(true);
+    });
+
+    test("the player takes damage", (_) => {
+      expect(newPlayer.stats.health) |> toBeLessThan(10);
+    });
+    
+    let postEnemy = Level.Area.findEnemy(activeEnemy.name, area) |> Rationale.Option.default(activeEnemy);
+
+    test("the enemy still exists", (_) => {
+      expect(Level.Area.findEnemy(activeEnemy.name, area) |> Rationale.Option.isSome) |> toBe(true);
+    });
+
+    test("position is uneffected", (_) => {
+      expect(postEnemy.stats.position) |> toBe(1.);
     });
   });
 

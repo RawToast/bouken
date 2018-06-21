@@ -22,3 +22,31 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.map-ground {
+  color: darkgray;
+}
+
+.map-trap {
+  color: darkgray;
+}
+
+.map-water {
+  color: rgb(0, 0, 130);
+}
+
+.map-wall {
+  color: rgb(33, 32, 31);
+}
+
+.title {
+  font-size: 35px;
+}
+
+.nameinput {
+  font-size: 15px;
+}
+
+.c-messages {
+  font-size: 15px;
+}
