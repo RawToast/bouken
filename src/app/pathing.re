@@ -82,6 +82,7 @@ module PathUtil = {
       else if (isGoal(x, y, tx, ty)) [ [(x, y), ...current], ... routes ]
       else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && oy == y}, current)) routes
       else {
+      
         let history: list((int, int)) = if (turn == 0) { current }  else { [ (x, y), ... current ] };
       
         recRoutes((x, y + 1), turn + 1, history, 
@@ -139,10 +140,52 @@ module Navigation: Movement = {
 };
 
 module VisionUtil = {
-  let canSee = (~limit=4, area, (x, y), (tx, ty)) => {
 
+  let incRange = Rationale.RList.rangeInt(1);
 
-    true;
+  let basicRange = (~range=1, x, y) => {
+    let minX = x - range;
+    let maxX = x + range;
+
+    let targetX = incRange(minX, maxX) |> List.filter(x => x >= 0);
+    let targetY = incRange((y-range), (y+range)) |> List.filter(y => y >= 0);
+    targetY |> List.map(y => (targetX |> List.map(x => (x, y)))) |> List.flatten |> List.filter(xy => xy != (x, y));
   };
 
+  type direction =
+    | North
+    | South;
+
+  let canSee = (~limit=4, area, (x, y), (tx, ty)) => {
+    let possibleVision = basicRange(~range=limit, x, y);
+
+    let inMaxRange = 
+      possibleVision |>
+        Rationale.RList.any(((px, py)) => px == tx && py == py);
+    
+
+    let makeLine = (distance, direction, (ox, oy), (dx, dy)) => {
+      
+      let rec loop = (i, ix, iy, acc) => {
+        let ni = i + 1;
+        let nx = ix + 1;
+        let ny = iy + 1;
+        if (ni > distance) acc
+        else if (List.length(acc) == 0) loop(ni, ix, iy, [ (ox, oy), ... acc])
+        else if (nx == dx && ny == dy) { let (hx, hy) = List.hd(acc); loop(ni, 0, 0, [ (hx + 1, hy + 1), ... acc]) }
+        else if (nx == dx && dx != 0) { let (hx, hy) = List.hd(acc); loop(ni, 0, ny, [ (hx + 1, hy), ... acc]) }
+        else if (ny == dy && dy != 0) { let (hx, hy) = List.hd(acc); loop(ni, nx, 0, [ (hx, hy + 1), ... acc]) }
+        else loop(ni, nx, ny, acc);
+      };
+
+      loop(0, 0, 0, []);
+    };
+  
+    if (inMaxRange) {
+      let line = makeLine(limit, North, (x, y), (0, 1));
+
+
+      true;
+    } else false;
+  };
 };

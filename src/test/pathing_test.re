@@ -229,6 +229,6 @@ describe("Pathing", () => {
       (_) => expect(canSee((4, 5))) |> toEqual(true));
 
     test("Cannot see a tile that is behind a wall", 
-      (_) => expect(canSee((2, 5))) |> toEqual(true));
+      (_) => expect(canSee((2, 5))) |> toEqual(false));
   });
 });
