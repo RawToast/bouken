@@ -2,7 +2,7 @@ open Types;
 open Rationale;
 
 module LevelBuilder = {
-  let blankPlace = {tile: GROUND, state: Empty, tileEffect: NoEff };
+  let blankPlace = {tile: GROUND, state: Empty, tileEffect: NoEff, visible: false };
   let makeBlankLevel = (name: string) => {
     let emptyMap =
       RList.repeat(blankPlace, 15) |> List.map(i => RList.repeat(i, 15));
@@ -11,21 +11,21 @@ module LevelBuilder = {
   
   let makeWaterLevel = (name: string) => {
     let emptyMap =
-      RList.repeat({tile: WATER, state: Empty, tileEffect: NoEff }, 15) |> List.map(i => RList.repeat(i, 15));
+      RList.repeat({tile: WATER, state: Empty, tileEffect: NoEff, visible: false }, 15) |> List.map(i => RList.repeat(i, 15));
     {name, map: emptyMap};
   };
 
   let makeLevel = (name, sizeX, sizeY, defaultTile) => {
     let emptyMap =
-      RList.repeat({tile: defaultTile, state: Empty, tileEffect: NoEff }, sizeY) |> List.map(i => RList.repeat(i, sizeX));
+      RList.repeat({tile: defaultTile, state: Empty, tileEffect: NoEff, visible: false }, sizeY) |> List.map(i => RList.repeat(i, sizeX));
     {name, map: emptyMap};
   };
 };
 
 module Tiles = {
-  let groundTile = { tile: GROUND, state: Empty, tileEffect: NoEff };
-  let wallTile = { tile: WALL, state: Empty, tileEffect: NoEff };
-  let waterTile = { tile: WATER, state: Empty, tileEffect: NoEff };
+  let groundTile = { tile: GROUND, state: Empty, tileEffect: NoEff, visible: false };
+  let wallTile = { tile: WALL, state: Empty, tileEffect: NoEff, visible: false };
+  let waterTile = { tile: WATER, state: Empty, tileEffect: NoEff, visible: false };
 
   let isGround = t => switch t {
     | GROUND => true
@@ -87,9 +87,15 @@ module Tiles = {
     | _ => 0.
     };
 
-  let placePenalty = t => tilePenalty(t.tile) +. statePenalty(t.state);
-  let placePenaltyNoEnemy = t => tilePenalty(t.tile);
+  let objPenalty = (incTraps, t) => switch t {
+    | Trap(_) => if (incTraps) 3. else 0.
+    | Snare(_) => if (incTraps) 3. else 0.
+    | _ => 0.
+    };
 
+  let placePenalty = (~incTraps=false, t)  => tilePenalty(t.tile) +. statePenalty(t.state) +. objPenalty(incTraps, t.tileEffect);
+
+  let placePenaltyNoEnemy = t => tilePenalty(t.tile);
 
   let canOccupy = p => 
     if (isEnemy(p)) false

@@ -183,7 +183,7 @@ module VisionUtil = {
   
     if (inMaxRange) {
       let line = makeLine(limit, North, (x, y), (0, 1));
-
+      
 
       true;
     } else false;

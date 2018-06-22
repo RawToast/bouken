@@ -55,6 +55,7 @@ type occupier =
   | Empty;
 
 type place = {
+  visible: bool,
   tile: tile,
   state: occupier,
   tileEffect: tileEffect

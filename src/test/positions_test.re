@@ -39,8 +39,8 @@ let enemy = Enemy({id: "enemy", name: "enemy", stats: basicStats, ai: { moveRang
 
 let modifiedLevel =
   blankWorld
-  |> Level.modifyTile(0, 0, {tile: GROUND, state: playerAt(0, 0), tileEffect: NoEff })
-  |> Level.modifyTile(5, 5, {tile: GROUND, state: enemy, tileEffect: NoEff });
+  |> Level.modifyTile(0, 0, {tile: GROUND, state: playerAt(0, 0), tileEffect: NoEff, visible: false })
+  |> Level.modifyTile(5, 5, {tile: GROUND, state: enemy, tileEffect: NoEff, visible: false });
 
 describe("BasicPositions", () =>
     describe("incrementAll", () => {
