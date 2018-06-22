@@ -198,6 +198,37 @@ describe("Pathing", () => {
     
     test("Suggests to move into range", 
       (_) => expect(bestMove) |> toEqual((-1, -1)));
+    });
+
+  let smallGrid = 
+  "., ., ., ., ., .
+  ., ., ., ., ., .
+  ., ., #, ., ., .
+  ., ., ., ., ., .
+  ., ., ., ., ., .
+  ., ., ., ., ., .";
+
+  let smallLevel = CsvWorldBuilder.buildArea(blankGrid);
+
+  describe("canSee", () => {
+    let canSee = VisionUtil.canSee(~limit=4, smallLevel, (2, 1));
+
+    test("Can see a tile that is infront of the origin", 
+      (_) => expect(canSee((2,2))) |> toEqual(true));
+    test("Can see a tile that is behind of the origin", 
+      (_) => expect(canSee((2,0))) |> toEqual(true));
+    test("Can see a tile that is to the left of the origin", 
+      (_) => expect(canSee((0,1))) |> toEqual(true));
+    test("Can see a tile that is to the right of the origin", 
+      (_) => expect(canSee((4, 1))) |> toEqual(true));
+    test("Can a tile that is diagonal of the origin", 
+      (_) => expect(canSee((4, 3))) |> toEqual(true));
+    test("Can a tile that somewhat diagonal of the origin", 
+      (_) => expect(canSee((3, 3))) |> toEqual(true));
+    test("Can a tile that somewhat diagonal of the origin 2", 
+      (_) => expect(canSee((4, 5))) |> toEqual(true));
+
+    test("Cannot see a tile that is behind a wall", 
+      (_) => expect(canSee((2, 5))) |> toEqual(true));
   });
-  }
-);
+});

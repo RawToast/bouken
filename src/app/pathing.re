@@ -5,7 +5,6 @@ module PathUtil = {
   let invalidPosition = (x, y) => (x < 0 || y < 0);
   let isOutOfBounds = (x, y, maxX, maxY) => (x > maxX || y > maxY);
   let isInvalidTerrain = (x, y, area) => (area |> List.nth(_, y) |> List.nth(_, x) |> p => p.tile |> Level.Tiles.isWall == true);
-
   let isInvalidMove = (x, y, area) => (area |> List.nth(_, y) |> List.nth(_, x) |> Level.Tiles.canOccupyOrAttack == false);
   let isGoal = (x, y, tx, ty) => (x == tx && y == ty);
 
@@ -137,4 +136,13 @@ module Navigation: Movement = {
       (0, 0);
     }
   };
+};
+
+module VisionUtil = {
+  let canSee = (~limit=4, area, (x, y), (tx, ty)) => {
+
+
+    true;
+  };
+
 };
