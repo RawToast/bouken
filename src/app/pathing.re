@@ -153,8 +153,8 @@ module VisionUtil = {
   };
 
   type direction =
-    | North
-    | South;
+    | UpRight
+    | DownRight;
 
   let canSee = (~limit=4, area, (x, y), (tx, ty)) => {
     let possibleVision = basicRange(~range=limit, x, y);
@@ -164,17 +164,28 @@ module VisionUtil = {
         Rationale.RList.any(((px, py)) => px == tx && py == py);
     
 
-    let makeLine = (distance, direction, (ox, oy), (dx, dy)) => {
+    let makeLine = (distance, (ox, oy), (dx, dy)) => {
+
+      let (ffx, ffy) = {
+        ( if (dx == 0) { x => x }
+          else if (dx > 0) { x => x + 1 }
+          else { x => x - 1 }
+        ,
+        if (dy == 0) { y => y }
+        else if (dx > 0) { x => x + 1 }
+        else { x => x - 1 }
+        )
+      }
       
       let rec loop = (i, ix, iy, acc) => {
         let ni = i + 1;
-        let nx = ix + 1;
-        let ny = iy + 1;
+        let nx = ffx(ix);
+        let ny = ffy(iy);
         if (ni > distance) acc
         else if (List.length(acc) == 0) loop(ni, ix, iy, [ (ox, oy), ... acc])
-        else if (nx == dx && ny == dy) { let (hx, hy) = List.hd(acc); loop(ni, 0, 0, [ (hx + 1, hy + 1), ... acc]) }
-        else if (nx == dx && dx != 0) { let (hx, hy) = List.hd(acc); loop(ni, 0, ny, [ (hx + 1, hy), ... acc]) }
-        else if (ny == dy && dy != 0) { let (hx, hy) = List.hd(acc); loop(ni, nx, 0, [ (hx, hy + 1), ... acc]) }
+        else if (nx == dx && ny == dy) { let (hx, hy) = List.hd(acc); loop(ni, 0, 0, [ (ffx(hx), ffy(hy)), ... acc]) }
+        else if (nx == dx && dx != 0) { let (hx, hy) = List.hd(acc); loop(ni, 0, ny, [ (ffx(hx), hy), ... acc]) }
+        else if (ny == dy && dy != 0) { let (hx, hy) = List.hd(acc); loop(ni, nx, 0, [ (hx, ffy(hy)), ... acc]) }
         else loop(ni, nx, ny, acc);
       };
 
@@ -182,10 +193,35 @@ module VisionUtil = {
     };
   
     if (inMaxRange) {
-      let line = makeLine(limit, North, (x, y), (0, 1));
+      open Rationale.RList;
       
+      let up = makeLine(limit, (x, y), (0, 1));
+      let down = makeLine(limit, (x, y), (0, -1));
+      let left = makeLine(limit, (x, y), (-1, 0));
+      let right = makeLine(limit, (x, y), (1, 0));
 
-      true;
+      let upRight = incRange(1, limit) 
+        |> List.map(dx => (dx, 1))
+        |> List.map(dxdy => makeLine(limit, (x, y), dxdy))
+        |> List.flatten;
+
+      let downRight = incRange(1, limit) 
+        |> List.map(dx => (dx, -1))
+        |> List.map(dxdy => makeLine(limit, (x, y), dxdy))
+        |> List.flatten;
+
+      let upLeft = incRange(1, limit) 
+        |> List.map(dx => (-dx, 1))
+        |> List.map(dxdy => makeLine(limit, (x, y), dxdy))
+        |> List.flatten;
+
+      let downLeft = incRange(1, limit) 
+        |> List.map(dx => (-dx, -1))
+        |> List.map(dxdy => makeLine(limit, (x, y), dxdy))
+        |> List.flatten;
+
+      up @ down @ left @ right @ upRight @ downRight @ upLeft @ downLeft
+       |> any(((x, y)) => x == tx && y == ty);
     } else false;
   };
 };

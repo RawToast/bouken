@@ -201,12 +201,12 @@ describe("Pathing", () => {
     });
 
   let smallGrid = 
-  "., ., ., ., ., .
-  ., ., ., ., ., .
-  ., ., #, ., ., .
-  ., ., ., ., ., .
-  ., ., ., ., ., .
-  ., ., ., ., ., .";
+  "., ., ., ., ., ., ., .
+  ., ., ., ., ., ., ., .
+  ., ., #, ., ., ., ., .
+  ., ., ., ., ., ., ., .
+  ., ., ., ., ., ., ., .
+  ., ., ., ., ., ., ., .";
 
   let smallLevel = CsvWorldBuilder.buildArea(blankGrid);
 
@@ -215,13 +215,13 @@ describe("Pathing", () => {
 
     test("Can see a tile that is infront of the origin", 
       (_) => expect(canSee((2,2))) |> toEqual(true));
-    test("Can see a tile that is behind of the origin", 
+    test("Can see a tile that is behind the origin", 
       (_) => expect(canSee((2,0))) |> toEqual(true));
     test("Can see a tile that is to the left of the origin", 
       (_) => expect(canSee((0,1))) |> toEqual(true));
     test("Can see a tile that is to the right of the origin", 
       (_) => expect(canSee((4, 1))) |> toEqual(true));
-    test("Can a tile that is diagonal of the origin", 
+    test("Can a tile that is diagonal to the origin", 
       (_) => expect(canSee((4, 3))) |> toEqual(true));
     test("Can a tile that somewhat diagonal of the origin", 
       (_) => expect(canSee((3, 3))) |> toEqual(true));
@@ -230,5 +230,7 @@ describe("Pathing", () => {
 
     test("Cannot see a tile that is behind a wall", 
       (_) => expect(canSee((2, 5))) |> toEqual(false));
+    test("Cannot see a tile that is out of range", 
+      (_) => expect(canSee((7, 1))) |> toEqual(false));
   });
 });
