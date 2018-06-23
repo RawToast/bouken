@@ -10,7 +10,7 @@ module GameElements = {
   };
 
   let makeObject = (t, default) => switch(t.tileEffect) {
-      | Trap(_) => (":", "trap")
+      | Trap(_) => (",", "trap")
       | Snare(_) => (";", "trap")
       | Heal(_) => ("+", "health")
       | Gold(_) => ("g", "gold")
@@ -27,12 +27,13 @@ module GameElements = {
   let tilesToElements = (index, places) => places |> List.mapi((i, t) =>
     switch (t.tile) {
       | GROUND => makeObject(t, (".", "ground")) |> stateToElement(t)
+      | ROUGH => makeObject(t, (":", "rough")) |> stateToElement(t)
       | WATER => makeObject(t, ("w", "water")) |> stateToElement(t)
       | WALL => ("#", "wall") |> stateToElement(~incVisible=false, t)
       | STAIRS(_) => makeObject(t, ("/", "stairs")) |> stateToElement(t)
       | EXIT(_) => makeObject(t, ("e", "exit")) |> stateToElement(t)
       }
-    |> ((str, clazz)) => (" " ++ str, clazz)
+    |> ((str, clazz)) => (str, clazz)
     |> ((str, clazz)) => (<text key=(string_of_int(index)++"x"++string_of_int(i)) className=("map-" ++ clazz ++ " map")>(string(str))</text>));
   
   let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =

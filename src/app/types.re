@@ -44,6 +44,7 @@ type tileEffect =
 
 type tile =
   | GROUND
+  | ROUGH
   | STAIRS(link)
   | WATER
   | WALL

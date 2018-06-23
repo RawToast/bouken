@@ -29,9 +29,11 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 `.` Ground
 
-`#` Wall
+`:` Tough terrain (Slower movement/attack speed)
 
-`w` Shallow water (Slows all actions)
+`w` Shallow water (Very slow movement/attack speed)
+
+`#` Wall
 
 `Z` Enemy / Zombie
 
@@ -43,7 +45,7 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 `g` Gold
 
-`:` Trap
+`,` Trap
 
 `;` Snare
 

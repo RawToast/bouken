@@ -20,6 +20,13 @@ describe("buildPlace", () => {
     test("The place is empty", (_) => expect(result.state) |> toBe(Empty));
   });
 
+  describe("When given ':'", () => {
+    let result = buildPlace(":");
+
+    test("Builds a rough tile", (_) => expect(result.tile) |> toBe(ROUGH));
+    test("The place is empty", (_) => expect(result.state) |> toBe(Empty));
+  });
+
   describe("When given 'w'", () => {
     let result = buildPlace("w");
 
