@@ -5,10 +5,8 @@ module PathUtil = {
   let invalidPosition = (x, y) => (x < 0 || y < 0);
   let isOutOfBounds = (x, y, maxX, maxY) => (x > maxX || y > maxY);
   let isInvalidTerrain = (x, y, area) => (area |> List.nth(_, y) |> List.nth(_, x) |> p => p.tile |> Level.Tiles.isWall == true);
-
   let isInvalidMove = (x, y, area) => (area |> List.nth(_, y) |> List.nth(_, x) |> Level.Tiles.canOccupyOrAttack == false);
   let isGoal = (x, y, tx, ty) => (x == tx && y == ty);
-
   let canNavigateTo = (~limit=4, area, (x, y), (tx, ty)) => {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
@@ -83,6 +81,7 @@ module PathUtil = {
       else if (isGoal(x, y, tx, ty)) [ [(x, y), ...current], ... routes ]
       else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && oy == y}, current)) routes
       else {
+      
         let history: list((int, int)) = if (turn == 0) { current }  else { [ (x, y), ... current ] };
       
         recRoutes((x, y + 1), turn + 1, history, 
@@ -106,7 +105,7 @@ module PathUtil = {
     let countPenalties: list((int, int)) => float = locations => 
       if (incTerrain) {  
         locations
-          |> List.map(loc => { let (x, y) = loc; area |> List.nth(_, y) |> List.nth(_, x) |>  Level.Tiles.placePenalty})
+          |> List.map(loc => { let git (x, y) = loc; area |> List.nth(_, y) |> List.nth(_, x) |>  Level.Tiles.placePenalty})
           |> List.fold_left((p1, p2) => p1 +. p2, 0.)
       } else locations |> List.length |> float_of_int;
 
@@ -137,4 +136,102 @@ module Navigation: Movement = {
       (0, 0);
     }
   };
+};
+
+
+
+module VisionUtil = {
+  
+  let makeLine = (distance, area, (ox, oy), (dx, dy)) => {
+    open Rationale.Option;
+
+    let cannotSeeThrough = ((x, y)) => 
+      area 
+        |> Rationale.RList.nth(y) 
+        >>= Rationale.RList.nth(x)
+        <$> (Level.Tiles.cantSeeThrough)
+        |> Rationale.Option.default(true); 
+
+    let (ffx, ffy) = {
+      ( if (dx == 0) { x => x }
+        else if (dx > 0) { x => x + 1 }
+        else { x => x - 1 }
+      ,
+      if (dy == 0) { y => y }
+      else if (dy > 0) { y => y + 1 }
+      else { y => y - 1 }
+      )
+    }
+    
+    let rec loop = (i, ix, iy, acc) => {
+      let nx = ffx(ix);
+      let ny = ffy(iy);
+      if (i > distance) acc
+      else if (List.length(acc) == 0) loop(i, ix, iy, [ (ox, oy), ... acc])
+      else if (nx == dx && ny == dy) {
+        let (hx, hy) = List.hd(acc); 
+        if (cannotSeeThrough((ffx(hx), ffy(hy)))) [ (ffx(hx), ffy(hy)), ... acc]
+        else loop(i + 1, 0, 0, [ (ffx(hx), ffy(hy)), ... acc]) }
+      else if (nx == dx && dy != 0) { 
+        let (hx, hy) = List.hd(acc); 
+        if (cannotSeeThrough((ffx(hx), hy))) [ (ffx(hx), hy ), ... acc]
+        else loop(i + 1, 0, ny, [ (ffx(hx), hy ), ... acc]) }
+      else if (ny == dy) { 
+        let (hx, hy) = List.hd(acc); 
+        if (cannotSeeThrough(( hx, ffy(hy)))) [ (hx, ffy(hy)), ... acc]
+        else loop(i + 1, nx, 0, [ (hx, ffy(hy)), ... acc]) }
+      else loop(i, nx, ny, acc);
+    };
+
+    loop(0, 0, 0, []);
+  };
+
+  let incRange = Rationale.RList.rangeInt(1);
+
+  let basicRange = (~range=1, x, y) => {
+    let minX = x - range;
+    let maxX = x + range;
+
+    let targetX = incRange(minX, maxX) |> List.filter(x => x >= 0);
+    let targetY = incRange((y-range), (y+range)) |> List.filter(y => y >= 0);
+    targetY |> List.map(y => (targetX |> List.map(x => (x, y)))) |> List.flatten |> List.filter(xy => xy != (x, y));
+  };
+
+  let makeLines = (~limit=4, area, (x, y)) => {    
+    let bigLimit = limit;  
+    let rng = incRange(-bigLimit, bigLimit) |> List.filter(i => i != 0);
+
+    rng
+      |> List.map(x => rng |> List.map(y => ((x, y)))) 
+      |> List.flatten 
+      |> List.append([ (0, 1), (0, -1), (1, 0), (-1, 0) ])
+      |> List.map(dxdy => makeLine(limit + 2, area, (x, y), dxdy))
+      |> List.flatten 
+      |> List.filter(((xx, yy)) => (xx <= x + limit) && (yy <= y + limit) )
+      |> List.filter(((xx, yy)) => (xx >= x - limit) && (yy >= y - limit) );
+  }
+
+  let canSee = (~limit=4, area, (x, y), (tx, ty)) => {
+    let possibleVision = basicRange(~range=limit, x, y);
+
+    let inMaxRange = 
+      possibleVision |>
+        Rationale.RList.any(((px, py)) => px == tx && py == py);
+  
+    if (inMaxRange) {
+      open Rationale.RList;
+
+      makeLines(~limit=limit, area, (x, y))
+       |> any(((x, y)) => x == tx && y == ty);
+    } else false;
+  };
+
+  let updateTiles = (~limit=4, area, (x, y)) => {
+    let lines = makeLines(~limit=limit, area, (x, y));
+    /* let areaArray: array(array(place)) = area |> List.map(Array.of_list) |> Array.of_list; */
+
+    area |> List.mapi((yi, ys) => ys |> List.mapi((xi, place) => 
+        if (Rationale.RList.any((xy) => xy == (xi, yi), lines)) { ... place, visible: true } 
+        else { ... place, visible: false }));
+  }
 };

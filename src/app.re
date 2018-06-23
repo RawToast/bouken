@@ -26,8 +26,10 @@ let component = ReasonReact.reducerComponent("App");
 
 let movement = (x, y) => MovePlayer(x, y);
 
+module Game = Modules.Game;
+
 let mapGameOrError = (f, view) => switch(view) {
-  | InGame(g) => f(g)
+  | InGame(g) => f(g) |> Game.resultUpdateVision
   |  _ => Error("Wrong app state")
 };
 
@@ -37,7 +39,6 @@ let update = (result) => switch result {
   | Error(error) => Js.Console.error(error); ReasonReact.NoUpdate
 };
 
-module Game = Modules.Game;
 
 let handleGameAction = (act, view) => switch act {
   | TakeStairs => view |> mapGameOrError(Game.useStairs(_)) |> update
@@ -60,7 +61,7 @@ let make = (_children) => {
     | GameAction(gameAction) => handleGameAction(gameAction, view)
     | AppAction(appAction) => switch appAction {
       | StartGame(name) => ReasonReact.SideEffects(initgame(name))
-      | Begin(game) => ReasonReact.Update(InGame(game))
+      | Begin(game) => ReasonReact.Update(InGame(game |> Game.updateVision))
       };
   },
   render: (self) =>

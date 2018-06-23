@@ -55,6 +55,7 @@ type occupier =
   | Empty;
 
 type place = {
+  visible: bool,
   tile: tile,
   state: occupier,
   tileEffect: tileEffect
@@ -163,6 +164,9 @@ module type Game = {
   let movePlayer: (int, int, game) => actionResult;
   let useStairs: game => actionResult;
   let useExit: game => actionResult;
+  let resultUpdateVision: actionResult => actionResult;
+
+  let updateVision: game => game;
 };
 
 module type AsyncGame = {

@@ -141,7 +141,6 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     let canSee = canAttack(~range=activeEnemy.enemy.ai.moveRange);
 
     if (canAttack(level.map, activeEnemy)) {
-      Js.Console.log("Attacking");
       setEnemy(~cost=1.,level.map, activeEnemy) 
         |> Option.bind(_, map => attack(activeEnemy, map))
         |> Option.fmap(r => {

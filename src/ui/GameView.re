@@ -8,14 +8,14 @@ type inxRow = { i: int, place: list(inxPlace) };
 
 let viewport = (player: player, area) => {
   open Rationale;
-  let size = 5;
+  let size = 6;
   let fullSize = 1 + (size * 2);
   let (x, y) = player.location;
-  let blocks = RList.repeat({tile: WALL, state: Empty, tileEffect: NoEff }, size);
+  let blocks = RList.repeat({tile: WALL, state: Empty, tileEffect: NoEff, visible: false  }, size);
   
   let pt1 = area |> List.map(ys => blocks @ ys @ blocks);
 
-  let row = pt1 |> List.hd |> List.length |> RList.repeat({tile: WALL, state: Empty, tileEffect: NoEff })
+  let row = pt1 |> List.hd |> List.length |> RList.repeat({tile: WALL, state: Empty, tileEffect: NoEff, visible: false })
     |> RList.repeat(_, size);
 
   (row @ pt1 @ row)

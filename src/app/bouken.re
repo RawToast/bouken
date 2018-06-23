@@ -5,6 +5,23 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
   open Level;
   open Types;
 
+  
+  let andUpdateTiles = (game) => {
+    W.currentLevel(game.world)
+      |> Option.fmap(lvl => { ... lvl, map: Pathing.VisionUtil.updateTiles(~limit=5, lvl.map, game.player.location) } )
+      |> Option.fmap(lvl => W.updateLevel(lvl, game.world ) )
+      |> Option.fmap(w => { ...game, world: w } )
+      |> Option.default(game);
+  };
+
+  let resultUpdateVision = (res) => switch res {
+    | Ok(g) => Ok(g |> andUpdateTiles)
+    | EndGame(int, string) => EndGame(int, string)
+    | Error(string) => Error(string)
+  };
+
+  let updateVision = (res) => res |> andUpdateTiles;
+
   let initPlayer = name => {name: name, stats: { health: 10, speed: 1.0, position: 0., damage: 3 }, gold: 0, location: (6, 6)};
 
   let initgame = pname => initPlayer(pname) |> p => {
@@ -13,7 +30,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
       turn: 0.
       };
 
-  let create = name => initgame(name);
+  let create = name => initgame(name) |> andUpdateTiles;
 
   let calculateScore = game => {
     let baseScore = 1000;

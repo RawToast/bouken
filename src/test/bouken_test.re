@@ -63,7 +63,7 @@ describe("Game.UseStairs", () => {
         World.World.currentLevel |>
           Option.bind(_, lv => 
             Level.Area.getPlace(0, 9, lv.map))
-          |> Option.default({ tile: GROUND, state: Empty, tileEffect: NoEff });
+          |> Option.default({ tile: GROUND, state: Empty, tileEffect: NoEff, visible: false });
       
       let isPlayer = switch place.state {
       | Player(_) => true;
@@ -89,7 +89,8 @@ describe("Game.ExitGame", () => {
         tileEffect: NoEff,
         state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0., damage: 1 }, 
         gold: 5, 
-        location: (6, 6)})});
+        location: (6, 6)}),
+        visible: false});
 
     let newWorld = World.World.updateLevel(newLevel, game.world);
     let initGame = { ... game, world: newWorld};
@@ -112,7 +113,8 @@ describe("Game.ExitGame", () => {
           tileEffect: NoEff,
           state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0., damage: 1 }, 
           gold: 5, 
-          location: (6, 6)})});
+          location: (6, 6)}), 
+          visible: false});
 
     let newWorld = World.World.updateLevel(newLevel, game.world);
     let initGame = { ... game, world: newWorld};
