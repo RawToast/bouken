@@ -33,7 +33,7 @@ module GameElements = {
       | EXIT(_) => makeObject(t, ("e", "exit")) |> stateToElement(t)
       }
     |> ((str, clazz)) => (" " ++ str, clazz)
-    |> ((str, clazz)) => (<text key=(string_of_int(index)++"x"++string_of_int(i)) className=("map-" ++ clazz)>(string(str))</text>));
+    |> ((str, clazz)) => (<text key=(string_of_int(index)++"x"++string_of_int(i)) className=("map-" ++ clazz ++ " map")>(string(str))</text>));
   
   let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
   (map) => map

@@ -33,7 +33,7 @@ let make = ( _children) => {
   reducer: (action: bool, _ext) => ReasonReact.Update(action),
   render: (self) => {
     <div>
-      <h4 onClick=((evt) => (self.send(!self.state)))>(string("Guide"))</h4>
+      <h3 onClick=((evt) => (self.send(!self.state)))>(string("Guide"))</h3>
       (if (self.state) notes else ReasonReact.null)
     </div>
   }
