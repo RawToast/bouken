@@ -32,6 +32,11 @@ module Tiles = {
     | _ => false
     };
 
+  let cantSeeThrough = t => switch t.tile {
+    | WALL => true
+    | _ => false
+    };
+
   let isWall = t => switch t {
     | WALL => true
     | _ => false

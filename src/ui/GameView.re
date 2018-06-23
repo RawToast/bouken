@@ -8,7 +8,7 @@ type inxRow = { i: int, place: list(inxPlace) };
 
 let viewport = (player: player, area) => {
   open Rationale;
-  let size = 5;
+  let size = 6;
   let fullSize = 1 + (size * 2);
   let (x, y) = player.location;
   let blocks = RList.repeat({tile: WALL, state: Empty, tileEffect: NoEff, visible: false  }, size);

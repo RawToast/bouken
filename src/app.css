@@ -54,3 +54,7 @@
 .map {
   font-size: 32px;
 }
+
+.notvisible {
+  color: white;
+}

@@ -17,18 +17,18 @@ module GameElements = {
       | NoEff => default
       };
     
-  let stateToElement = (place: place, default) => 
+  let stateToElement = (~incVisible=true, place: place, default) => 
     switch place.state {
     | Empty => default
     | Player(_) => ("O", "player")
     | Enemy(e) => makeEnemy(e)
-    };
+    } |> ((txt, claz)) => if (!place.visible) { (txt, claz ++ " notvisible") } else { (txt, claz) };
 
   let tilesToElements = (index, places) => places |> List.mapi((i, t) =>
     switch (t.tile) {
       | GROUND => makeObject(t, (".", "ground")) |> stateToElement(t)
       | WATER => makeObject(t, ("w", "water")) |> stateToElement(t)
-      | WALL => ("#", "wall") |> stateToElement(t)
+      | WALL => ("#", "wall") |> stateToElement(~incVisible=false, t)
       | STAIRS(_) => makeObject(t, ("/", "stairs")) |> stateToElement(t)
       | EXIT(_) => makeObject(t, ("e", "exit")) |> stateToElement(t)
       }

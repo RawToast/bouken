@@ -208,7 +208,7 @@ describe("Pathing", () => {
   ., ., ., ., ., ., ., .
   ., ., ., ., ., ., ., .";
 
-  let smallLevel = CsvWorldBuilder.buildArea(blankGrid);
+  let smallLevel = CsvWorldBuilder.buildArea(smallGrid);
 
   describe("canSee", () => {
     let canSee = VisionUtil.canSee(~limit=4, smallLevel, (2, 1));
@@ -228,8 +228,13 @@ describe("Pathing", () => {
     test("Can a tile that somewhat diagonal of the origin 2", 
       (_) => expect(canSee((4, 5))) |> toEqual(true));
 
+    test("Can see a wall tile", 
+      (_) => expect(canSee((2, 3))) |> toEqual(true));
+    test("Cannot see a tile that is behind a wall", 
+      (_) => expect(canSee((2, 4))) |> toEqual(false));
     test("Cannot see a tile that is behind a wall", 
       (_) => expect(canSee((2, 5))) |> toEqual(false));
+    
     test("Cannot see a tile that is out of range", 
       (_) => expect(canSee((7, 1))) |> toEqual(false));
   });
