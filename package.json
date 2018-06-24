@@ -1,6 +1,6 @@
 {
   "name": "bouken",
-  "version": "0.2.0",
+  "version": "0.2.0b",
   "private": true,
   "dependencies": {
     "bs-fetch": "^0.3.0",
