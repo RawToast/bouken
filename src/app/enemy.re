@@ -7,15 +7,15 @@ module Enemies = {
   let makeZombie = () => { 
     id: randId(), name: "Zombie", 
     stats: { health: 6, speed: 0.7, position: 0., damage: 1 }, 
-    ai: { moveRange: 5, terrainCost: false }};
+    ai: { moveRange: 5, terrainCost: false, mustSee: true }};
   let makeEnemy = () => { 
     id: randId(), name: "Enemy", 
     stats: { health: 3, speed: 1., position: 0., damage: 2 },
-    ai: { moveRange: 6, terrainCost: true }};
+    ai: { moveRange: 6, terrainCost: true, mustSee: false }};
   let makeMinotaur = () => {
     id: randId(), name: "Minotaur", 
     stats: { health: 9, speed: 1., position: 0., damage: 3 },
-    ai: { moveRange: 8, terrainCost: true }};
+    ai: { moveRange: 8, terrainCost: true, mustSee: false }};
 
   let addEnemy = (str, place) => {
     switch str {
@@ -138,7 +138,11 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
 
   let takeTurn = (activeEnemy, level, game) => {
     
-    let canSee = canAttack(~range=activeEnemy.enemy.ai.moveRange);
+    let canSee = (ei) => {
+      let range = ei.enemy.ai.moveRange;
+      if(ei.enemy.ai.mustSee) Pathing.VisionUtil.canSee(~limit=range, level.map, ei.location, game.player.location)
+      else canAttack(~range=range, level.map, ei)
+    };
 
     if (canAttack(level.map, activeEnemy)) {
       setEnemy(~cost=1.,level.map, activeEnemy) 
@@ -150,7 +154,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
           |> lvl => World.updateLevel(lvl, game.world)
           |> w => {...game, world: w, player: player}
       })
-    } else if (canSee(level.map, activeEnemy)) {
+    } else if (canSee(activeEnemy)) {
       let (dx, dy) = chase(level.map, activeEnemy);
       let (ox, oy) = activeEnemy.location;
       

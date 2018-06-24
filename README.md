@@ -3,7 +3,7 @@
 ASCII rogue-like 🙀
 
 [![Build Status](https://travis-ci.org/RawToast/bouken.svg?branch=master)](https://travis-ci.org/RawToast/bouken)
-[![Coverage Status](https://coveralls.io/repos/github/RawToast/bouken/badge.svg?branch=master)](https://coveralls.io/github/RawToast/daibouken?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/RawToast/bouken/badge.svg?branch=master)](https://coveralls.io/github/RawToast/bouken?branch=master)
 
 ## Controls
 
@@ -29,9 +29,11 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 `.` Ground
 
-`#` Wall
+`:` Tough terrain (Slower movement/attack speed)
 
-`w` Shallow water (Slows all actions)
+`w` Shallow water (Very slow movement/attack speed)
+
+`#` Wall
 
 `Z` Enemy / Zombie
 
@@ -43,7 +45,7 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 `g` Gold
 
-`:` Trap
+`,` Trap
 
 `;` Snare
 

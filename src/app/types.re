@@ -15,7 +15,8 @@ type player = {
 
 type ai = {
   moveRange: int,
-  terrainCost: bool
+  terrainCost: bool,
+  mustSee: bool 
 };
 
 type enemy = {
@@ -44,6 +45,7 @@ type tileEffect =
 
 type tile =
   | GROUND
+  | ROUGH
   | STAIRS(link)
   | WATER
   | WALL

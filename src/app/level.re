@@ -84,6 +84,7 @@ module Tiles = {
 
   let tilePenalty = t => switch t {
     | WATER => 1.5
+    | ROUGH => 1.1
     | _ => 1.
     };
 
@@ -198,6 +199,7 @@ module Area: Places = {
         |> Result.ofOption(ImpossibleMove)
         |> Result.bind(_, l => switch l.tile {
             | GROUND => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
+            | ROUGH => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
             | WATER => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
             | WALL => error(ImpossibleMove)
             | STAIRS(_) => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)

@@ -27,6 +27,10 @@
   color: darkgray;
 }
 
+.map-rough {
+  color: gray;
+}
+
 .map-trap {
   color: darkgray;
 }
@@ -52,9 +56,12 @@
 }
 
 .map {
+  text-align: center;
   font-size: 32px;
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 .notvisible {
-  color: white;
+  visibility: hidden;
 }

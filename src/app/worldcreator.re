@@ -17,6 +17,7 @@ module CsvWorldBuilder: WorldCreator = {
   let makeTile = (str) => {
     switch (Js.String.charAt(0, str)) {
     | "." => { tile: GROUND, state: Empty, tileEffect: NoEff, visible: false }
+    | ":" => { tile: ROUGH, state: Empty, tileEffect: NoEff, visible: false }
     | "w" => { tile: WATER, state: Empty, tileEffect: NoEff, visible: false }
     | "#" => { tile: WALL, state: Empty, tileEffect: NoEff, visible: false }
     | "e" => str |> tail |> makeExit
