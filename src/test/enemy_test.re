@@ -11,11 +11,11 @@ describe("EnemyLoop", () => {
 
   let quickEnemy (id, position) = { id: id, name: "default",
     stats: { health: 1, speed: 1.0, position: position, damage: 1 }, 
-    ai: { moveRange: 4, terrainCost: false }};
+    ai: { moveRange: 4, terrainCost: false, mustSee: true }};
 
   let activeEnemy = { id: "default", name: "default",
     stats: { health: 1, speed: 1.0, position: (1.), damage: 1 }, 
-    ai: { moveRange: 4, terrainCost: false }};
+    ai: { moveRange: 4, terrainCost: false, mustSee: true }};
 
   let blankLevel = Level.LevelBuilder.makeBlankLevel("Dungeon 1");
 

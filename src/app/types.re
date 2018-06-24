@@ -15,7 +15,8 @@ type player = {
 
 type ai = {
   moveRange: int,
-  terrainCost: bool
+  terrainCost: bool,
+  mustSee: bool 
 };
 
 type enemy = {

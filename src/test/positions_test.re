@@ -18,7 +18,7 @@ let defaultEnemy = {
     position: (-1.),
     damage: 1
   },
-  ai: { moveRange: 4, terrainCost: false }
+  ai: { moveRange: 4, terrainCost: false, mustSee: true }
 };
 
 let defaultPlayer = {
@@ -35,7 +35,7 @@ let defaultPlayer = {
 
 let playerAt = (x, y) => Player({name: "test", stats: basicStats, gold: 5, location: (x, y)});
 
-let enemy = Enemy({id: "enemy", name: "enemy", stats: basicStats, ai: { moveRange: 4, terrainCost: false }});
+let enemy = Enemy({id: "enemy", name: "enemy", stats: basicStats, ai: { moveRange: 4, terrainCost: false, mustSee: true }});
 
 let modifiedLevel =
   blankWorld
