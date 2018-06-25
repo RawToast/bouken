@@ -17,7 +17,12 @@ type ai = {
   moveRange: int,
   terrainCost: bool,
   mustSee: bool,
-  memory: option((int, int))
+  memory: option((int, int)),
+  attackRange: int,
+  flying: bool,
+  swim: bool,
+  seedark: bool,
+  small: bool
 };
 
 type enemy = {
