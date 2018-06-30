@@ -6,16 +6,16 @@ module Enemies = {
 
   let makeZombie = () => { 
     id: randId(), name: "Zombie", 
-    stats: { health: 6, speed: 0.7, position: 0., damage: 1 }, 
-    ai: { moveRange: 5, terrainCost: false, mustSee: true }};
+    stats: { health: 5, speed: 0.7, position: 0., damage: 1 }, 
+    ai: { moveRange: 5, terrainCost: false, mustSee: true, memory: None, attackRange: 1, flying: false, swim: false, seedark: false, small: false }};
   let makeEnemy = () => { 
     id: randId(), name: "Enemy", 
     stats: { health: 3, speed: 1., position: 0., damage: 2 },
-    ai: { moveRange: 6, terrainCost: true, mustSee: false }};
+    ai: { moveRange: 6, terrainCost: true, mustSee: true, memory: None, attackRange: 1, flying: false, swim: false, seedark: false, small: false }};
   let makeMinotaur = () => {
     id: randId(), name: "Minotaur", 
     stats: { health: 9, speed: 1., position: 0., damage: 3 },
-    ai: { moveRange: 8, terrainCost: true, mustSee: false }};
+    ai: { moveRange: 8, terrainCost: true, mustSee: false, memory: None, attackRange: 1, flying: false, swim: false, seedark: false, small: false }};
 
   let addEnemy = (str, place) => {
     switch str {
@@ -126,14 +126,23 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
     let visiblePlaces = findTargets(~range=range, enemyInfo);
     let playerLocations = attackablePlaces(visiblePlaces, area);
 
-    if (List.length(playerLocations) == 0) (0, 0)
+    if (List.length(playerLocations) == 0) ((0, 0), None)
     else {
       let loc = List.hd(playerLocations);
 
-      if(Pathing.Navigation.canNavigateTo(~limit=range, area, enemyInfo.location, loc))
-        Pathing.Navigation.suggestMove(~limit=range, ~incTerrain=enemyAi.terrainCost, area, enemyInfo.location, loc)
+      if(Pathing.Navigation.canNavigateTo(~limit=range, area, enemyInfo.location, loc)) {
+        let move: (int, int) = Pathing.Navigation.suggestMove(~limit=range, ~incTerrain=enemyAi.terrainCost, area, enemyInfo.location, loc);
+        (move, Some(loc));
+      } else ((0, 0), None)
+    };
+  };
+
+  let toLastSeen = (area, (mx, my), enemyInfo) => {
+    let enemyAi = enemyInfo.enemy.ai;
+    let range = enemyAi.moveRange;
+      if(Pathing.Navigation.canNavigateTo(~limit=range, area, enemyInfo.location, (mx, my)))
+        Pathing.Navigation.suggestMove(~limit=range, ~incTerrain=enemyAi.terrainCost, area, enemyInfo.location, (mx, my))
       else (0, 0)
-    }
   };
 
   let takeTurn = (activeEnemy, level, game) => {
@@ -144,7 +153,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
       else canAttack(~range=range, level.map, ei)
     };
 
-    if (canAttack(level.map, activeEnemy)) {
+    if (canAttack(~range=activeEnemy.enemy.ai.attackRange, level.map, activeEnemy)) {
       setEnemy(~cost=1.,level.map, activeEnemy) 
         |> Option.bind(_, map => attack(activeEnemy, map))
         |> Option.fmap(r => {
@@ -155,10 +164,23 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
           |> w => {...game, world: w, player: player}
       })
     } else if (canSee(activeEnemy)) {
-      let (dx, dy) = chase(level.map, activeEnemy);
+      let ((dx, dy), mem) = chase(level.map, activeEnemy);
       let (ox, oy) = activeEnemy.location;
-      
-    updateEnemy(level.map, activeEnemy, (ox + dx, oy + dy))
+
+      let ne = { ... activeEnemy, enemy: { ... activeEnemy.enemy, ai: { ... activeEnemy.enemy.ai, memory: mem } } };
+
+      updateEnemy(level.map, ne, (ox + dx, oy + dy))
+        |> Option.fmap(map => {...level, map: map })
+        |> Option.fmap(l => World.updateLevel(l, game.world))
+        |> Option.fmap(w => {...game, world: w})
+    } else if (activeEnemy.enemy.ai.memory != None) {
+      Js.Console.log("Using memory");
+      let (mx, my) = activeEnemy.enemy.ai.memory |> Option.default((0, 0));
+
+      let (dx, dy) = toLastSeen(level.map, (mx, my), activeEnemy);
+      let (ox, oy) = activeEnemy.location;
+      let ne = { ... activeEnemy, enemy: { ... activeEnemy.enemy, ai: { ... activeEnemy.enemy.ai, memory: None } } };
+    updateEnemy(level.map, ne, (ox + dx, oy + dy))
       |> Option.fmap(map => {...level, map: map })
       |> Option.fmap(l => World.updateLevel(l, game.world))
       |> Option.fmap(w => {...game, world: w})

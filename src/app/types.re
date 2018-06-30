@@ -16,7 +16,13 @@ type player = {
 type ai = {
   moveRange: int,
   terrainCost: bool,
-  mustSee: bool 
+  mustSee: bool,
+  memory: option((int, int)),
+  attackRange: int,
+  flying: bool,
+  swim: bool,
+  seedark: bool,
+  small: bool
 };
 
 type enemy = {
@@ -157,7 +163,7 @@ module type EnemyLoop = {
   let canAttack: (~range: int=?, area, enemyInfo) => bool;
   let attack: (enemyInfo, area) => option((area, player));
   let takeTurn: (enemyInfo, level, game) => option(game);
-  let chase: (area, enemyInfo) => (int, int);
+  let chase: (area, enemyInfo) => ((int, int), option((int, int)));
 };
 
 module type Game = {

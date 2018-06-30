@@ -6,9 +6,10 @@ let notes =
     <div className="pre-scrollable">
         <pre className="c-messages">
             (string("
-v0.2.0b New Frontend!
+v0.2.0 New Frontend!
 
 * New Dungeon layout
+* Player vision
 * Traps and gold
 * Healthpacks
 

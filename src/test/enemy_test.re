@@ -11,11 +11,11 @@ describe("EnemyLoop", () => {
 
   let quickEnemy (id, position) = { id: id, name: "default",
     stats: { health: 1, speed: 1.0, position: position, damage: 1 }, 
-    ai: { moveRange: 4, terrainCost: false, mustSee: true }};
+    ai: { moveRange: 4, terrainCost: false, mustSee: true, memory: None, attackRange: 1, flying: false, swim: false, seedark: false, small: false }};
 
   let activeEnemy = { id: "default", name: "default",
     stats: { health: 1, speed: 1.0, position: (1.), damage: 1 }, 
-    ai: { moveRange: 4, terrainCost: false, mustSee: true }};
+    ai: { moveRange: 4, terrainCost: false, mustSee: true, memory: None, attackRange: 1, flying: false, swim: false, seedark: false, small: false }};
 
   let blankLevel = Level.LevelBuilder.makeBlankLevel("Dungeon 1");
 
@@ -156,35 +156,35 @@ describe("EnemyLoop", () => {
 
     test("move north towards the player when the player is in range", (_) => {
       let (_, level) = gameWithEnemyDelta(0, -1, game);
-      let result = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (6, 5) });
+      let (result, _) = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (6, 5) });
 
       expect(result) |> toEqual((0, 1));
     });
 
     test("move west towards the player when the player is in range", (_) => {
       let (_, level) = gameWithEnemyDelta(4, 0, game);
-      let result = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (10, 6) });
+      let (result, _) = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (10, 6) });
 
       expect(result) |> toEqual((-1, 0));
     });
 
     test("move south east towards the player when the player is in range", (_) => {
       let (_, level) = gameWithEnemyDelta(-1, 1, game);
-      let result = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (5, 7) });
+      let (result, _) = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (5, 7) });
 
       expect(result) |> toEqual((1, -1));
     });
 
     test("does not move if the tile is occupied by another enemy", (_) => {
       let (_, level) = gameWithEnemyDelta(0, -1, game);
-      let result = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (6, 5) });
+      let (result, _) = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (6, 5) });
 
       expect(result) |> toEqual((0, 1));
     });
 
     test("does not move when the player is out of range", (_) => {
       let (_, level) = gameWithEnemyDelta(6, 6, game);
-      let result = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (12, 12)} );
+      let (result, _) = EnemyLoop.chase(level.map, { enemy: activeEnemy, location: (12, 12)} );
 
       expect(result) |> toEqual((0, 0));
     });

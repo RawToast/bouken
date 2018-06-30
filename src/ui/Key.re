@@ -10,6 +10,8 @@ O Player
 
 . Ground
 
+: Rough Ground
+
 # Wall
 
 w Shallow water (Slows all actions)
@@ -24,7 +26,7 @@ g Gold
 
 + Health
 
-: Trap
+, Trap
 
 ; Snare
 
