@@ -132,11 +132,11 @@ module type WorldCreator = {
 module type Places = {
   let findPlayer: (area) => option(player); 
   let findEnemy: (string, area) => option(enemy);
-  let canMoveTo: (~overwrite:bool=?, int, int, area) => Js.Result.t(place, error);
+  let canMoveTo: (~overwrite:bool=?, int, int, area) => Belt.Result.t(place, error);
   let removeOccupant: (int, int, area) => area;
-  let movePlayer: (int, int, float, area) => Js.Result.t (playerArea, error);
-  let setPlayerAt: (int, int, player, float, area) => Js.Result.t (area, error);
-  let setEnemyAt: (int, int, enemy, float, area) => Js.Result.t (area, error);
+  let movePlayer: (int, int, float, area) => Belt.Result.t (playerArea, error);
+  let setPlayerAt: (int, int, player, float, area) => Belt.Result.t (area, error);
+  let setEnemyAt: (int, int, enemy, float, area) => Belt.Result.t (area, error);
   let getPlace: (int, int, area) => option(place);
   let findStairs: (int, area) => option(place);
   let locationOfStairs: (int, area) => option((int, int));

@@ -192,18 +192,18 @@ module Area: Places = {
     | _ => false
   };
 
-  let canMoveTo = (~overwrite=true, x, y, map: area) => {
+  let canMoveTo = (~overwrite=true, x, y, area: area) => {
     open Rationale.Option;
     
-    map |> RList.nth(y) >>= RList.nth(x)
+    area |> RList.nth(y) >>= RList.nth(x)
         |> Result.ofOption(ImpossibleMove)
         |> Result.bind(_, l => switch l.tile {
-            | GROUND => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
-            | ROUGH => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
-            | WATER => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
-            | WALL => error(ImpossibleMove)
-            | STAIRS(_) => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
-            | EXIT(_) => if (isEmpty(l) || overwrite) success(l) else error(ImpossibleMove)
+            | GROUND => if (isEmpty(l) || overwrite) Ok(l) else Error(ImpossibleMove)
+            | ROUGH => if (isEmpty(l) || overwrite) Ok(l) else Error(ImpossibleMove)
+            | WATER => if (isEmpty(l) || overwrite) Ok(l) else Error(ImpossibleMove)
+            | WALL => Error(ImpossibleMove)
+            | STAIRS(_) => if (isEmpty(l) || overwrite) Ok(l) else Error(ImpossibleMove)
+            | EXIT(_) => if (isEmpty(l) || overwrite) Ok(l) else Error(ImpossibleMove)
         });
   };
     
@@ -249,11 +249,10 @@ module Area: Places = {
       | NoEff => {... player, stats: { ... player.stats, position: player.stats.position -. (Tiles.placePenalty(tile) *. cost)}}
       };
 
-
     let nopFunc = (player: player, tile) => player;
 
-    let update = (playerFunc, map) => {
-      map |>
+    let update = (playerFunc, gameMap) => {
+      gameMap |>
       List.mapi((xi: int, xs: list(place)) =>
         if (xi == y) {
             xs |> List.mapi((yi: int, place: place) =>
@@ -263,7 +262,8 @@ module Area: Places = {
             } else place);
         } else xs
       );
-    };
+    };    
+    open Rationale.Result;
 
     canMoveTo(x, y, area)
       |> Result.bind(_, _r =>
@@ -271,8 +271,8 @@ module Area: Places = {
         |> Option.fmap((p: player) => (updatePlayer(p)))
         |> Option.fmap(p => update(p, area) ) 
         |> o => switch (o) {
-          | None => error(InvalidState)
-          | Some(result) => success(result)
+          | None => Belt.Result.Error(InvalidState)
+          | Some(result) => Ok(result)
       })
   };
 
@@ -368,7 +368,7 @@ module Area: Places = {
                   )
           };
       }
-      | None => error(InvalidState);
+      | None => Belt.Result.Error(InvalidState);
     };
   };
 };

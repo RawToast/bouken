@@ -228,7 +228,6 @@ module VisionUtil = {
 
   let updateTiles = (~limit=4, area, (x, y)) => {
     let lines = makeLines(~limit=limit, area, (x, y));
-    /* let areaArray: array(array(place)) = area |> List.map(Array.of_list) |> Array.of_list; */
 
     area |> List.mapi((yi, ys) => ys |> List.mapi((xi, place) => 
         if (Rationale.RList.any((xy) => xy == (xi, yi), lines)) { ... place, visible: true } 

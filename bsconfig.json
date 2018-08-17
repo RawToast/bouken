@@ -15,7 +15,6 @@
     "@glennsl/bs-jest",
     "rationale",
     "bs-webapi",
-    "bs-node",
     "bs-fetch"
   ],
   "reason": {

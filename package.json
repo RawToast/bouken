@@ -4,15 +4,16 @@
   "private": true,
   "dependencies": {
     "bs-fetch": "^0.3.0",
-    "bs-node": "reasonml-community/bs-node",
-    "bs-webapi": "^0.9.1",
-    "rationale": "^0.1.4",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "bs-webapi": "^0.11.0",
+    "rationale": "^0.1.5",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "clean": "bsb -clean-world && rm -rf lib",
+    "bsb": "bsb -make-world",
+    "bsb-watch": "bsb -make-world -w",
     "build": "react-scripts build",
     "test": "jest --env=jsdom --testMatch='**/test/*test.{js, re}' --watch",
     "eject": "react-scripts eject",
@@ -21,8 +22,8 @@
     "ci": "react-scripts test --env=jsdom --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.4.2",
-    "reason-react": "^0.4.2",
+    "@glennsl/bs-jest": "^0.4.3",
+    "reason-react": "^0.5.3",
     "reason-scripts": "0.8.0"
   },
   "jest": {
