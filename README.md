@@ -55,6 +55,15 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 ## Deployment
 
+* Install bs-platform `npm install -g bs-platform@4.0.3`
+* Install dependencies `yarn`
+* Compile reason `yarn build`
+* Run tests `yarn test`
+* Test coverage `yarn coverage`
+* Development server with watch mode `yarn start`
+
+## Docker
+
 The provided dockerfile can be used to deploy the app using [Now](https://zeit.co/now)
 
 `now --no-verify --public --docker`

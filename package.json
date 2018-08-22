@@ -10,25 +10,22 @@
     "react-dom": "^16.4.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "bsb -make-world -w",
     "clean": "bsb -clean-world && rm -rf lib",
-    "bsb": "bsb -make-world",
-    "bsb-watch": "bsb -make-world -w",
-    "build": "react-scripts build",
+    "build": "bsb -clean-world -make-world",
     "test": "jest --env=jsdom --testMatch='**/test/*test.{js, re}' --watch",
-    "eject": "react-scripts eject",
     "prepare": "npm link bs-platform",
-    "coverage": "react-scripts test --env=jsdom --coverage",
-    "ci": "react-scripts test --env=jsdom --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "coverage": "jest --env=jsdom --testMatch='**/test/*test.{js, re}' --coverage",
+    "ci": "jest --env=jsdom --testMatch='**/test/*test.{js, re}' --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.3",
-    "reason-react": "^0.5.3",
-    "reason-scripts": "0.8.0"
+    "parcel": "^1.9.7",
+    "reason-react": "^0.5.3"
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/app/**/*.{re}"
+      "lib/js/**/*.{js}"
     ]
   }
 }
