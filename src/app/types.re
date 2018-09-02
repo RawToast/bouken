@@ -66,7 +66,11 @@ type place = {
   visible: bool,
   tile: tile,
   state: occupier,
+<<<<<<< HEAD
   tileEffect: tileEffect
+=======
+  tileEffect: tileEffect,
+>>>>>>> ee19adf... Thoughts on light sources
   /* illuminance: int */
 };
 
