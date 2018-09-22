@@ -64,7 +64,9 @@ module CsvWorldBuilder: WorldCreator = {
   let loadLevel = (directory, file) =>
     Node.Fs.readFileAsUtf8Sync(directory ++ "/" ++ file) |> buildLevel(Js.String.slice(~from=0, ~to_=(Js.String.indexOf(".", file)), file));
 
-  let loadWorld = (initial, directory) => {   
+  let loadWorld = (initial, directory) => {  
+    Js.Console.log("local load world");
+    
     let levels = directory 
       |> Node.Fs.readdirSync
       |> Array.to_list 
@@ -75,12 +77,32 @@ module CsvWorldBuilder: WorldCreator = {
 
   let loadWorldAsync = (initial, names) => {
 
-    let levelNames = Js.String.split(",", names) |> Array.to_list;
+  let levelNames = Js.String.split(",", names) |> Array.to_list;
+   
+   /* Hack, hack, hack */
+    let d1 = Utils.requireAssetURI("../../public/world/Dungeon 1.csv");
+    let d2 = Utils.requireAssetURI("../../public/world/Dungeon 2.csv");
+    let d3 = Utils.requireAssetURI("../../public/world/Dungeon 3.csv");
+    let d4 = Utils.requireAssetURI("../../public/world/Dungeon 4.csv");
+  
+    let d5 = Utils.requireAssetURI("../../public/world/Dungeon 5.csv");
+    let c1 = Utils.requireAssetURI("../../public/world/Cave.csv");
+    let s1 = Utils.requireAssetURI("../../public/world/Swamp.csv");
+    let l1 = Utils.requireAssetURI("../../public/world/Labyrinth.csv");
 
-    let prom = (name) => Js.Promise.(
-      Fetch.fetch("/world/" ++ name ++ ".csv")
+    let lvls = [d1, d2, d3, d4, d5, c1, s1, l1];
+
+    let prom = (name) => Js.Promise.({
+      Js.Console.log("Loading levels");
+      /* Fix this hack! */
+      let a = List.map(Js.Console.log, lvls);
+      let nFileLoc = List.find(fp => String.sub(fp, 1, (String.index(fp, '.') - 1)) == name, lvls)
+      Js.Console.log("Level: " ++ nFileLoc);
+
+      Fetch.fetch(nFileLoc)
         |> then_(Fetch.Response.text)
         |> then_(text => buildLevel(name, text) |> resolve)
+    }
     );
 
     levelNames 

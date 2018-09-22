@@ -1,9 +1,12 @@
-[%bs.raw {|require('./index.css')|}];
+open Utils;
 
-[@bs.module "./registerServiceWorker"]
-external register_service_worker: unit => unit = "default";
+requireCSS("./index.css");
 
-ReactDOMRe.renderToElementWithId(<App />, "root");
+/* [%bs.raw {|require('../public/world/*.csv')|}]; */
+
+ReactDOMRe.renderToElementWithId(<App />, "index");
 ReasonReact.Router.push("");
 
-register_service_worker();
+if (hot) {
+  accept();
+};

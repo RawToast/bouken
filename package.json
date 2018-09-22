@@ -1,30 +1,34 @@
 {
   "name": "bouken",
-  "version": "0.2.1b",
-  "private": true,
-  "dependencies": {
-    "bs-fetch": "^0.3.0",
-    "bs-webapi": "^0.11.0",
-    "rationale": "^0.1.5",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2"
-  },
+  "version": "0.2.1",
+  "description": "Parcel Bundler Example with Reason React",
+  "license": "MIT",
   "scripts": {
-    "start": "react-scripts start",
-    "clean": "bsb -clean-world && rm -rf lib",
+    "start": "concurrently -c --kill-others 'npm:watch-html' 'npm:watch-reason'",
+    "build": "parcel build src/index.html --public-url /",
+    "clean": "rimraf .cache lib dist .merlin src/*.js",
+    "watch-html": "parcel src/index.html",
+    "watch-reason": "bsb -make-world -w",
     "bsb": "bsb -make-world",
-    "bsb-watch": "bsb -make-world -w",
-    "build": "react-scripts build",
     "test": "jest --env=jsdom --testMatch='**/test/*test.{js, re}' --watch",
-    "eject": "react-scripts eject",
-    "prepare": "npm link bs-platform",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "ci": "react-scripts test --env=jsdom --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
+  "dependencies": {
+    "bs-fetch": "^0.3.0",
+    "bs-webapi": "0.11.0",
+    "rationale": "^0.1.7",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "reason-react": "^0.5.3"
+  },
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.4.3",
-    "reason-react": "^0.5.3",
-    "reason-scripts": "0.8.0"
+    "@glennsl/bs-jest": "glennsl/bs-jest",
+    "bs-platform": "^4.0.5",
+    "bsb-js": "^1.1.7",
+    "concurrently": "^3.6.1",
+    "parcel-bundler": "^1.9.7",
+    "rimraf": "^2.6.2"
   },
   "jest": {
     "collectCoverageFrom": [
