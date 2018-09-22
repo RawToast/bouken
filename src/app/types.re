@@ -125,7 +125,6 @@ module type WorldCreator = {
   let buildPlace: string => place;
   let buildArea: string => area;
   let buildLevel: (string, string) => level;
-  let loadWorld: (string, string) => world;
   let loadWorldAsync: (string, string) => Js.Promise.t(world);
 };
 

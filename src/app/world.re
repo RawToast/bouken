@@ -13,21 +13,6 @@ module World: World = {
   let currentLevel = (world) => selectLevel(world.current, world);
 };
 
-module FSCsvBuilder: WorldBuilder = {
-  open Level;
-  open Rationale;
-
-  let create = (player: player) => {
-    let world = Worldcreator.CsvWorldBuilder.loadWorld("Dungeon 1", "./world");
-    let (x, y) = player.location;
-    world 
-      |> World.currentLevel
-      |> Option.fmap(Level.modifyTile(x, y, {tile: GROUND, state: Player(player), tileEffect: NoEff, visible: false }))
-      |> Option.fmap(World.updateLevel(_, world))
-      |> Option.default(world);
-  };
-};
-
 module FetchCsvBuilder = {
   open Level;
   open Rationale;

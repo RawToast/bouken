@@ -61,19 +61,6 @@ module CsvWorldBuilder: WorldCreator = {
 
   let buildLevel = (name, areaStr) => { name: name, map: buildArea(areaStr) };
 
-  let loadLevel = (directory, file) =>
-    Node.Fs.readFileAsUtf8Sync(directory ++ "/" ++ file) |> buildLevel(Js.String.slice(~from=0, ~to_=(Js.String.indexOf(".", file)), file));
-
-  let loadWorld = (initial, directory) => {  
-    
-    let levels = directory 
-      |> Node.Fs.readdirSync
-      |> Array.to_list 
-      |> List.map(file => loadLevel(directory, file));
-
-    { current: initial, levels: levels };
-  };
-
   let loadWorldAsync = (initial, names) => {
 
   let levelNames = Js.String.split(",", names) |> Array.to_list;

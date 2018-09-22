@@ -132,13 +132,3 @@ describe("buildLevel", () => {
     test("Creates an area with the correct number of columns", (_) => expect(result.map |> List.hd |> List.length) |> toBe(5));
   });
 });
-
-describe("loadWorld", () => {
-  describe("When given a valid parameters", () => {
-    let result = loadWorld("Cave", "./testworld");
-
-    test("Creates a world with a current level", (_) => expect(result.current) |> toBe("Cave"));
-    test("With multiple levels", (_) => expect(List.length(result.levels)) |> toBeGreaterThan(1));
-    test("With the current level", (_) => expect(Rationale.RList.any(l => l.name === "Cave", result.levels)) |> toBe(true));    
-  });
-});
