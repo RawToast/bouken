@@ -65,7 +65,6 @@ module CsvWorldBuilder: WorldCreator = {
     Node.Fs.readFileAsUtf8Sync(directory ++ "/" ++ file) |> buildLevel(Js.String.slice(~from=0, ~to_=(Js.String.indexOf(".", file)), file));
 
   let loadWorld = (initial, directory) => {  
-    Js.Console.log("local load world");
     
     let levels = directory 
       |> Node.Fs.readdirSync
@@ -93,11 +92,8 @@ module CsvWorldBuilder: WorldCreator = {
     let lvls = [d1, d2, d3, d4, d5, c1, s1, l1];
 
     let prom = (name) => Js.Promise.({
-      Js.Console.log("Loading levels");
       /* Fix this hack! */
-      let a = List.map(Js.Console.log, lvls);
       let nFileLoc = List.find(fp => String.sub(fp, 1, (String.index(fp, '.') - 1)) == name, lvls)
-      Js.Console.log("Level: " ++ nFileLoc);
 
       Fetch.fetch(nFileLoc)
         |> then_(Fetch.Response.text)
