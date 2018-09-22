@@ -1,1 +1,1 @@
-yarn && yarn build && cd dist && now --public
+yarn && yarn build && cd dist && now -n=bouken --public
