@@ -61,38 +61,18 @@ module CsvWorldBuilder: WorldCreator = {
 
   let buildLevel = (name, areaStr) => { name: name, map: buildArea(areaStr) };
 
-  let loadWorldAsync = (initial, names) => {
-
-  let levelNames = Js.String.split(",", names) |> Array.to_list;
-   
-   /* Hack, hack, hack */
-    let d1 = Utils.requireAssetURI("../../public/world/Dungeon 1.csv");
-    let d2 = Utils.requireAssetURI("../../public/world/Dungeon 2.csv");
-    let d3 = Utils.requireAssetURI("../../public/world/Dungeon 3.csv");
-    let d4 = Utils.requireAssetURI("../../public/world/Dungeon 4.csv");
+  let loadWorldAsync: (string, list((string, string))) => Js.Promise.t(world) = (initial, namesAndLocations) => {
   
-    let d5 = Utils.requireAssetURI("../../public/world/Dungeon 5.csv");
-    let c1 = Utils.requireAssetURI("../../public/world/Cave.csv");
-    let s1 = Utils.requireAssetURI("../../public/world/Swamp.csv");
-    let l1 = Utils.requireAssetURI("../../public/world/Labyrinth.csv");
-
-    let lvls = [d1, d2, d3, d4, d5, c1, s1, l1];
-
-    let prom = (name) => Js.Promise.({
-      /* Fix this hack! */
-      let nFileLoc = List.find(fp => String.sub(fp, 1, (String.index(fp, '.') - 1)) == name, lvls)
-
-      Fetch.fetch(nFileLoc)
+    let prom = ((name, location)) => Js.Promise.({
+      Fetch.fetch(location)
         |> then_(Fetch.Response.text)
         |> then_(text => buildLevel(name, text) |> resolve)
-    }
-    );
+    });
 
-    levelNames 
-      |> List.map(prom) 
+    namesAndLocations 
+      |> List.map(ns => prom(ns)) 
       |> Array.of_list 
       |> Js.Promise.all 
       |> Js.Promise.then_(lvl => lvl |> Array.to_list |> lvs => {current: initial, levels: lvs} |> Js.Promise.resolve);
   };
 };
-
