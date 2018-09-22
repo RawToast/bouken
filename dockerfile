@@ -1,6 +1,6 @@
 FROM node:8.9.4
 
-RUN npm install -g serve@6.5.8 react-scripts
+RUN npm install -g serve@6.5.8
 
 COPY package.json yarn.lock bsconfig.json  ./
 
@@ -10,8 +10,8 @@ COPY public ./public
 
 COPY src ./src
 
-RUN yarn --silent && npm link bs-platform && yarn build
+RUN yarn bsb && yarn build
 
 EXPOSE 3000
 
-CMD ["serve", "-s", "build", "-p", "3000"]
+CMD ["serve", "-s", "dist", "-p", "3000"]
