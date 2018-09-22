@@ -59,6 +59,13 @@ The provided dockerfile can be used to deploy the app using [Now](https://zeit.c
 
 `now --no-verify --public --docker`
 
+## Development
+
+* Install dependencies `yarn`
+* Development server with watch mode `yarn start`
+* Run tests `yarn test`
+* Test coverage `yarn coverage`
+
 ## Stuff
 
 * [ReasonML](https://reasonml.github.io/)

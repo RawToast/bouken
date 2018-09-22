@@ -11,8 +11,8 @@
     "watch-reason": "bsb -make-world -w",
     "bsb": "bsb -make-world",
     "test": "jest --env=jsdom --testMatch='**/test/*test.{js, re}' --watch",
-    "coverage": "react-scripts test --env=jsdom --coverage",
-    "ci": "react-scripts test --env=jsdom --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "coverage": "jest --env=jsdom --testMatch='**/test/*test.{js, re}' --coverage",
+    "ci": "jest --env=jsdom --testMatch='**/test/*test.{js, re}' --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js" 
   },
   "dependencies": {
     "bs-fetch": "^0.3.0",
@@ -32,7 +32,7 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/app/**/*.{re}"
+      "lib/js/**/*.{js}"
     ]
   }
 }
