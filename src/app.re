@@ -1,8 +1,10 @@
-[%bs.raw {|require('./app.css')|}];
+open Utils;
 
 open ReasonReact;
 open Types;
 open Webapi.Dom;
+
+requireCSS("./App.css");
 
 type view =
   | Home

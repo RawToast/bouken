@@ -61,33 +61,18 @@ module CsvWorldBuilder: WorldCreator = {
 
   let buildLevel = (name, areaStr) => { name: name, map: buildArea(areaStr) };
 
-  let loadLevel = (directory, file) =>
-    Node.Fs.readFileAsUtf8Sync(directory ++ "/" ++ file) |> buildLevel(Js.String.slice(~from=0, ~to_=(Js.String.indexOf(".", file)), file));
-
-  let loadWorld = (initial, directory) => {   
-    let levels = directory 
-      |> Node.Fs.readdirSync
-      |> Array.to_list 
-      |> List.map(file => loadLevel(directory, file));
-
-    { current: initial, levels: levels };
-  };
-
-  let loadWorldAsync = (initial, names) => {
-
-    let levelNames = Js.String.split(",", names) |> Array.to_list;
-
-    let prom = (name) => Js.Promise.(
-      Fetch.fetch("/world/" ++ name ++ ".csv")
+  let loadWorldAsync: (string, list((string, string))) => Js.Promise.t(world) = (initial, namesAndLocations) => {
+  
+    let prom = ((name, location)) => Js.Promise.({
+      Fetch.fetch(location)
         |> then_(Fetch.Response.text)
         |> then_(text => buildLevel(name, text) |> resolve)
-    );
+    });
 
-    levelNames 
-      |> List.map(prom) 
+    namesAndLocations 
+      |> List.map(ns => prom(ns)) 
       |> Array.of_list 
       |> Js.Promise.all 
       |> Js.Promise.then_(lvl => lvl |> Array.to_list |> lvs => {current: initial, levels: lvs} |> Js.Promise.resolve);
   };
 };
-

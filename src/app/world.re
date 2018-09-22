@@ -13,30 +13,29 @@ module World: World = {
   let currentLevel = (world) => selectLevel(world.current, world);
 };
 
-module FSCsvBuilder: WorldBuilder = {
-  open Level;
-  open Rationale;
-
-  let create = (player: player) => {
-    let world = Worldcreator.CsvWorldBuilder.loadWorld("Dungeon 1", "./world");
-    let (x, y) = player.location;
-    world 
-      |> World.currentLevel
-      |> Option.fmap(Level.modifyTile(x, y, {tile: GROUND, state: Player(player), tileEffect: NoEff, visible: false }))
-      |> Option.fmap(World.updateLevel(_, world))
-      |> Option.default(world);
-  };
-};
-
 module FetchCsvBuilder = {
   open Level;
   open Rationale;
   
   let create = (player: player) => {
     let (x, y) = player.location;
+
+    let d1 = Utils.requireAssetURI("../../public/world/Dungeon 1.csv");
+    let d2 = Utils.requireAssetURI("../../public/world/Dungeon 2.csv");
+    let d3 = Utils.requireAssetURI("../../public/world/Dungeon 3.csv");
+    let d4 = Utils.requireAssetURI("../../public/world/Dungeon 4.csv");
+  
+    let d5 = Utils.requireAssetURI("../../public/world/Dungeon 5.csv");
+    let c1 = Utils.requireAssetURI("../../public/world/Cave.csv");
+    let s1 = Utils.requireAssetURI("../../public/world/Swamp.csv");
+    let l1 = Utils.requireAssetURI("../../public/world/Labyrinth.csv");
+
+    let lvls = [("Dungeon 1", d1), ("Dungeon 2", d2), ("Dungeon 3", d3), 
+                ("Dungeon 4", d4), ("Dungeon 5", d5), ("Cave", d5), 
+                ("Swamp", s1), ("Labyrinth", l1)];
     
     Worldcreator.CsvWorldBuilder
-      .loadWorldAsync("Dungeon 1", "Dungeon 1,Dungeon 2,Dungeon 3,Dungeon 4,Dungeon 5,Swamp,Cave,Labyrinth")
+      .loadWorldAsync("Dungeon 1", lvls)
       |> Js.Promise.then_(world => 
         world 
           |> World.currentLevel

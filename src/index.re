@@ -1,9 +1,9 @@
-[%bs.raw {|require('./index.css')|}];
+open Utils;
 
-[@bs.module "./registerServiceWorker"]
-external register_service_worker: unit => unit = "default";
+requireCSS("./index.css");
 
-ReactDOMRe.renderToElementWithId(<App />, "root");
-ReasonReact.Router.push("");
+ReactDOMRe.renderToElementWithId(<App />, "index");
 
-register_service_worker();
+if (hot) {
+  accept();
+};

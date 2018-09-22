@@ -55,9 +55,18 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 ## Deployment
 
-The provided dockerfile can be used to deploy the app using [Now](https://zeit.co/now)
+The provided script can be used to deploy the app using [Now](https://zeit.co/now)
 
-`now --no-verify --public --docker`
+`deploy.sh`
+
+Alternatively, after building the app run `now` from the `dist` folder.
+
+## Development
+
+* Install dependencies `yarn`
+* Development server with watch mode `yarn start`
+* Run tests `yarn test`
+* Test coverage `yarn coverage`
 
 ## Stuff
 
