@@ -26,5 +26,9 @@ yarn-debug.log*
 yarn-error.log*
 .bsb.lock
 
-# Gen
+# Generated bucklescript js
 *.bs.js
+
+# Cache and runtime files
+.cache/
+dist/
