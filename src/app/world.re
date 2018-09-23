@@ -31,7 +31,7 @@ module FetchCsvBuilder = {
     let l1 = Utils.requireAssetURI("../../public/world/Labyrinth.csv");
 
     let lvls = [("Dungeon 1", d1), ("Dungeon 2", d2), ("Dungeon 3", d3), 
-                ("Dungeon 4", d4), ("Dungeon 5", d5), ("Cave", d5), 
+                ("Dungeon 4", d4), ("Dungeon 5", d5), ("Cave", c1), 
                 ("Swamp", s1), ("Labyrinth", l1)];
     
     Worldcreator.CsvWorldBuilder

@@ -6,6 +6,12 @@ let notes =
     <div className="pre-scrollable">
         <pre className="c-messages">
             (string("
+v0.2.1
+
+* Enemy vision and memory
+* Additional `tall grass` tile
+* Coloured water tiles
+
 v0.2.0 New Frontend!
 
 * New Dungeon layout
