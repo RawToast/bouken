@@ -15,8 +15,10 @@ let viewport = (player: player, area) => {
   
   let pt1 = area |> List.map(ys => blocks @ ys @ blocks);
 
-  let row = pt1 |> List.hd |> List.length |> RList.repeat({tile: WALL, state: Empty, tileEffect: NoEff, visible: false })
-    |> RList.repeat(_, size);
+  let row = pt1 |> List.hd 
+                |> List.length 
+                |> RList.repeat({tile: WALL, state: Empty, tileEffect: NoEff, visible: false })
+                |> RList.repeat(_, size);
 
   (row @ pt1 @ row)
     |> RList.drop(y) 

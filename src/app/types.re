@@ -67,6 +67,7 @@ type place = {
   tile: tile,
   state: occupier,
   tileEffect: tileEffect
+  /* illuminance: int */
 };
 
 type area = list(list(place));

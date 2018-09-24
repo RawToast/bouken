@@ -24,16 +24,15 @@ module GameElements = {
     | Enemy(e) => makeEnemy(e)
     } |> ((txt, claz)) => if (!place.visible) { (txt, claz ++ " notvisible") } else { (txt, claz) };
 
-  let tilesToElements = (index, places) => places |> List.mapi((i, t) =>
-    switch (t.tile) {
-      | GROUND => makeObject(t, (".", "ground")) |> stateToElement(t)
-      | ROUGH => makeObject(t, (":", "rough")) |> stateToElement(t)
-      | WATER => makeObject(t, ("w", "water")) |> stateToElement(t)
-      | WALL => ("#", "wall") |> stateToElement(~incVisible=false, t)
-      | STAIRS(_) => makeObject(t, ("/", "stairs")) |> stateToElement(t)
-      | EXIT(_) => makeObject(t, ("e", "exit")) |> stateToElement(t)
+  let tilesToElements = (index, places) => places |> List.mapi((i, place) =>
+    switch (place.tile) {
+      | GROUND => makeObject(place, (".", "ground")) |> stateToElement(place)
+      | ROUGH => makeObject(place, (":", "rough")) |> stateToElement(place)
+      | WATER => makeObject(place, ("w", "water")) |> stateToElement(place)
+      | WALL => ("#", "wall") |> stateToElement(~incVisible=false, place)
+      | STAIRS(_) => makeObject(place, ("/", "stairs")) |> stateToElement(place)
+      | EXIT(_) => makeObject(place, ("e", "exit")) |> stateToElement(place)
       }
-    |> ((str, clazz)) => (str, clazz)
     |> ((str, clazz)) => (<text key=(string_of_int(index)++"x"++string_of_int(i)) className=("map-" ++ clazz ++ " map")>(string(str))</text>));
   
   let asElements: list(list(place)) => list(list(ReasonReact.reactElement)) =
