@@ -22,13 +22,13 @@ module GameElements = {
     | Empty => default
     | Player(_) => ("O", "player")
     | Enemy(e) => makeEnemy(e)
-    } |> ((txt, claz)) => if (!place.visible) { (txt, claz ++ " notvisible") } else { (txt, claz) };
+    } |> ((txt, claz)) => if (!place.visible) { (".", claz ++ " map-not-visible") } else { (txt, claz ++ " map-visible") };
 
   let tilesToElements = (index, places) => places |> List.mapi((i, place) =>
     switch (place.tile) {
       | GROUND => makeObject(place, (".", "ground")) |> stateToElement(place)
       | ROUGH => makeObject(place, (":", "rough")) |> stateToElement(place)
-      | WATER => makeObject(place, ("w", "water")) |> stateToElement(place)
+      | WATER => makeObject(place, ("w", "water")) |> stateToElement(place) |> ((s, c)) => (s, c ++ " map-water")
       | WALL => ("#", "wall") |> stateToElement(~incVisible=false, place)
       | STAIRS(_) => makeObject(place, ("/", "stairs")) |> stateToElement(place)
       | EXIT(_) => makeObject(place, ("e", "exit")) |> stateToElement(place)
