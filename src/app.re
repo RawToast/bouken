@@ -4,8 +4,6 @@ open ReasonReact;
 open Types;
 open Webapi.Dom;
 
-requireCSS("./App.css");
-
 type view =
   | Home
   | InGame(Types.game)
