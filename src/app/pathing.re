@@ -1,5 +1,41 @@
 open Types;
 
+module DictRouting = {
+  type location = {
+    x: int,
+    y: int
+  };
+  module LocationCmp = Belt.Id.MakeComparable({
+    type t = location;
+    let cmp: (location, location) => int = 
+      ({x: xa, y: ya}, {x: xb, y: yb}) => {
+        let xCmp = Pervasives.compare(xa, xb);
+        let yCmp = Pervasives.compare(ya, yb);
+
+        if (xCmp == 1 && yCmp == 1) 1
+        else if (xCmp == -1 && yCmp == -1) (-1)
+        else Pervasives.compare(xCmp, yCmp)
+      }
+  });
+
+  let toDict = area => area |> List.mapi((yi, ys) => ys |> List.mapi((xi, place) => ({x: xi, y: yi}, place))) 
+    |> List.flatten 
+    |> Array.of_list
+    |> Belt.Map.Dict.fromArray(_, ~cmp=LocationCmp.cmp);
+
+  let findPlace = (x, y, area) => 
+    (area |> Belt.Map.Dict.getExn(_, {x: x, y: y}, ~cmp=LocationCmp.cmp));
+
+  let findPlaceOpt = (x, y, area) => 
+    (area |> Belt.Map.Dict.getExn(_, {x: x, y: y}, ~cmp=LocationCmp.cmp));
+
+  let isInvalidTerrain = (x, y, area) => findPlace(x, y, area)
+    |> p => (p.tile |> Level.Tiles.isWall) == true;
+
+  let isInvalidMove = (x, y, area) => findPlace(x, y, area)
+      |> Level.Tiles.canOccupyOrAttack == false;
+};
+
 module PathUtil = {
 
   let invalidPosition = (x, y) => (x < 0 || y < 0);
@@ -11,14 +47,16 @@ module PathUtil = {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
 
+    let dArea = DictRouting.toDict(area);
+
     let rec navigate = ((x, y), turn, route, canNavi: bool) => {
       if (turn > limit) false
       else if (canNavi) true
       else if (limit - turn < Js.Math.abs_int(tx - x) || limit - turn < Js.Math.abs_int(ty - y)) false
       else if (invalidPosition(x, y)) false
       else if (isOutOfBounds(x, y, maxX, maxY)) false
-      else if (isInvalidTerrain(x, y, area)) false
-      else if (turn == 1 && isInvalidMove(x, y, area)) false
+      else if (DictRouting.isInvalidTerrain(x, y, dArea)) false
+      else if (turn == 1 && DictRouting.isInvalidMove(x, y, dArea)) false
       else if (isGoal(x, y, tx, ty)) true
       else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && oy == y}, route)) false
       else {
@@ -41,17 +79,18 @@ module PathUtil = {
   let findRoute = (~limit=4, area, (x, y), (tx, ty)) => {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
+    let dArea = DictRouting.toDict(area);
 
     let rec recRoutes = ((x, y), turn, route) => {
       if (turn > limit) []
       else if (invalidPosition(x, y)) []
       else if (isOutOfBounds(x, y, maxX, maxY)) []
-      else if (isInvalidTerrain(x, y, area)) []
-      else if (turn == 1 && isInvalidMove(x, y, area)) []
+      else if (DictRouting.isInvalidTerrain(x, y, dArea)) []
+      else if (turn == 1 &&  DictRouting.isInvalidMove(x, y, dArea)) []
       else if (isGoal(x, y, tx, ty)) route
       else {
         let nxt = if (turn == 0) { route }  else { [ (x, y), ... route] };
-        /* let nxt: list((int, int)) = [ (x, y), ... routes ]; */
+
         recRoutes((x - 1, y + 1), turn + 1, nxt)
           @ recRoutes((x, y + 1), turn + 1, nxt) 
           @ recRoutes((x + 1, y + 1), turn + 1, nxt)
@@ -69,14 +108,15 @@ module PathUtil = {
   let findRoutes = (~limit=4, area, (x, y), (tx, ty)) => {
     let maxX = List.length(List.hd(area)) - 1;
     let maxY = List.length(area) - 1;
-    
+    let dArea = DictRouting.toDict(area);
+
     let rec recRoutes = ((x, y), turn, current, routes: list(list((int, int)))) => {
       if (turn > limit) routes
       else if (limit - turn < Js.Math.abs_int(tx - x) || limit - turn < Js.Math.abs_int(ty - y)) routes
       else if (invalidPosition(x, y)) routes
       else if (isOutOfBounds(x, y, maxX, maxY)) routes
-      else if (isInvalidTerrain(x, y, area)) routes
-      else if (turn == 1 && isInvalidMove(x, y, area)) routes
+      else if (DictRouting.isInvalidTerrain(x, y, dArea)) routes
+      else if (turn == 1 && DictRouting.isInvalidMove(x, y, dArea)) routes
       else if (routes |> Rationale.RList.any(p => List.length(current) > List.length(p))) routes
       else if (isGoal(x, y, tx, ty)) [ [(x, y), ...current], ... routes ]
       else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && oy == y}, current)) routes
@@ -105,7 +145,7 @@ module PathUtil = {
     let countPenalties: list((int, int)) => float = locations => 
       if (incTerrain) {  
         locations
-          |> List.map(loc => { let git (x, y) = loc; area |> List.nth(_, y) |> List.nth(_, x) |>  Level.Tiles.placePenalty})
+          |> List.map(loc => { let (x, y) = loc; area -> List.nth(y) -> List.nth(x) |>  Level.Tiles.placePenalty})
           |> List.fold_left((p1, p2) => p1 +. p2, 0.)
       } else locations |> List.length |> float_of_int;
 
@@ -137,8 +177,6 @@ module Navigation: Movement = {
     }
   };
 };
-
-
 
 module VisionUtil = {
   

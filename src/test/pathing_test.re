@@ -47,6 +47,38 @@ let walledLevel = CsvWorldBuilder.buildArea(walledWorld);
 let simpleLevel = CsvWorldBuilder.buildArea(simpleWorld);
 let bigWorld = CsvWorldBuilder.buildArea(bigBlankGrid);
 
+describe("Dict Routing", () => {
+
+  let dictLevel = DictRouting.toDict(walledLevel);
+
+  describe("Dict Routing", () => {
+    
+    test("isInvalidTerrain 0 0", (_) => 
+      expect(DictRouting.isInvalidTerrain(0,0, dictLevel)) |> toBe(false)
+    );
+
+    test("isInvalidTerrain 1 0", (_) => 
+      expect(DictRouting.isInvalidTerrain(1,0, dictLevel)) |> toBe(true)
+    );
+
+    test("isInvalidTerrain 0 1", (_) => 
+      expect(DictRouting.isInvalidTerrain(0,1, dictLevel)) |> toBe(false)
+    );
+
+    test("isInvalidTerrain 1 1", (_) => 
+      expect(DictRouting.isInvalidTerrain(1,1, dictLevel)) |> toBe(true)
+    );
+
+    test("isInvalidTerrain 3 0", (_) => 
+      expect(DictRouting.isInvalidTerrain(3,0, dictLevel)) |> toBe(true)
+    );
+
+    test("isInvalidTerrain 3 3", (_) => 
+      expect(DictRouting.isInvalidTerrain(3,3, dictLevel)) |> toBe(true)
+    );
+  });
+});
+
 describe("Pathing", () => {
 
   test("Max X is 6", (_) =>
