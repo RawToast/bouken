@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@glennsl/bs-jest": "glennsl/bs-jest",
-    "bs-platform": "^4.0.5",
+    "bs-platform": "^7.0.1",
     "bsb-js": "^1.1.7",
     "concurrently": "^3.6.1",
     "parcel-bundler": "^1.9.7",
