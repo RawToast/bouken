@@ -217,10 +217,10 @@ describe("Pathing", () => {
     let bestMove = Navigation.suggestMove(~limit=4, bigWorld, (5, 11), (3, 9));
 
     test("Suggests to stay when no move is available", 
-      (_) => expect(impossibleMove) |> toEqual((0, 0)));
+      (_) => expect(impossibleMove) |> Expect.toEqual((0, 0)));
     
     test("Suggests to move when possible", 
-      (_) => expect(possibleMove) |> not_ |> toEqual((0, 0)));
+      (_) => expect(possibleMove === (0, 0)) |> toEqual(false));
 
     test("Suggests the only possible move", 
       (_) => expect(expectedMove) |> toEqual((0, 1)));
