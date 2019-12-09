@@ -10,9 +10,9 @@
     "watch-html": "parcel src/index.html",
     "watch-reason": "bsb -make-world -w",
     "bsb": "bsb -make-world",
-    "test": "jest --env=jsdom --testMatch='**/test/*test.{bs.js}' --watch",
-    "coverage": "jest --env=node --testMatch='**/test/*test.{bs.js}' --coverage",
-    "ci": "yarn bsb && jest --env=jsdom --testMatch='**/test/*test.{bs.js}' --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "test": "jest --env=jsdom --testMatch='**/test/*test.bs.js' --watch",
+    "coverage": "jest --env=node --testMatch='**/test/*test.bs.js' --coverage",
+    "ci": "yarn bsb && jest --env=jsdom --testMatch='**/test/*test.bs.js' --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
     "bs-fetch": "^0.5.0",
