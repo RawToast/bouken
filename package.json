@@ -11,9 +11,9 @@
     "watch-reason": "bsb -make-world -w",
     "bsb": "bsb -make-world",
     "bsb-clean": "bsb -clean-world",
-    "test": "jest --env=jsdom --testMatch='**/test/*test.bs.js' --watch",
-    "coverage": "jest --env=node --testMatch='**/test/*test.bs.js' --coverage",
-    "ci": "yarn bsb && jest --env=node --testMatch='**/test/*test.bs.js' --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "test": "jest --testMatch='**/test/*test.bs.js' --watch",
+    "coverage": "jest --testMatch='**/test/*test.bs.js' --collectCoverageFrom='src/app/**' --coverage",
+    "ci": "yarn bsb && yarn coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
     "bs-fetch": "^0.5.0",
@@ -24,7 +24,7 @@
     "reason-react": "^0.5.3"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.3.3",
+    "@glennsl/bs-jest": "^0.4.9",
     "bs-platform": "^7.0.1",
     "bsb-js": "^1.1.7",
     "concurrently": "^3.6.1",
