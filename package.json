@@ -10,12 +10,13 @@
     "watch-html": "parcel src/index.html",
     "watch-reason": "bsb -make-world -w",
     "bsb": "bsb -make-world",
-    "test": "jest --env=jsdom --testMatch='**/test/*test.{bs.js}' --watch",
-    "coverage": "jest --env=node --testMatch='**/test/*test.{bs.js}' --coverage",
-    "ci": "yarn bsb && jest --env=jsdom --testMatch='**/test/*test.{bs.js}' --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js" 
+    "bsb-clean": "bsb -clean-world",
+    "test": "jest --testMatch='**/test/*test.bs.js' --watch",
+    "coverage": "jest --testMatch='**/test/*test.bs.js' --collectCoverageFrom='src/app/**' --coverage",
+    "ci": "yarn bsb && yarn coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
-    "bs-fetch": "^0.3.0",
+    "bs-fetch": "^0.5.0",
     "bs-webapi": "0.11.0",
     "rationale": "^0.1.7",
     "react": "^16.4.2",
@@ -23,11 +24,11 @@
     "reason-react": "^0.5.3"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "glennsl/bs-jest",
-    "bs-platform": "^4.0.5",
+    "@glennsl/bs-jest": "^0.4.9",
+    "bs-platform": "^7.0.1",
     "bsb-js": "^1.1.7",
     "concurrently": "^3.6.1",
-    "parcel-bundler": "^1.9.7",
+    "parcel-bundler": "^1.12.4",
     "rimraf": "^2.6.2"
   },
   "jest": {
