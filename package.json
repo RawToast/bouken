@@ -16,20 +16,20 @@
     "ci": "yarn bsb && yarn coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
-    "bs-fetch": "^0.5.0",
-    "bs-webapi": "0.11.0",
+    "bs-fetch": "^0.5.2",
+    "bs-webapi": "^0.15.9",
     "rationale": "^0.1.7",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
-    "reason-react": "^0.5.3"
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "reason-react": "^0.8.0"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.9",
-    "bs-platform": "^7.0.1",
+    "bs-platform": "^7.3.2",
     "bsb-js": "^1.1.7",
     "concurrently": "^3.6.1",
     "parcel-bundler": "^1.12.4",
-    "rimraf": "^2.6.2"
+    "rimraf": "^3.0.2"
   },
   "jest": {
     "collectCoverageFrom": [
