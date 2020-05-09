@@ -211,7 +211,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
     }) 
     |> Option.fmap(GL.continue)
     |> optRes => switch optRes {
-      | Some(game) => Success (game)
+      | Some(game) => Success(game)
       | None => Fail("Unable to use stairs")
     }
   };

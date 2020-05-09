@@ -66,11 +66,7 @@ type place = {
   visible: bool,
   tile: tile,
   state: occupier,
-<<<<<<< HEAD
   tileEffect: tileEffect
-=======
-  tileEffect: tileEffect,
->>>>>>> ee19adf... Thoughts on light sources
   /* illuminance: int */
 };
 
@@ -102,9 +98,9 @@ type error =
   | ImpossibleMove;
 
 type actionResult = 
-  | Ok(game)
+  | Success(game)
   | EndGame(int, string)
-  | Error(string);
+  | Fail(string);
 
 let error = (err) => Js.Result.Error(err);
 
@@ -190,21 +186,21 @@ module type AsyncGame = {
 };
 
 module Operators = {
-  let isOk = r => switch(r) {
-    | Ok(_) => true
+  let isSuccess = r => switch(r) {
+    | Success(_) => true
     | _ => false
     };
   
   /* flatMap on ActionResult */
   let (>>=) = (r, f) => switch(r) {
-    | Ok(gam) => f(gam)
-    | Error(err) => Error(err)
+    | Success(gam) => f(gam)
+    | Fail(err) => Fail(err)
     | EndGame(score, name) => EndGame(score, name)
     };
   
   /* Default operator */
   let (|?) = (r, g) => switch(r) {
-    | Ok(gam) => gam
+    | Success(gam) => gam
     | _ => g
     };
 };

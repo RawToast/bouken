@@ -33,15 +33,15 @@ module Game = Modules.Game;
 let mapGameOrError = (f, view) =>
   switch (view) {
   | InGame(g) => f(g) |> Game.resultUpdateVision
-  | _ => Error("Wrong app state")
+  | _ => Fail("Wrong app state")
   };
 
 let update = result =>
   switch (result) {
-  | Ok(game) => InGame(game) |> (r => ReasonReact.Update(r))
+  | Success(game) => InGame(game) |> (r => ReasonReact.Update(r))
   | EndGame(score, name) =>
     Score(name, score) |> (r => ReasonReact.Update(r))
-  | Error(error) =>
+  | Fail(error) =>
     Js.Console.error(error);
     ReasonReact.NoUpdate;
   };

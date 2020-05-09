@@ -1,7 +1,7 @@
-open Types;
-open Rationale;
-
 module LevelBuilder = {
+  open Types;
+  open Rationale;
+
   let blankPlace = {tile: GROUND, state: Empty, tileEffect: NoEff, visible: false };
   let makeBlankLevel = (name: string) => {
     let emptyMap =
@@ -23,6 +23,9 @@ module LevelBuilder = {
 };
 
 module Tiles = {
+  open Types;
+  open Rationale;
+
   let groundTile = { tile: GROUND, state: Empty, tileEffect: NoEff, visible: false };
   let wallTile = { tile: WALL, state: Empty, tileEffect: NoEff, visible: false };
   let waterTile = { tile: WATER, state: Empty, tileEffect: NoEff, visible: false };
@@ -114,7 +117,9 @@ module Tiles = {
     else true;
 };
 
-module Area: Places = {
+module Area: Types.Places = {
+  open Types;
+  open Rationale;
 
   let findStairs = (id, area: list(list(place))) => {
 
@@ -374,6 +379,10 @@ module Area: Places = {
 };
 
 module Level = {
+  open Types;
+  open Rationale;
+
+
   let modifyTile = (x: int, y: int, newPlace: place, level: level) => {
       let updateMap =
         List.mapi((xi: int, xs: list(place)) =>

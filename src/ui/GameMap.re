@@ -17,7 +17,7 @@ module GameElements = {
       | NoEff => default
       };
     
-  let stateToElement = (~incVisible=true, place: place, default) => 
+  let stateToElement = (~_incVisible=true, place: place, default) => 
     switch place.state {
     | Empty => default
     | Player(_) => ("O", "player")
@@ -29,7 +29,7 @@ module GameElements = {
       | GROUND => makeObject(place, (".", "ground")) |> stateToElement(place)
       | ROUGH => makeObject(place, (":", "rough")) |> stateToElement(place)
       | WATER => makeObject(place, ("w", "water")) |> stateToElement(place) |> ((s, c)) => (s, c ++ " map-water")
-      | WALL => ("#", "wall") |> stateToElement(~incVisible=false, place)
+      | WALL => ("#", "wall") |> stateToElement(~_incVisible=false, place)
       | STAIRS(_) => makeObject(place, ("/", "stairs")) |> stateToElement(place)
       | EXIT(_) => makeObject(place, ("e", "exit")) |> stateToElement(place)
       }

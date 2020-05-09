@@ -9,7 +9,7 @@ let make = (~player: player, ~turn: float, ~level:string, _children) => {
       <text>(ReasonReact.string(player.name ++ 
         " HP: " ++ string_of_int(player.stats.health) ++ 
         " Gold: " ++ string_of_int(player.gold) ++ 
-        " Turn: " ++ string_of_float(turn)))</text>
+        " Turn: " ++ Js.Float.toString(turn)))</text>
       <div><text>(ReasonReact.string(level))</text></div>
     </div>,
 };

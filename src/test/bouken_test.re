@@ -16,7 +16,7 @@ describe("Game.MovePlayer", () => {
   let initGame = Game.create("davey");
   let optGame = initGame |> Game.movePlayer(-1, -1);
   let newGame = optGame |> g => switch(g) {
-  | Ok(gam) => gam
+  | Success(gam) => gam
   | _ => initGame
   };
 
@@ -26,7 +26,7 @@ describe("Game.MovePlayer", () => {
 
   describe("When the move is possible", () => {
     test("Returns some", (_) => {
-      expect(Types.Operators.isOk(optGame)) |> toBe(true);
+      expect(Types.Operators.isSuccess(optGame)) |> toBe(true);
     });
   
     test("The Player's location is updated to (5,5)", (_) => {
