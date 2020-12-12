@@ -1535,20 +1535,22 @@ browserslist@^4.0.0, browserslist@^4.1.0, browserslist@^4.11.1, browserslist@^4.
     node-releases "^1.1.53"
     pkg-up "^2.0.0"
 
-bs-fetch@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/bs-fetch/-/bs-fetch-0.5.2.tgz#a9f4582ddb1414d3467b900305c738813481988c"
-  integrity sha512-CYweTJcgLeLOqzR3vNsB+NmyEFhWThnPNdZmmF28nkFmo0CQEf+20eSHZJDO6EuAhhoRqJ0qp2VgxtH6zBB5xA==
+bs-fetch@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/bs-fetch/-/bs-fetch-0.6.2.tgz#37d982e9f79b9bc44c23e87ae78ccbee1f869adf"
+  integrity sha512-VXEjp8kY3vHPckaoy3d96Bx0KYjJAPLNISBwfpwMN26K6DtuZYwI2HKhx7zeHBajz1bRArfx7O8OOLcdtujMvg==
 
 bs-platform@^7.3.2:
   version "7.3.2"
   resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-7.3.2.tgz#301f5c9b4e8cf5713cb60ca22e145e56e793affe"
   integrity sha512-seJL5g4anK9la4erv+B2o2sMHQCxDF6OCRl9en3hbaUos/S3JsusQ0sPp4ORsbx5eXfHLYBwPljwKXlgpXtsgQ==
 
-bs-webapi@^0.15.9:
-  version "0.15.9"
-  resolved "https://registry.yarnpkg.com/bs-webapi/-/bs-webapi-0.15.9.tgz#d1dcfbd40499a3b0914daacc4ceef47a0f3c906f"
-  integrity sha512-bmzO6na2HmK01a34qB7afMwfVSrPxkP3EGzUslWObuxbHIlLC0PAMDu4lA8ZL5NasBUctlwnA1QZxox+1aNWWw==
+bs-webapi@^0.19.1:
+  version "0.19.1"
+  resolved "https://registry.yarnpkg.com/bs-webapi/-/bs-webapi-0.19.1.tgz#cae7d65fc43795376becc44b56f46d85e5b8e878"
+  integrity sha512-sRhkNdHFBxzoiLH+r8rhlW9XSafBbbGCkvsxtTJ1QMABEaHKj8TejwA7TuBZH2ZYL2ur3sk291ukkge5qFm3Uw==
+  dependencies:
+    bs-fetch "^0.6.2"
 
 bsb-js@^1.1.7:
   version "1.1.7"
@@ -5236,10 +5238,10 @@ range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
-rationale@^0.1.7:
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/rationale/-/rationale-0.1.10.tgz#a14567d3eea7facaba0ed35d68ef2127fdd861d7"
-  integrity sha512-WMBpRHHjhY4AA8BtboQsA5voL2dQXhbtX0C/F4HYOGFZDZz5gbUfZVs22Sc4FqyvpJoT/1A+PhcpOvefnKKxJQ==
+rationale@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/rationale/-/rationale-0.2.0.tgz#555ed4f3cc7cd0245faeac041d3769f1857e4f3d"
+  integrity sha512-Pd8w5Inv1JhTfRyx03zs486CEAn6UKXvvOtxVRLsewngsBSffo3MQwUKYS75L/8vPt98wmf7iaZROx362/f7Bw==
 
 react-dom@^16.13.1:
   version "16.13.1"

@@ -1,4 +1,6 @@
-open Level;
+module LevelBuilder = Level.LevelBuilder;
+module Area = Level.Area;
+
 open Types;
 open Rationale;
 

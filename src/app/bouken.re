@@ -1,10 +1,9 @@
 module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.Game)) = 
   (GL: Types.GameLoop, W: Types.World, WB: Types.WorldBuilder) => {
-    
-  open Rationale;
-  open Level;
+  module Area = Level.Area;
   open Types;
-
+  module Option = Rationale.Option;
+  module Result = Rationale.Result;
   
   let andUpdateTiles = (game) => {
     W.currentLevel(game.world)
@@ -15,9 +14,9 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
   };
 
   let resultUpdateVision = (res) => switch res {
-    | Ok(g) => Ok(g |> andUpdateTiles)
+    | Success(g) => Success(g |> andUpdateTiles)
     | EndGame(int, string) => EndGame(int, string)
-    | Error(string) => Error(string)
+    | Fail(string) => Fail(string)
   };
 
   let updateVision = (res) => res |> andUpdateTiles;
@@ -42,7 +41,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
   };
 
   let gameToRes = game => {
-    if (game.player.stats.health > 0) Ok(game)
+    if (game.player.stats.health > 0) Success(game)
     else EndGame(calculateScore(game), game.player.name);
   };
 
@@ -111,7 +110,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
       >>= goldBonus(tx, ty)
       |> Option.fmap(GL.continue)
       |> Option.fmap(gameToRes)
-      |> Option.default(Error("Unable to attack"))
+      |> Option.default(Fail("Unable to attack"))
   };
 
   let movePlayer = (x, y, game) => {
@@ -136,7 +135,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
       |> Option.fmap(GL.continue)
       |> optRes => switch optRes {
         | Some(game) => gameToRes(game)
-        | None => Error("Unable to move player")
+        | None => Fail("Unable to move player")
         };
 
     if (canMove) {
@@ -144,7 +143,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
     } else if (canAttack) {
       attack(x, y, game)
     } else {
-      Error("Unable to move player")
+      Fail("Unable to move player")
     };
   };
 
@@ -211,8 +210,8 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
     }) 
     |> Option.fmap(GL.continue)
     |> optRes => switch optRes {
-      | Some(game) => Ok(game)
-      | None => Error("Unable to use stairs")
+      | Some(game) => Success(game)
+      | None => Fail("Unable to use stairs")
     }
   };
 
@@ -233,7 +232,7 @@ module CreateGame: ((Types.GameLoop, Types.World, Types.WorldBuilder) => (Types.
 
     switch(currentExitScore) {
     | Some(score) => EndGame((score + baseBonus + calculateScore(game)), game.player.name);
-    | None => Ok(game)
+    | None => Success(game)
     }
   };
 };

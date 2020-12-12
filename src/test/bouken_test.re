@@ -16,7 +16,7 @@ describe("Game.MovePlayer", () => {
   let initGame = Game.create("davey");
   let optGame = initGame |> Game.movePlayer(-1, -1);
   let newGame = optGame |> g => switch(g) {
-  | Ok(gam) => gam
+  | Success(gam) => gam
   | _ => initGame
   };
 
@@ -84,7 +84,7 @@ describe("Game.ExitGame", () => {
 
   describe("When the player is on an exit", () => {
     let newLevel = Level.LevelBuilder.makeBlankLevel("Dungeon 1") 
-    |> Level.Level.modifyTile(6, 6, 
+    |> Level.modifyTile(6, 6, 
       { tile: EXIT(100), 
         tileEffect: NoEff,
         state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0., damage: 1 }, 
@@ -108,7 +108,7 @@ describe("Game.ExitGame", () => {
 
   describe("When the player is not on an exit", () => {
     let newLevel = Level.LevelBuilder.makeBlankLevel("Floor 1")
-      |> Level.Level.modifyTile(6, 6, 
+      |> Level.modifyTile(6, 6, 
         { tile: GROUND, 
           tileEffect: NoEff,
           state: Player({name: "test", stats: { health: 10, speed: 1.0, position: 0., damage: 1 }, 

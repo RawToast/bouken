@@ -2,7 +2,7 @@ open Types;
 open Rationale;
 
 module Enemies = {
-  let randId = () => Js.Math.random() |> string_of_float;
+  let randId = () => Js.Math.random() |> Js.Float.toString;
 
   let makeZombie = () => { 
     id: randId(), name: "Zombie", 
@@ -101,7 +101,7 @@ module CreateEnemyLoop = (Pos: Types.Positions, Places: Types.Places, World: Wor
 
   let attack = (enemyInfo, area) => {
     open Rationale.Option;
-    let targets = enemyInfo |> findTargets |> attackablePlaces(_, area);
+    let targets = enemyInfo |> findTargets(~range=1) |> attackablePlaces(_, area);
     if (List.length(targets) >= 1) {
       let (x,y) = List.hd(targets);
       let place = Places.getPlace(x, y, area);

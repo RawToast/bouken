@@ -2,8 +2,9 @@ open Types;
 open Rationale;
 
 module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
-  open World;
   let loopCost = (1. /. Pos.divisor);
+  module World = World.World;
+  
   let rec continue: game => game =
     game => {
       let activeEnemies: list(enemyInfo) = game.world 

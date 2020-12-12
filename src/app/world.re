@@ -1,6 +1,6 @@
-open Types;
+module World: Types.World = {
+  open Types;
 
-module World: World = {
   let updateLevel = (level, world) => { 
     let newLevels = world.levels 
       |> List.map(l => if (level.name == l.name) { level } else { l });
@@ -14,8 +14,9 @@ module World: World = {
 };
 
 module FetchCsvBuilder = {
-  open Level;
-  open Rationale;
+  open Types;
+
+  module Option = Rationale.Option;
   
   let create = (player: player) => {
     let (x, y) = player.location;
@@ -46,8 +47,11 @@ module FetchCsvBuilder = {
   };
 };
 
-module Builder: WorldBuilder = {
-  open Level;
+module Builder: Types.WorldBuilder = {
+  open Types;
+
+  module LevelBuilder = Level.LevelBuilder;
+  module Tiles = Level.Tiles;
   open Rationale;
 
   let listHorizontal = (x, y, tx) => RList.rangeInt(1, x, tx) |> List.map(i => (i, y));
@@ -127,3 +131,5 @@ module Builder: WorldBuilder = {
     { levels: [ initLevel(player), swamp, cave, level2, level3, level4, level5], current: "Dungeon 1"  }
   };
 };
+
+include World;

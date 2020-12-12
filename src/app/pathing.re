@@ -145,7 +145,8 @@ module PathUtil = {
     let countPenalties: list((int, int)) => float = locations => 
       if (incTerrain) {  
         locations
-          |> List.map(loc => { let (x, y) = loc; area -> List.nth(y) -> List.nth(x) |>  Level.Tiles.placePenalty})
+          |> List.map(loc => { let (x, y) = loc; 
+            area -> List.nth(y) -> List.nth(x) |>  Level.Tiles.placePenalty(~incTraps=false)})
           |> List.fold_left((p1, p2) => p1 +. p2, 0.)
       } else locations |> List.length |> float_of_int;
 

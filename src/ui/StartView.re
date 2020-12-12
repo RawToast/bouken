@@ -11,7 +11,7 @@ let make = (~startGame, _children) => {
       <h1>(string("Bouken"))</h1>
       <input className="nameinput"
         onChange=(evt => self.send(ReactDOMRe.domElementToObj(ReactEventRe.Form.target(evt))##value))
-        onKeyPress=(evt => if (ReactEventRe.Keyboard.key(evt) == "Enter") { 
+        onKeyPress=(evt => if (ReactEvent.Keyboard.key(evt) == "Enter") { 
           startGame(self.state)
         })></input><br/>
         <Instructions></Instructions>

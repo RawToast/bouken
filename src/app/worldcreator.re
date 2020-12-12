@@ -1,6 +1,6 @@
-open Types;
+module CsvWorldBuilder: Types.WorldCreator = {
+  open Types;
 
-module CsvWorldBuilder: WorldCreator = {
   let makeExit = score => { tile: EXIT(int_of_string((score))), state: Empty, tileEffect: NoEff, visible: false };
 
   let tail = Js.String.sliceToEnd(~from=1);
