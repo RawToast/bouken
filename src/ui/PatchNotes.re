@@ -5,6 +5,10 @@ let notes =
     <div className="pre-scrollable">
         <pre className="c-messages">
             (string("
+v0.3.0c
+
+* Lots of technology updates, no changes to the actual game
+
 v0.3.0b
 
 * Initial Tile theming and colours " ++ {js|🙀|js} ++ "

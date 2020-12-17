@@ -1,20 +1,20 @@
 [@react.component]
-let make = (~startGame) => {
+let make = (~startGame, ~onChange) => {
   let (name, setName) = React.useState(() => "");
+
+  let setValue = e => {
+    let value = ReactEvent.Synthetic.target(e)##value;
+    setName(_ => value);
+    onChange(value);
+  };
 
   <div>
     <h1> {React.string("Bouken")} </h1>
     <input
       className="nameinput"
       value=name
-      onChange={event =>
-        (_ => ReactEvent.Form.target(event)##value) |> setName
-      }
-      onKeyPress={evt =>
-        if (ReactEvent.Keyboard.key(evt) == "Enter") {
-          startGame(name);
-        }
-      }
+      onChange=setValue
+      onKeyPress=startGame
     />
     <br />
     <Instructions />
