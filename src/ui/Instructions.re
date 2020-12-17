@@ -1,6 +1,4 @@
-open ReasonReact;
-
-let component = ReasonReact.reducerComponent("Instructions");
+let string = React.string;
 
 let notes = 
   <div id="notes" className="c-notes">
@@ -27,16 +25,15 @@ The player can win the game using an exit `e` using `s`, but remember some exits
     </div>
   </div>;
 
-let make = ( _children) => {
-  ...component,
-  initialState: () => false,
-  reducer: (action: bool, _ext) => ReasonReact.Update(action),
-  render: (self) => {
+[@react.component]
+let make = () => {
+  let (showNotes, updateState) = React.useState(() => false);
+  let toggleNotes = _ => updateState(show => !show);
+
+  {
     <div>
-      <h3 onClick=((_) => (self.send(!self.state)))>(string("Guide"))</h3>
-      (if (self.state) notes else ReasonReact.null)
+      <h3 onClick=(toggleNotes)>(string("Guide"))</h3>
+      (showNotes? notes : ReasonReact.null)
     </div>
   }
 };
-
-
