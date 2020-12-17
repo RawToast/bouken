@@ -1,1 +1,1 @@
-yarn && yarn build && cd dist && now -n=bouken --public
+yarn && yarn build && cd dist && surge dist bouken-surprise.surge.sh
