@@ -1,17 +1,20 @@
 let string = React.string;
 
-let notes = 
+let notes =
   <div id="notes" className="c-notes">
     <div className="pre-scrollable">
-        <pre className="c-messages">
-            (string("
+      <pre className="c-messages">
+        {string(
+           "
 v0.3.0c
 
 * Lots of technology updates, no changes to the actual game
 
 v0.3.0b
 
-* Initial Tile theming and colours " ++ {js|🙀|js} ++ "
+* Initial Tile theming and colours "
+           ++ {js|🙀|js}
+           ++ "
 
 v0.2.1
 
@@ -28,19 +31,11 @@ v0.2.0 New Frontend!
 
 v0.1.0 MVP
 
-* Initial game")
-            )
-        </pre>
+* Initial game",
+         )}
+      </pre>
     </div>
   </div>;
 
 [@react.component]
-let make = () => {
-  let (showNotes, updateState) = React.useState(() => false);
-  let toggleNotes = _ => updateState(show => !show);
-
-  <div>
-    <h3 onClick={toggleNotes}> {string("Patch Notes")} </h3>
-    {showNotes? notes : ReasonReact.null}
-  </div>;
-};
+let make = () => <Toggleable label="Patch Notes" content=notes />;

@@ -39,12 +39,4 @@ e Exit",
   </div>;
 
 [@react.component]
-let make = () => {
-  let (showKey, updateState) = React.useState(() => false);
-  let toggleKey = _ => updateState(show => !show);
-
-  <div>
-    <h3 onClick={toggleKey}> {string("Key")} </h3>
-    {showKey? notes : ReasonReact.null}
-  </div>;
-};
+let make = () => <Toggleable label="Key" content=notes />;

@@ -1,15 +1,18 @@
 let string = React.string;
 
-let notes = 
+let notes =
   <div id="notes" className="c-notes">
     <div className="pre-scrollable">
-        <pre className="c-messages">
-            (string("
+      <pre className="c-messages">
+        {string(
+           "
 The player can move in 8 directions with:
 
 `q` `w` `e`
 
-`a` " ++ {js|🐾|js} ++ " `d`
+`a` "
+           ++ {js|🐾|js}
+           ++ " `d`
 
 `z` `x` `c`
 
@@ -19,21 +22,11 @@ Stairs `/` can be taken in either direction using `s`.
 
 The player can win the game using an exit `e` using `s`, but remember some exits score more points than others.
 
-`s` will wait a turn if the player is not on stairs or an exit.")
-            )
-        </pre>
+`s` will wait a turn if the player is not on stairs or an exit.",
+         )}
+      </pre>
     </div>
   </div>;
 
 [@react.component]
-let make = () => {
-  let (showNotes, updateState) = React.useState(() => false);
-  let toggleNotes = _ => updateState(show => !show);
-
-  {
-    <div>
-      <h3 onClick=(toggleNotes)>(string("Guide"))</h3>
-      (showNotes? notes : ReasonReact.null)
-    </div>
-  }
-};
+let make = () => <Toggleable label="Guide" content=notes />;
