@@ -1,9 +1,9 @@
 open Types;
-open Rationale;
 open Jest;
 open Expect;
 
 module Game = Modules.Game;
+module Option = Belt_Option;
 
 describe("Game.Create", () => {
   test("Creates a new game", (_) => {
@@ -59,11 +59,10 @@ describe("Game.UseStairs", () => {
     });
 
     test("Updates the world map", (_) => {
-      let place = newGame.world |>
-        World.World.currentLevel |>
-          Option.bind(_, lv => 
-            Level.Area.getPlace(0, 9, lv.map))
-          |> Option.default({ tile: GROUND, state: Empty, tileEffect: NoEff, visible: false });
+      let place = newGame.world 
+      -> World.World.currentLevel 
+      -> Option.flatMap(lv => Level.Area.getPlace(0, 9, lv.map))
+      -> Option.getWithDefault({ tile: GROUND, state: Empty, tileEffect: NoEff, visible: false });
       
       let isPlayer = switch place.state {
       | Player(_) => true;
