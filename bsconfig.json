@@ -23,7 +23,6 @@
     "reason-react",
     "@glennsl/bs-jest",
     "bs-webapi",
-    "rationale",
     "bs-fetch"
   ],
   "refmt": 3
