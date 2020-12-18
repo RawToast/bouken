@@ -8,7 +8,7 @@ module World: Types.World = {
     { ... world, levels: newLevels };
   };
 
-  let selectLevel = (name, world) => world.levels |> Rationale.RList.find(l => l.name == name);
+  let selectLevel = (name, world) => world.levels -> Belt_List.getBy(l => l.name == name);
 
   let currentLevel = (world) => selectLevel(world.current, world);
 };
@@ -16,7 +16,7 @@ module World: Types.World = {
 module FetchCsvBuilder = {
   open Types;
 
-  module Option = Rationale.Option;
+  module Option = Belt_Option;
   
   let create = (player: player) => {
     let (x, y) = player.location;
@@ -39,11 +39,11 @@ module FetchCsvBuilder = {
       .loadWorldAsync("Dungeon 1", lvls)
       |> Js.Promise.then_(world => 
         world 
-          |> World.currentLevel
-          |> Option.fmap(Level.modifyTile(x, y, {tile: GROUND, state: Player(player), tileEffect: NoEff, visible: false }))
-          |> Option.fmap(World.updateLevel(_, world))
-          |> Option.default(world) 
-          |> Js.Promise.resolve);
+          -> World.currentLevel
+          -> Option.map(Level.modifyTile(x, y, {tile: GROUND, state: Player(player), tileEffect: NoEff, visible: false }))
+          -> Option.map(World.updateLevel(_, world))
+          -> Option.getWithDefault(world) 
+          -> Js.Promise.resolve);
   };
 };
 
@@ -52,10 +52,21 @@ module Builder: Types.WorldBuilder = {
 
   module LevelBuilder = Level.LevelBuilder;
   module Tiles = Level.Tiles;
-  open Rationale;
 
-  let listHorizontal = (x, y, tx) => RList.rangeInt(1, x, tx) |> List.map(i => (i, y));
-  let listVertical = (x, y, ty) => RList.rangeInt(1, y, ty) |> List.map(i => (x, i));
+  let append = (a, xs) => List.append(xs, [a]);
+    let rangeF = {
+      let rec loop = (inc, s, e, acc) =>
+        switch (List.rev(acc)) {
+        | [] => loop(inc, s, e, [s])
+        | [a, ..._] =>
+          inc(a) > e ? acc : loop(inc, s, e, append(inc(a), acc))
+        };
+      (inc, s, e) => loop(inc, s, e, []);
+    };
+    let rangeInt = step => rangeF(x => x + step);
+
+  let listHorizontal = (x, y, tx) => rangeInt(1, x, tx) |> List.map(i => (i, y));
+  let listVertical = (x, y, ty) => rangeInt(1, y, ty) |> List.map(i => (x, i));
   let initEnemy = Enemy.Enemies.makeEnemy();
   let newEnemy = id => { ... initEnemy,id: id, name: id };
   let create = player => {

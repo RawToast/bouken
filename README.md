@@ -72,5 +72,4 @@ Alternatively, after building the app run `now` from the `dist` folder.
 
 * [ReasonML](https://reasonml.github.io/)
 * [Reason React](https://reasonml.github.io/reason-react/)
-* [Rationale](https://github.com/jonlaing/rationale)
 * [BS Jest](https://github.com/glennsl/bs-jest)

@@ -1,5 +1,5 @@
 open Types;
-open Rationale;
+module Option = Belt_Option;
 
 module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
   let loopCost = (1. /. Pos.divisor);
@@ -8,9 +8,9 @@ module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
   let rec continue: game => game =
     game => {
       let activeEnemies: list(enemyInfo) = game.world 
-          |> World.currentLevel
-          |> Option.fmap(l => EL.findActiveEnemies(l.map))
-          |> Option.default([]);
+          -> World.currentLevel
+          -> Option.map(l => EL.findActiveEnemies(l.map))
+          -> Option.getWithDefault([]);
 
       if (Pos.isActive(game.player.stats)) {
         game;
@@ -18,29 +18,22 @@ module CreateGameLoop = (Pos: Types.Positions, EL: EnemyLoop) => {
         /* relocate */
         let levelOpt = World.currentLevel(game.world);
         let activeEnemy = List.hd(activeEnemies);
-        let updatedGame = Option.bind(levelOpt, level =>
+        let updatedGame = Option.flatMap(levelOpt, level =>
           EL.takeTurn(activeEnemy, level, game)
         );
-
-        switch updatedGame {
-          | None => game
-          | Some(g) => continue(g)
-          };
+        updatedGame
+        -> Option.mapWithDefault(game, continue);
       } else {
         /* No one is active */
-        let maybeGame = game.world 
-          |> World.currentLevel
-          |> Rationale.Option.fmap(l => {
+        game.world 
+          -> World.currentLevel
+          -> Option.map(l => {
             let area = Pos.incrementAll(l.map);
             let world = World.updateLevel( {...l, map: area }, game.world);
             { ...game, world: world, turn: game.turn +. loopCost }
             })
-          |> Rationale.Option.fmap(g => {... g, player: {... g.player, stats: Pos.increment(g.player.stats)}});
-
-        switch maybeGame {
-        | None => game
-        | Some(g) => continue(g)
-        };
+          -> Option.map(g => {... g, player: {... g.player, stats: Pos.increment(g.player.stats)}})
+          -> Option.mapWithDefault(game, continue);
     };
   };
 };

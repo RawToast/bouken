@@ -22,7 +22,6 @@
   "bs-dependencies": [
     "reason-react",
     "@glennsl/bs-jest",
-    "rationale",
     "bs-webapi",
     "bs-fetch"
   ],
