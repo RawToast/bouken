@@ -5,6 +5,8 @@ ASCII rogue-like 🙀
 [![Build Status](https://travis-ci.org/RawToast/bouken.svg?branch=master)](https://travis-ci.org/RawToast/bouken)
 [![Coverage Status](https://coveralls.io/repos/github/RawToast/bouken/badge.svg?branch=master)](https://coveralls.io/github/RawToast/bouken?branch=master)
 
+[Stable server](https://bouken-dtangmsuhe.now.sh). For the latest version, see the link in the about section.
+
 ## Controls
 
 The player can move in 8 directions with:
