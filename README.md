@@ -57,7 +57,7 @@ The player can win the game using an exit `e` using `s`, but remember some exits
 
 ## Deployment
 
-The provided script can be used to deploy the app using [Now](https://zeit.co/now)
+The provided script can be used to deploy the app using [Surge](https://surge.sh)
 
 `deploy.sh`
 
