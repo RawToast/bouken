@@ -222,7 +222,7 @@ module Area: Types.Places = {
   };
 
   let getPlace = (x, y, area) =>
-    area -> RList.get(y) -> Option.flatMap(RList.get(x));
+    area -> RList.get(y) -> Option.flatMap(RList.get(_, x));
 
   let findPlayer = area => {
     let findPlayerRow = RList.getBy(_, y => isPlayer(y));
@@ -254,10 +254,10 @@ module Area: Types.Places = {
         places -> RList.getBy(y => isEnemyWithId(id, y));
 
       area
-      |> RList.find(row => row |> findEnemyRow(id) |> hasEnemy)
-      |> Option.default([])
-      |> RList.find(p => isEnemyWithId(id, p))
-      |> Option.bind(_, s =>
+      -> RList.getBy(row => row |> findEnemyRow(id) |> hasEnemy)
+      -> Option.getWithDefault([])
+      -> RList.getBy(p => isEnemyWithId(id, p))
+      -> Option.flatMap(s =>
            switch (s.state) {
            | Empty => None
            | Enemy(e) => Some(e)
@@ -272,13 +272,13 @@ module Area: Types.Places = {
     | _ => false
     };
 
-  let canMoveTo = (~overwrite=true, x, y, area: area) => {
-    Rationale.Option.(
+  let canMoveTo = (~overwrite=true, x, y, area: area) =>
       area
-      |> RList.nth(y)
-      >>= RList.nth(x)
-      |> Result.ofOption(ImpossibleMove)
-      |> Result.bind(_, l =>
+      -> RList.get(y)
+      -> Option.flatMap(RList.get(_, x))
+      -> Option.map(x => Ok(x))
+      -> Option.getWithDefault(Error(ImpossibleMove))
+      -> Belt_Result.flatMap(l =>
            switch (l.tile) {
            | GROUND =>
              if (isEmpty(l) || overwrite) {
@@ -312,9 +312,7 @@ module Area: Types.Places = {
                Error(ImpossibleMove);
              }
            }
-         )
-    );
-  };
+         );
 
   let removeOccupant = (x, y, area) => {
     area
@@ -411,10 +409,10 @@ module Area: Types.Places = {
     };
 
     canMoveTo(x, y, area)
-    |> Result.bind(_, _r =>
+    -> Belt_Result.flatMap(_r =>
          findPlayer(area)
-         |> Option.fmap((p: player) => updatePlayer(p))
-         |> Option.fmap(p => update(p, area))
+         -> Option.map((p: player) => updatePlayer(p))
+         -> Option.map(p => update(p, area))
          |> (
            o =>
              switch (o) {
@@ -449,7 +447,7 @@ module Area: Types.Places = {
     };
 
     canMoveTo(x, y, area)
-    |> Result.fmap(_ => {
+    -> Belt_Result.map(_ => {
          let updatedPlayer = tile => {
            ...player,
            stats: {
@@ -488,7 +486,7 @@ module Area: Types.Places = {
     };
 
     canMoveTo(x, y, area)
-    |> Result.fmap(_ => {
+    -> Belt_Result.map(_ => {
          let updatedEnemy = tile =>
            switch (tile.tileEffect) {
            | Trap(dmg) => {
@@ -530,7 +528,7 @@ module Area: Types.Places = {
   };
 
   let movePlayer = (x: int, y: int, cost: float, area: area) => {
-    open Rationale.Result;
+    // open Rationale.Result;
     let playerOpt = findPlayer(area);
     switch (playerOpt) {
     | Some(player) =>
@@ -542,20 +540,20 @@ module Area: Types.Places = {
 
       if (x == 0 && y == 0) {
         /* Wait logic */
-        area
-        |> setPlayerLocation(nx, ny, cost)
-        |> Result.fmap(a => {player: newPlayer, area: a});
+        (area
+        |> setPlayerLocation(nx, ny, cost))
+        -> Belt_Result.map(a => {player: newPlayer, area: a});
       } else {
-        area
-        |> canMoveTo(~overwrite=false, nx, ny)
-        >>= (
+        (area
+        |> canMoveTo(~overwrite=false, nx, ny))
+        -> Belt_Result.flatMap(
           _ =>
             setPlayerLocation(nx, ny, cost, area)
-            |> Result.fmap(removeOccupant(xl, yl))
-            |> Result.bind(_, a =>
+            -> Belt_Result.map(removeOccupant(xl, yl))
+            -> Belt_Result.flatMap(a =>
                  findPlayer(a)
-                 |> Option.fmap(p => {player: p, area: a})
-                 |> Result.ofOption(InvalidState)
+                 -> Option.map(p => Ok({player: p, area: a}))
+                 -> Option.getWithDefault(Error(InvalidState))
                )
         );
       };

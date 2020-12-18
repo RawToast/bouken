@@ -52,7 +52,7 @@ describe("BasicPositions", () =>
         expect(Belt_Option.isSome(updatedPlayer)) |> toBe(true);
       });
       test("Increments the player's position", (_) => {
-        let updatedPlayer = Area.findPlayer(updatedMap) -> Option.getWithDefault(defaultPlayer);
+        let updatedPlayer = Area.findPlayer(updatedMap) -> Belt_Option.getWithDefault(defaultPlayer);
         expect(updatedPlayer.stats.position) |> toBeGreaterThanOrEqual(defaultPlayer.stats.position);
       });
       test("Increments the enemys positsion", (_) => {

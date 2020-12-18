@@ -1,6 +1,6 @@
 let currentLevel = world =>
   World.currentLevel(world)
-  ->Belt_Option.getWithDefault(List.hd(world.levels));
+  |> Rationale.Option.default(List.hd(world.levels));
 type inxPlace = {
   i: int,
   place: Types.place,
@@ -11,35 +11,36 @@ type inxRow = {
 };
 
 let viewport = (player: Types.player, area) => {
+  open Rationale;
   let size = 6;
   let fullSize = 1 + size * 2;
   let (x, y) = player.location;
   let blocks =
-    Belt_List.make(
-      size,
+    RList.repeat(
       {Types.tile: WALL, state: Empty, tileEffect: NoEff, visible: false},
+      size,
     );
 
   let pt1 = area |> List.map(ys => blocks @ ys @ blocks);
 
   let row =
     pt1
-    ->List.hd
-    ->List.length
-    ->Belt_List.make({
-        Types.tile: WALL,
-        state: Empty,
-        tileEffect: NoEff,
-        visible: false,
-      })
-    ->Belt_List.make(size, _);
+    |> List.hd
+    |> List.length
+    |> RList.repeat({
+         Types.tile: WALL,
+         state: Empty,
+         tileEffect: NoEff,
+         visible: false,
+       })
+    |> RList.repeat(_, size);
 
-  let dropOrEmpty = (list, n) =>
-    Belt_List.drop(list, n)->Belt_Option.getWithDefault([]);
-  let takeOrEmpty = (list, n) =>
-    Belt_List.drop(list, n)->Belt_Option.getWithDefault([]);
-  (row @ pt1 @ row)->dropOrEmpty(y)->takeOrEmpty(fullSize)
-  |> List.map(l => dropOrEmpty(l, x)->takeOrEmpty(fullSize));
+  row
+  @ pt1
+  @ row
+  |> RList.drop(y)
+  |> RList.take(fullSize)
+  |> List.map(l => RList.drop(x, l) |> RList.take(fullSize));
 };
 
 [@react.component]
