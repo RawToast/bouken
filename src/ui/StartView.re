@@ -1,22 +1,24 @@
-open ReasonReact;
+[@react.component]
+let make = (~startGame, ~onChange) => {
+  let (name, setName) = React.useState(() => "");
 
-let component = ReasonReact.reducerComponent("StartView");
+  let setValue = e => {
+    let value = ReactEvent.Synthetic.target(e)##value;
+    setName(_ => value);
+    onChange(value);
+  };
 
-let make = (~startGame, _children) => {
-  ...component,
-  initialState: () => "",
-  reducer: (state: string, _ext) =>  ReasonReact.Update(state),
-  render: (self) => {
-    <div>
-      <h1>(string("Bouken"))</h1>
-      <input className="nameinput"
-        onChange=(evt => self.send(ReactDOMRe.domElementToObj(ReactEventRe.Form.target(evt))##value))
-        onKeyPress=(evt => if (ReactEvent.Keyboard.key(evt) == "Enter") { 
-          startGame(self.state)
-        })></input><br/>
-        <Instructions></Instructions>
-        <Key></Key>
-        <PatchNotes></PatchNotes>
-    </div>
-  }
+  <div>
+    <h1> {React.string("Bouken")} </h1>
+    <input
+      className="nameinput"
+      value=name
+      onChange=setValue
+      onKeyPress=startGame
+    />
+    <br />
+    <Instructions />
+    <Key></Key>
+    <PatchNotes></PatchNotes>
+  </div>;
 };

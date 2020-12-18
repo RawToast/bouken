@@ -1,11 +1,11 @@
-open ReasonReact;
+let string = React.string;
 
-let component = ReasonReact.reducerComponent("Key");
-let notes = 
+let notes =
   <div id="notes" className="c-notes">
     <div className="pre-scrollable">
-        <pre className="c-messages">
-            (string("
+      <pre className="c-messages">
+        {string(
+           "
 O Player
 
 . Ground
@@ -32,22 +32,11 @@ g Gold
 
 / Stairs
 
-e Exit")
-            )
-        </pre>
+e Exit",
+         )}
+      </pre>
     </div>
   </div>;
 
-let make = ( _children) => {
-  ...component,
-  initialState: () => false,
-  reducer: (action: bool, _ext) => ReasonReact.Update(action),
-  render: (self) => {
-    <div>
-      <h3 onClick=((_) => (self.send(!self.state)))>(string("Key"))</h3>
-      (if (self.state) notes else ReasonReact.null)
-    </div>
-  }
-};
-
-
+[@react.component]
+let make = () => <Toggleable label="Key" content=notes />;

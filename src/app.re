@@ -1,10 +1,11 @@
 open Utils;
 
-open ReasonReact;
 open Types;
 open Webapi.Dom;
 
 requireCSS("./App.css");
+
+let string = ReasonReact.string;
 
 type view =
   | Home
@@ -16,43 +17,9 @@ type gameAction =
   | TakeStairs
   | UseExit;
 
-type appAction =
-  | StartGame(string)
-  | Begin(game);
-
-type action =
-  | GameAction(gameAction)
-  | AppAction(appAction);
-
-let component = ReasonReact.reducerComponent("App");
-
 let movement = (x, y) => MovePlayer(x, y);
 
 module Game = Modules.Game;
-
-let mapGameOrError = (f, view) =>
-  switch (view) {
-  | InGame(g) => f(g) |> Game.resultUpdateVision
-  | _ => Fail("Wrong app state")
-  };
-
-let update = result =>
-  switch (result) {
-  | Success(game) => InGame(game) |> (r => ReasonReact.Update(r))
-  | EndGame(score, name) =>
-    Score(name, score) |> (r => ReasonReact.Update(r))
-  | Fail(error) =>
-    Js.Console.error(error);
-    ReasonReact.NoUpdate;
-  };
-
-let handleGameAction = (act, view) =>
-  switch (act) {
-  | TakeStairs => view |> mapGameOrError(Game.useStairs(_)) |> update
-  | MovePlayer(x, y) =>
-    view |> mapGameOrError(Game.movePlayer(x, y)) |> update
-  | UseExit => view |> mapGameOrError(Game.useExit) |> update
-  };
 
 let initPlayer = name => {
   name,
@@ -66,62 +33,76 @@ let initPlayer = name => {
   location: (1, 1),
 };
 
-let initgame = (pname, self) =>
-  initPlayer(pname)
-  |> (
-    p =>
-      World.FetchCsvBuilder.create(p)
-      |> Js.Promise.then_(w =>
-           {player: p, world: w, turn: 0.} |> Js.Promise.resolve
-         )
-      |> Js.Promise.then_(g => {
-           self.send(AppAction(Begin(g)));
-           Js.Promise.resolve(g);
-         })
-      |> ignore
-  );
+[@react.component]
+let make = () => {
+  let (state: view, updateState) = React.useState(() => Home);
+  let (playerName, updateName) = React.useState(() => "");
 
-let make = _children => {
-  ...component,
-  initialState: () => Home,
-  reducer: (act: action, view) =>
+  let mapGameOrError = (f, view) =>
+    switch (view) {
+    | InGame(g) => f(g) |> Game.resultUpdateVision
+    | _ => Fail("Wrong app state")
+    };
+
+  let update = (prev, result): view =>
+    switch (result) {
+    | Success(game) => InGame(game)
+    | EndGame(score, name) => Score(name, score)
+    | Fail(error) =>
+      Js.Console.error(error);
+      prev;
+    };
+
+  let handleGameAction = (act, view): view =>
     switch (act) {
-    | GameAction(gameAction) => handleGameAction(gameAction, view)
-    | AppAction(appAction) =>
-      switch (appAction) {
-      | StartGame(name) => ReasonReact.SideEffects(initgame(name))
-      | Begin(game) => ReasonReact.Update(InGame(game |> Game.updateVision))
-      }
-    },
-  render: self =>
-    <div className="App">
-      (
-        switch (self.state) {
-        | Home =>
-          <StartView
-            startGame=(string => self.send(AppAction(StartGame(string))))
-          />
-        | Score(name, score) =>
-          <div>
-            <div>
-              (
-                ReasonReact.string(
-                  name ++ " scored " ++ string_of_int(score) ++ " points",
-                )
-              )
-            </div>
-            <button onClick=(_ => Location.reload(location))>
-              (string("Try again"))
-            </button>
-          </div>
-        | InGame(game) =>
-          <GameView
-            game
-            takeStairs=(() => self.send(GameAction(TakeStairs)))
-            useExit=(() => self.send(GameAction(UseExit)))
-            movePlayer=((x, y) => self.send(GameAction(MovePlayer(x, y))))
-          />
-        }
-      )
-    </div>,
+    | TakeStairs =>
+      view |> mapGameOrError(Game.useStairs(_)) |> update(view)
+    | MovePlayer(x, y) =>
+      view |> mapGameOrError(Game.movePlayer(x, y)) |> update(view)
+    | UseExit => view |> mapGameOrError(Game.useExit) |> update(view)
+    };
+
+  let startGame = pname => {
+    initPlayer(pname)
+    |> (
+      p =>
+        World.FetchCsvBuilder.create(p)
+        |> Js.Promise.then_(w =>
+             {player: p, world: w, turn: 0.} |> Js.Promise.resolve
+           )
+        |> Js.Promise.then_(g => {
+            let game = g |> Game.updateVision;
+             updateState(_ => InGame(game));
+             Js.Promise.resolve(game);
+           })
+        |> ignore
+    );
+  };
+
+  let startNewGame = evt =>
+    if (ReactEvent.Keyboard.key(evt) == "Enter") {
+      startGame(playerName);
+    };
+
+  <div className="App">
+    {switch (state) {
+     | Home => <StartView startGame=startNewGame onChange=updateName />
+     | Score(name, score) =>
+       <div>
+         <div>
+           {string(name ++ " scored " ++ string_of_int(score) ++ " points")}
+         </div>
+         <button onClick={_ => Location.reload(location)}>
+           {string("Try again")}
+         </button>
+       </div>
+     | InGame(game) =>
+      <GameView
+        game
+        takeStairs={() => updateState(handleGameAction(TakeStairs))}
+        useExit={() => updateState(handleGameAction(UseExit))}
+        movePlayer={(x, y) => updateState(handleGameAction(MovePlayer(x, y)))}
+      />
+     }}
+  </div>;
 };
