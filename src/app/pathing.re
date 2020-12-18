@@ -1,5 +1,8 @@
 open Types;
 
+module Option = Belt_Option;
+module RList = Belt_List;
+
 module DictRouting = {
   type location = {
     x: int,
@@ -58,7 +61,7 @@ module PathUtil = {
       else if (DictRouting.isInvalidTerrain(x, y, dArea)) false
       else if (turn == 1 && DictRouting.isInvalidMove(x, y, dArea)) false
       else if (isGoal(x, y, tx, ty)) true
-      else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && oy == y}, route)) false
+      else if (turn != 0 && RList.some(route, xy => {let (ox, oy) = xy; ox == x && oy == y})) false
       else {
         let route = if (turn == 0) { route }  else { [ (x, y), ... route] };
 
@@ -117,9 +120,9 @@ module PathUtil = {
       else if (isOutOfBounds(x, y, maxX, maxY)) routes
       else if (DictRouting.isInvalidTerrain(x, y, dArea)) routes
       else if (turn == 1 && DictRouting.isInvalidMove(x, y, dArea)) routes
-      else if (routes |> Rationale.RList.any(p => List.length(current) > List.length(p))) routes
+      else if (routes -> RList.some(p => List.length(current) > List.length(p))) routes
       else if (isGoal(x, y, tx, ty)) [ [(x, y), ...current], ... routes ]
-      else if (turn != 0 && Rationale.RList.any(xy => {let (ox, oy) = xy; ox == x && oy == y}, current)) routes
+      else if (turn != 0 && RList.some(current, xy => {let (ox, oy) = xy; ox == x && oy == y})) routes
       else {
       
         let history: list((int, int)) = if (turn == 0) { current }  else { [ (x, y), ... current ] };
@@ -182,14 +185,12 @@ module Navigation: Movement = {
 module VisionUtil = {
   
   let makeLine = (distance, area, (ox, oy), (dx, dy)) => {
-    open Rationale.Option;
-
     let cannotSeeThrough = ((x, y)) => 
       area 
-        |> Rationale.RList.nth(y) 
-        >>= Rationale.RList.nth(x)
-        <$> (Level.Tiles.cantSeeThrough)
-        |> Rationale.Option.default(true); 
+        -> RList.nth(y) 
+        -> RList.flatMap(RList.nth(x))
+        -> RList.map(Level.Tiles.cantSeeThrough)
+        -> Option.getWithDefault(true); 
 
     let (ffx, ffy) = {
       ( if (dx == 0) { x => x }

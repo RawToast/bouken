@@ -1,6 +1,6 @@
 module LevelBuilder = {
   open Types;
-  open Rationale;
+  module RList = Belt_List;
 
   let blankPlace = {
     tile: GROUND,
@@ -9,28 +9,27 @@ module LevelBuilder = {
     visible: false,
   };
   let makeBlankLevel = (name: string) => {
-    let emptyMap =
-      RList.repeat(blankPlace, 15) |> List.map(i => RList.repeat(i, 15));
+    let emptyMap = RList.make(15, blankPlace) |> List.map(RList.make(15));
     {name, map: emptyMap};
   };
 
   let makeWaterLevel = (name: string) => {
     let emptyMap =
-      RList.repeat(
-        {tile: WATER, state: Empty, tileEffect: NoEff, visible: false},
+      RList.make(
         15,
+        {tile: WATER, state: Empty, tileEffect: NoEff, visible: false},
       )
-      |> List.map(i => RList.repeat(i, 15));
+      |> List.map(RList.make(15));
     {name, map: emptyMap};
   };
 
   let makeLevel = (name, sizeX, sizeY, defaultTile) => {
     let emptyMap =
-      RList.repeat(
-        {tile: defaultTile, state: Empty, tileEffect: NoEff, visible: false},
+      RList.make(
         sizeY,
+        {tile: defaultTile, state: Empty, tileEffect: NoEff, visible: false},
       )
-      |> List.map(i => RList.repeat(i, sizeX));
+      |> List.map(RList.make(sizeX));
     {name, map: emptyMap};
   };
 };
@@ -171,11 +170,12 @@ module Tiles = {
 
 module Area: Types.Places = {
   open Types;
-  open Rationale;
+  module RList = Belt_List;
+  module Option = Belt_Option;
 
   let findStairs = (id, area: list(list(place))) => {
     let findStairsRow = id =>
-      RList.find(y =>
+      RList.getBy(_, y =>
         switch (y.tile) {
         | STAIRS(link) => link.id == id
         | _ => false
@@ -183,19 +183,28 @@ module Area: Types.Places = {
       );
 
     area
-    |> RList.find(row => row |> findStairsRow(id) |> Option.isSome)
-    |> Option.default([])
-    |> RList.find(place =>
-         switch (place.tile) {
-         | STAIRS(link) => link.id == id
-         | _ => false
-         }
-       );
+    ->RList.getBy(row => row |> findStairsRow(id) |> Option.isSome)
+    ->Option.getWithDefault([])
+    ->RList.getBy(place =>
+        switch (place.tile) {
+        | STAIRS(link) => link.id == id
+        | _ => false
+        }
+      );
   };
 
   let locationOfStairs = (id, area: list(list(place))) => {
+    let findIndex = {
+      let rec loop = (pred, xs, i) =>
+        switch (xs) {
+        | [] => None
+        | [a, ...b] => pred(a) ? Some(i) : loop(pred, b, i + 1)
+        };
+      (pred, xs) => loop(pred, xs, 0);
+    };
+
     let findStairsRow = id =>
-      RList.findIndex(y =>
+      findIndex(y =>
         switch (y.tile) {
         | STAIRS(link) => link.id == id
         | _ => false
@@ -204,30 +213,26 @@ module Area: Types.Places = {
 
     let idx =
       area
-      |> RList.findIndex(row => row |> findStairsRow(id) |> Option.isSome);
+      |> findIndex(row => row |> findStairsRow(id) |> Option.isSome);
 
-    Option.bind(idx, y => {
-      area
-      |> List.nth(_, y)
-      |> findStairsRow(id)
-      |> Option.fmap(x => (x, y))
-    });
+    idx
+    -> Option.flatMap(y => RList.get(area, y)
+    -> Option.flatMap(x => findStairsRow(id, x) -> Option.map(x => (x, y)))
+    );
   };
 
   let getPlace = (x, y, area) =>
-    area |> RList.nth(y) |> Option.bind(_, RList.nth(x));
+    area -> RList.get(y) -> Option.flatMap(RList.get(x));
 
   let findPlayer = area => {
-    open Rationale.Option;
-
-    let findPlayerRow = RList.find(y => isPlayer(y));
+    let findPlayerRow = RList.getBy(_, y => isPlayer(y));
     let hasPlayer = (p: option(place)) => Option.isSome(p);
 
     area
-    |> RList.find(row => row |> findPlayerRow |> hasPlayer)
-    |> Option.default([])
-    |> RList.find(state => isPlayer(state))
-    >>= (
+    -> RList.getBy(row => row |> findPlayerRow |> hasPlayer)
+    -> Option.getWithDefault([])
+    -> RList.getBy(state => isPlayer(state))
+    -> Option.flatMap(
       place =>
         switch (place.state) {
         | Player(p) => Some(p)
@@ -246,7 +251,7 @@ module Area: Types.Places = {
       let hasEnemy = (p: option(place)) => Option.isSome(p);
 
       let findEnemyRow = (id, places) =>
-        places |> RList.find(y => isEnemyWithId(id, y));
+        places -> RList.getBy(y => isEnemyWithId(id, y));
 
       area
       |> RList.find(row => row |> findEnemyRow(id) |> hasEnemy)
