@@ -49,7 +49,7 @@ describe("EnemyLoop", () => {
       let activeEnemies = EnemyLoop.findActiveEnemies(level.map);
 
       expect(activeEnemies 
-        |> Rationale.RList.any(ei => {
+        -> Belt_List.some(ei => {
           let (x, y) = ei.location;
           (x == 10) && (y == 10)}))
         |> toBe(true);

@@ -27,7 +27,7 @@ module CsvWorldBuilder: Types.WorldCreator = {
   };
 
   let createOccupier: (string, place) => place = (str, place) => {
-    if(Rationale.RList.any(k => str == k, ["+", ":", "g", ";"])) {
+    if(Belt_List.some(["+", ":", "g", ";"], k => str == k)) {
         switch str {
         | "+" => { ... place, tileEffect: Heal(2) }
         | ":" => { ... place, tileEffect: Trap(2) }

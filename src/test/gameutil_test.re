@@ -1,10 +1,11 @@
 open Types;
 open Jest;
 open Expect;
-open Rationale;
+module Option = Belt_Option;
 
 module Game = Modules.Game;
 module GU = Modules.GameUtil;
+
 let game = Game.create("test");
 
 describe("GameUtil", () =>
@@ -19,8 +20,8 @@ describe("GameUtil", () =>
     test("Updates the current level", (_) => {  
         let updatedLevel = 
             GU.updateCurrentLevel(emptyArea, game) 
-                |> Option.bind(_, w => World.World.currentLevel(w)) 
-                |> Option.default(Level.LevelBuilder.makeWaterLevel("No"));
+                -> Option.flatMap(_, w => World.World.currentLevel(w)) 
+                -> Option.getWithDefault(Level.LevelBuilder.makeWaterLevel("No"));
 
         expect(updatedLevel.map |> List.length) |> toBe(1);
     });

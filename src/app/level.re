@@ -404,7 +404,6 @@ module Area: Types.Places = {
            }
          );
     };
-    // open Rationale.Result;
 
     canMoveTo(x, y, area)
     |> Result.bind(_, _r =>
