@@ -1,0 +1,29 @@
+{
+  "name": "@bouken/game",
+  "version": "0.3.0c",
+  "description": "ASCII Roguelike Game Logic",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "compile": "bsb -make-world",
+    "clean": "bsb -clean-world",
+    "watch": "bsb -make-world -w",
+    "tests": "jest --testMatch='**/test/*.*'",
+    "test:watch": "jest --testMatch='**/src/test/*test.mjs' --watch",
+    "test:coverage": "jest --testMatch='**/src/test/*test.mjs' --collectCoverageFrom='src/app/**' --coverage"
+  },
+  "dependencies": {
+    "bs-fetch": "^0.6.2",
+    "bs-webapi": "^0.19.1",
+    "install": "^0.13.0",
+  },
+  "devDependencies": {
+    "@glennsl/bs-jest": "^0.7.0",
+    "bs-platform": "^9.0.2"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "**/test/*.mjs"
+    ]
+  }
+}

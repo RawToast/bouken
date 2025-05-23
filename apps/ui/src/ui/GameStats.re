@@ -1,8 +1,8 @@
 // let text = 
 [@react.component]
-let make = (~player: Types.player, ~turn: float, ~level: string) => {
+let make = (~player: BoukenGame.Types.player, ~turn: float, ~level: string) => {
   <div className="GameStats">
-    <text>
+    <p>
       {ReasonReact.string(
          player.name
          ++ " HP: "
@@ -12,7 +12,7 @@ let make = (~player: Types.player, ~turn: float, ~level: string) => {
          ++ " Turn: "
          ++ Js.Float.toFixedWithPrecision(~digits=1, turn),
        )}
-    </text>
-    <div> <text> {ReasonReact.string(level)} </text> </div>
+    </p>
+    <div> <p> {ReasonReact.string(level)} </p> </div>
   </div>;
 };

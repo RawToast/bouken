@@ -1,6 +1,5 @@
 open Types;
-open Jest;
-open Expect;
+open Test;
 
 module Game = Modules.Game;
 module Option = Belt_Option;
@@ -8,7 +7,7 @@ module Option = Belt_Option;
 describe("Game.Create", () => {
   test("Creates a new game", (_) => {
     let initGame = Game.create("dave");
-    expect(initGame.player.name) |> toBe("dave");
+    expect(initGame.player.name) |> Expect.toMatch("dave");
   });
 });
 

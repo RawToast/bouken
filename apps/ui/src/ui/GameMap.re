@@ -1,4 +1,4 @@
-open Types;
+open BoukenGame.Types;
 open ReasonReact;
 
 module GameElements = {
@@ -59,11 +59,11 @@ module GameElements = {
          )
          |> (
            ((str, clazz)) =>
-             <text
+             <span
                key={string_of_int(index) ++ "x" ++ string_of_int(i)}
                className={"map-" ++ clazz ++ " map"}>
                {string(str)}
-             </text>
+             </span>
          )
        );
 

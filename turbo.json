@@ -1,0 +1,42 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalDependencies": ["**/.env.*local"],
+  "tasks": {
+    "compile": {
+      "dependsOn": ["^compile"],
+      "outputs": ["dist/**", "lib/**", "src/**/*.bs.js"],
+      "cache": false
+    },
+    "build": {
+      "dependsOn": ["^compile"],
+      "outputs": ["dist/**", "lib/**"]
+    },
+    "make": {
+      "dependsOn": ["^compile"],
+      "outputs": ["dist/**", "lib/**", "src/**/*.bs.js"]
+    },
+    "watch": {
+      "dependsOn": ["^compile"],
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "dependsOn": ["compile"],
+      "cache": false,
+      "persistent": true,
+      "with": ["watch"]
+    },
+    "tests": {
+      "dependsOn": ["make"],
+      "inputs": ["**/*test.bs.js"]
+    },
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+} 

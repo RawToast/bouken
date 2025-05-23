@@ -1,24 +1,24 @@
 let currentLevel = world =>
-  World.currentLevel(world)
+  BoukenGame.World.currentLevel(world)
   -> Belt_Option.getWithDefault(List.hd(world.levels));
 
 type inxPlace = {
   i: int,
-  place: Types.place,
+  place: BoukenGame.Types.place,
 };
 type inxRow = {
   i: int,
   place: list(inxPlace),
 };
 
-let viewport = (player: Types.player, area) => {
+let viewport = (player: BoukenGame.Types.player, area) => {
   let size = 6;
   let fullSize = 1 + size * 2;
   let (x, y) = player.location;
   let blocks =
     Belt_List.make(
       size,
-      {Types.tile: WALL, state: Empty, tileEffect: NoEff, visible: false},
+      {BoukenGame.Types.tile: WALL, state: Empty, tileEffect: NoEff, visible: false},
     );
 
   let pt1 = area -> Belt_List.map(ys => blocks @ ys @ blocks);
@@ -28,7 +28,7 @@ let viewport = (player: Types.player, area) => {
     |> List.hd
     |> List.length)
     -> Belt_List.make(_, {
-         Types.tile: WALL,
+         BoukenGame.Types.tile: WALL,
          state: Empty,
          tileEffect: NoEff,
          visible: false,
@@ -47,7 +47,7 @@ let viewport = (player: Types.player, area) => {
 };
 
 [@react.component]
-let make = (~game: Types.game, ~movePlayer, ~takeStairs, ~useExit) => {
+let make = (~game: BoukenGame.Types.game, ~movePlayer, ~takeStairs, ~useExit) => {
   <div>
     <GameStats
       player={game.player}
