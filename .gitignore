@@ -1,7 +1,7 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
 
 # testing
 /coverage
@@ -10,7 +10,8 @@
 /build
 
 # bucklescript
-/lib
+apps/game/lib/
+apps/ui/lib/
 /types
 .merlin
 
@@ -32,3 +33,5 @@ yarn-error.log*
 # Cache and runtime files
 .cache/
 dist/
+
+.turbo

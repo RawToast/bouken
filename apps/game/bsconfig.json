@@ -1,0 +1,26 @@
+{
+  "name": "@bouken/game",
+  "sources": [
+    {
+      "dir": "src/app"
+    },
+    {
+      "dir": "src/test",
+      "type": "dev"
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "es6",
+      "in-source": true
+    }
+  ],
+  "suffix": ".bs.js",
+  "namespace": true,
+  "bs-dependencies": [
+    "@glennsl/bs-jest",
+    "bs-webapi",
+    "bs-fetch"
+  ],
+  "refmt": 3
+} 

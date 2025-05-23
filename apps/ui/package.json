@@ -1,0 +1,35 @@
+{
+  "name": "@bouken/ui",
+  "version": "0.3.0c",
+  "description": "ASCII Roguelike UI",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "compile": "bsb -make-world",
+    "watch": "bsb -make-world -w",
+    "start": "bun watch-html",
+    "make": "vite build",
+    "build": "vite build",
+    "clean": "rimraf .cache lib dist .merlin src/*.js",
+    "watch-html": "vite",
+    "watch-reason": "bsb -make-world -w",
+    "bsb": "bsb -make-world",
+    "bsb-clean": "bsb -clean-world"
+  },
+  "dependencies": {
+    "@bouken/game": "*",
+    "bs-fetch": "^0.6.2",
+    "bs-webapi": "^0.19.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "reason-react": "^0.9.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "bs-platform": "^9.0.2",
+    "bsb-js": "^1.1.7",
+    "rimraf": "^3.0.2",
+    "vite": "^6.0.3"
+  },
+  "node": "22"
+}

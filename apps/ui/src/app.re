@@ -1,15 +1,11 @@
-open Utils;
-
-open Types;
+open BoukenGame.Types;
 open Webapi.Dom;
-
-requireCSS("./App.css");
 
 let string = ReasonReact.string;
 
 type view =
   | Home
-  | InGame(Types.game)
+  | InGame(BoukenGame.Types.game)
   | Score(string, int);
 
 type gameAction =
@@ -19,7 +15,7 @@ type gameAction =
 
 let movement = (x, y) => MovePlayer(x, y);
 
-module Game = Modules.Game;
+module Game = BoukenGame.Modules.Game;
 
 let initPlayer = name => {
   name,
@@ -66,7 +62,7 @@ let make = () => {
     initPlayer(pname)
     |> (
       p =>
-        World.FetchCsvBuilder.create(p)
+        BoukenGame.World.FetchCsvBuilder.create(p)
         |> Js.Promise.then_(w =>
              {player: p, world: w, turn: 0.} |> Js.Promise.resolve
            )

@@ -3,36 +3,27 @@
   "version": "0.3.0c",
   "description": "ASCII Roguelike",
   "license": "MIT",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
-    "start": "concurrently -c --kill-others 'npm:watch-html' 'npm:watch-reason'",
-    "build": "parcel build src/index.html --public-url /",
-    "clean": "rimraf .cache lib dist .merlin src/*.js",
-    "watch-html": "parcel src/index.html",
-    "watch-reason": "bsb -make-world -w",
-    "bsb": "bsb -make-world",
-    "bsb-clean": "bsb -clean-world",
-    "test": "jest --testMatch='**/test/*test.bs.js' --watch",
-    "coverage": "jest --testMatch='**/test/*test.bs.js' --collectCoverageFrom='src/app/**' --coverage",
-    "ci": "yarn bsb && yarn coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
-  },
-  "dependencies": {
-    "bs-fetch": "^0.6.2",
-    "bs-webapi": "^0.19.1",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "reason-react": "^0.9.1"
+    "compile": "turbo compile",
+    "make": "turbo make",
+    "dev": "turbo start",
+    "tests": "turbo tests",
+    "test:watch": "turbo test:watch",
+    "clean": "turbo clean",
+    "ci": "turbo build test"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.4.9",
-    "bs-platform": "^8.4.2",
-    "bsb-js": "^1.1.7",
-    "concurrently": "^3.6.1",
-    "parcel-bundler": "^1.12.4",
-    "rimraf": "^3.0.2"
+    "turbo": "latest"
   },
-  "jest": {
-    "collectCoverageFrom": [
-      "**/app/*.{bs.js}"
-    ]
-  }
+  "packageManager": "bun@1.1.25",
+  "trustedDependencies": [
+    "bs-platform",
+    "bsdoc",
+    "esbuild"
+  ]
 }
